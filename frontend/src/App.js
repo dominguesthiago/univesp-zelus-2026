@@ -4,6 +4,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import Home from './pages/Home';
+import Privacidade from './pages/Privacidade';
+import NotFound from './pages/NotFound';
 
 /**
  * Componente Raiz da Aplicação ZELUS
@@ -27,6 +29,8 @@ function App() {
         <main id="conteudo-principal" className="app-main" tabIndex="-1">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/politica-privacidade" element={<Privacidade />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 

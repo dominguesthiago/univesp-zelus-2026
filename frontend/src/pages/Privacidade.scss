@@ -1,0 +1,96 @@
+// ==============================================================
+// Arquivo: Privacidade.scss — Estilos da Página de Privacidade
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+.privacidade {
+  padding-top: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+  padding-bottom: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+
+  // Limita a largura do texto para leitura confortável
+  > * {
+    max-width: 70ch;
+  }
+
+  &__title {
+    margin-bottom: vars.$spacing-lg;
+    font-size: vars.$font-size-3xl;
+    font-weight: vars.$font-weight-bold;
+    line-height: vars.$line-height-tight;
+    color: vars.$color-primary;
+  }
+
+  &__aviso {
+    margin-bottom: vars.$spacing-xl;
+    padding: vars.$spacing-md;
+    background-color: vars.$color-accent-light;
+    border-left: 4px solid vars.$color-accent;
+    border-radius: vars.$border-radius-sm;
+    color: vars.$color-text-primary;
+    line-height: vars.$line-height-normal;
+  }
+
+  &__section {
+    margin-bottom: vars.$spacing-xl;
+    color: vars.$color-text-primary;
+    line-height: vars.$line-height-normal;
+
+    h2 {
+      margin-bottom: vars.$spacing-sm;
+      font-size: vars.$font-size-xl;
+      font-weight: vars.$font-weight-semibold;
+      line-height: vars.$line-height-tight;
+      color: vars.$color-text-primary;
+    }
+
+    p + p,
+    p + ul,
+    ul + p {
+      margin-top: vars.$spacing-sm;
+    }
+
+    ul {
+      padding-left: vars.$spacing-lg;
+    }
+
+    li + li {
+      margin-top: vars.$spacing-xxs;
+    }
+
+    code {
+      padding: 0 vars.$spacing-xxs;
+      background-color: vars.$color-surface-hover;
+      border-radius: vars.$border-radius-xs;
+      font-family: vars.$font-family-mono;
+      font-size: 0.9em;
+    }
+  }
+
+  // Link com aparência de botão
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px; // Alvo de toque acessível (WCAG 2.5.5)
+    padding: vars.$spacing-xs vars.$spacing-xl;
+    background-color: vars.$color-primary;
+    color: vars.$color-text-inverse;
+    border-radius: vars.$border-radius-md;
+    font-weight: vars.$font-weight-semibold;
+    text-decoration: none;
+    transition: background-color vars.$transition-fast;
+
+    &:hover {
+      background-color: vars.$color-primary-hover;
+      color: vars.$color-text-inverse;
+      text-decoration: none;
+    }
+
+    // O anel global (#0d47a1) é invisível sobre o fundo azul do botão
+    &:focus-visible {
+      outline: 3px solid vars.$color-text-primary;
+      outline-offset: 3px;
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import './CookieBanner.scss';
 
@@ -53,13 +54,13 @@ const CookieBanner = () => {
               O <strong>ZELUS</strong> utiliza armazenamento local essencial (tokens de sessão e preferências de acessibilidade)
               para garantir a segurança e o pleno funcionamento da plataforma de zeladoria urbana municipal, em conformidade com a 
               Lei Geral de Proteção de Dados (LGPD). Não utilizamos cookies de terceiros ou rastreamento comercial.{' '}
-              <a
-                href="/politica-privacidade"
+              <Link
+                to="/politica-privacidade"
                 className="cookie-banner__link"
                 title="Acessar a Política de Privacidade e Proteção de Dados do ZELUS"
               >
                 Conheça a nossa Política de Privacidade
-              </a>.
+              </Link>.
             </p>
           </div>
         </div>
