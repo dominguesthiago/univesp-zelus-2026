@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "react-scripts test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",
@@ -28,5 +29,10 @@
     ]
   },
   "author": "Equipe ZELUS - UNIVESP",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8"
+  }
 }
