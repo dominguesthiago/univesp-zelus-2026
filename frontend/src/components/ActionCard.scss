@@ -1,0 +1,137 @@
+// ==============================================================
+// Arquivo: ActionCard.scss — Estilos do Card de Ação (estilo cartum)
+// ==============================================================
+// Bordas grossas, sombra sólida deslocada, conteúdo empilhado (column),
+// temas por classe modificadora e elevação no :hover / :focus-within.
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+$card-border: 4px solid vars.$color-text-primary;
+$card-shadow: 6px 6px 0 vars.$color-text-primary;
+$card-shadow-hover: 9px 9px 0 vars.$color-text-primary;
+$card-shadow-active: 3px 3px 0 vars.$color-text-primary;
+
+.action-card {
+  display: flex;
+  flex-direction: column; // Conteúdo sempre empilhado dentro do card
+  height: 100%;
+  background-color: vars.$color-surface;
+  border: $card-border;
+  border-radius: vars.$border-radius-lg;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+
+  // Elevação também para usuários de teclado
+  &:hover,
+  &:focus-within {
+    transform: translate(-3px, -3px);
+    box-shadow: $card-shadow-hover;
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: $card-shadow-active;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-bottom: $card-border;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: vars.$spacing-sm;
+    padding: clamp(vars.$spacing-md, 4vw, vars.$spacing-xl);
+    background-color: vars.$color-surface;
+  }
+
+  &__title {
+    font-size: vars.$font-size-2xl;
+    font-weight: vars.$font-weight-bold;
+    line-height: vars.$line-height-tight;
+    color: vars.$color-text-primary;
+  }
+
+  &__description {
+    flex: 1; // Empurra o botão para a base, alinhando os dois cards
+    font-size: vars.$font-size-md;
+    line-height: vars.$line-height-normal;
+    color: vars.$color-text-primary;
+  }
+
+  &__button {
+    align-self: flex-start;
+    min-height: 44px; // Alvo de toque acessível (WCAG 2.5.5)
+    min-width: 44px;
+    padding: vars.$spacing-xs vars.$spacing-xl;
+    margin-top: vars.$spacing-xs;
+    font-family: vars.$font-family-base;
+    font-size: vars.$font-size-md;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-inverse;
+    background-color: vars.$color-primary;
+    border: 3px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-md;
+    cursor: pointer;
+    transition: background-color vars.$transition-fast;
+
+    @media (max-width: vars.$breakpoint-sm) {
+      align-self: stretch;
+    }
+
+    // Override do anel de foco global (#0d47a1 é pouco visível sobre o botão azul)
+    &:focus-visible {
+      outline: 3px solid vars.$color-text-primary;
+      outline-offset: 3px;
+    }
+  }
+
+  // -- Tema: Cidadão (Verde Cidadão) --
+  &.card-citizen {
+    .action-card__body {
+      background-color: vars.$color-secondary-light;
+    }
+
+    .action-card__button {
+      background-color: vars.$color-secondary;
+
+      &:hover {
+        background-color: vars.$color-secondary-hover;
+      }
+    }
+  }
+
+  // -- Tema: Prefeitura (Azul Institucional) --
+  &.card-admin {
+    .action-card__body {
+      background-color: vars.$color-primary-light;
+    }
+
+    .action-card__button {
+      background-color: vars.$color-primary;
+
+      &:hover {
+        background-color: vars.$color-primary-hover;
+      }
+    }
+  }
+}
+
+// -- Movimento reduzido (WCAG 2.3.3): sem deslocamento, mantém só a sombra --
+@media (prefers-reduced-motion: reduce) {
+  .action-card {
+    &:hover,
+    &:focus-within,
+    &:active {
+      transform: none;
+    }
+  }
+}
