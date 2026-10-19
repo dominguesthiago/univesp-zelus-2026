@@ -5,34 +5,49 @@
 @use '../styles/variables' as vars;
 
 .home {
-  padding-top: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
-  padding-bottom: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: calc(100vh - 160px);
+  padding-top: vars.$spacing-lg;
+  padding-bottom: vars.$spacing-xl;
 
   &__title {
     margin-bottom: vars.$spacing-xl;
     text-align: center;
-    font-size: vars.$font-size-3xl;
+    font-size: vars.$font-size-2xl;
     font-weight: vars.$font-weight-bold;
     line-height: vars.$line-height-tight;
     color: vars.$color-primary;
 
     @media (min-width: vars.$breakpoint-md) {
       font-size: vars.$font-size-4xl;
+      margin-bottom: vars.$spacing-2xl;
     }
   }
 
-  // Empilhado no mobile; lado a lado a partir de $breakpoint-md
+  // No mobile: largura contida para não tocar as bordas, empilhado com gap generoso
   &__cards {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
     gap: vars.$spacing-xl;
     align-items: stretch;
     // Folga para a sombra sólida e a elevação do ActionCard
     padding-right: 10px;
     padding-bottom: 10px;
 
+    // No desktop: grid de 2 colunas com separação aumentada
     @media (min-width: vars.$breakpoint-md) {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
+      width: 100%;
+      max-width: 900px;
+      gap: vars.$spacing-2xl; // gap aumentado entre as colunas
+      margin: 0 auto;
     }
   }
 }

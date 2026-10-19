@@ -7,14 +7,18 @@
 .privacidade {
   padding-top: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
   padding-bottom: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+  text-align: center;
 
-  // Limita a largura do texto para leitura confortável
+  // Limita a largura do texto para leitura confortável e centraliza os blocos
   > * {
     max-width: 70ch;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &__title {
     margin-bottom: vars.$spacing-lg;
+    text-align: center;
     font-size: vars.$font-size-3xl;
     font-weight: vars.$font-weight-bold;
     line-height: vars.$line-height-tight;
@@ -29,12 +33,14 @@
     border-radius: vars.$border-radius-sm;
     color: vars.$color-text-primary;
     line-height: vars.$line-height-normal;
+    text-align: center;
   }
 
   &__section {
     margin-bottom: vars.$spacing-xl;
     color: vars.$color-text-primary;
     line-height: vars.$line-height-normal;
+    text-align: center;
 
     h2 {
       margin-bottom: vars.$spacing-sm;
@@ -42,6 +48,11 @@
       font-weight: vars.$font-weight-semibold;
       line-height: vars.$line-height-tight;
       color: vars.$color-text-primary;
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
     }
 
     p + p,
@@ -51,7 +62,13 @@
     }
 
     ul {
-      padding-left: vars.$spacing-lg;
+      list-style-position: inside;
+      padding: 0;
+      text-align: center;
+    }
+
+    li {
+      text-align: center;
     }
 
     li + li {
@@ -67,9 +84,10 @@
     }
   }
 
-  // Link com aparência de botão
+  // Link com aparência de botão centralizado
   &__back {
     display: inline-flex;
+    margin: 0 auto;
     align-items: center;
     justify-content: center;
     min-height: 44px; // Alvo de toque acessível (WCAG 2.5.5)

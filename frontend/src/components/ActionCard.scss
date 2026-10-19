@@ -1,8 +1,8 @@
 // ==============================================================
 // Arquivo: ActionCard.scss — Estilos do Card de Ação (estilo cartum)
 // ==============================================================
-// Bordas grossas, sombra sólida deslocada, conteúdo empilhado (column),
-// temas por classe modificadora e elevação no :hover / :focus-within.
+// Layout horizontal lado a lado (mesmo no mobile), tamanho de imagem rígido,
+// botão completo clicável, borda grossa e cores temáticas do mockup.
 // ==============================================================
 
 @use '../styles/variables' as vars;
@@ -14,18 +14,32 @@ $card-shadow-active: 3px 3px 0 vars.$color-text-primary;
 
 .action-card {
   display: flex;
-  flex-direction: column; // Conteúdo sempre empilhado dentro do card
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
   height: 100%;
+  min-height: 240px;
+  padding: vars.$spacing-xl vars.$spacing-lg;
   background-color: vars.$color-surface;
   border: $card-border;
-  border-radius: vars.$border-radius-lg;
+  border-radius: 24px;
   box-shadow: $card-shadow;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
   overflow: hidden;
-  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast, background-color vars.$transition-fast;
 
-  // Elevação também para usuários de teclado
+  @media (min-width: vars.$breakpoint-md) {
+    min-height: 280px;
+    padding: vars.$spacing-2xl vars.$spacing-xl;
+  }
+
+  // Elevação interativa no hover e foco de teclado
   &:hover,
-  &:focus-within {
+  &:focus-visible {
     transform: translate(-3px, -3px);
     box-shadow: $card-shadow-hover;
   }
@@ -35,92 +49,62 @@ $card-shadow-active: 3px 3px 0 vars.$color-text-primary;
     box-shadow: $card-shadow-active;
   }
 
-  &__image {
-    display: block;
+  &:focus-visible {
+    outline: 3px solid vars.$color-text-primary;
+    outline-offset: 3px;
+  }
+
+  // Ajuste da Imagem (Fidelidade ao Mockup)
+  &__image,
+  img {
     width: 100%;
+    max-width: 120px;
     height: auto;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-bottom: $card-border;
+    margin-bottom: vars.$spacing-md;
+    object-fit: contain;
+    flex-shrink: 0;
+    border: none;
   }
 
   &__body {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    gap: vars.$spacing-sm;
-    padding: clamp(vars.$spacing-md, 4vw, vars.$spacing-xl);
-    background-color: vars.$color-surface;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: vars.$spacing-xs;
+    padding: 0;
+    background-color: transparent;
   }
 
   &__title {
-    font-size: vars.$font-size-2xl;
+    font-size: vars.$font-size-xl;
     font-weight: vars.$font-weight-bold;
     line-height: vars.$line-height-tight;
     color: vars.$color-text-primary;
   }
 
   &__description {
-    flex: 1; // Empurra o botão para a base, alinhando os dois cards
-    font-size: vars.$font-size-md;
+    font-size: vars.$font-size-sm;
     line-height: vars.$line-height-normal;
     color: vars.$color-text-primary;
   }
 
-  &__button {
-    align-self: flex-start;
-    min-height: 44px; // Alvo de toque acessível (WCAG 2.5.5)
-    min-width: 44px;
-    padding: vars.$spacing-xs vars.$spacing-xl;
-    margin-top: vars.$spacing-xs;
-    font-family: vars.$font-family-base;
-    font-size: vars.$font-size-md;
-    font-weight: vars.$font-weight-bold;
-    color: vars.$color-text-inverse;
-    background-color: vars.$color-primary;
-    border: 3px solid vars.$color-text-primary;
-    border-radius: vars.$border-radius-md;
-    cursor: pointer;
-    transition: background-color vars.$transition-fast;
-
-    @media (max-width: vars.$breakpoint-sm) {
-      align-self: stretch;
-    }
-
-    // Override do anel de foco global (#0d47a1 é pouco visível sobre o botão azul)
-    &:focus-visible {
-      outline: 3px solid vars.$color-text-primary;
-      outline-offset: 3px;
-    }
-  }
-
-  // -- Tema: Cidadão (Verde Cidadão) --
+  // -- Tema Cidadão: Verde/Menta do Mockup --
   &.card-citizen {
-    .action-card__body {
-      background-color: vars.$color-secondary-light;
-    }
+    background-color: vars.$color-secondary;
 
-    .action-card__button {
-      background-color: vars.$color-secondary;
-
-      &:hover {
-        background-color: vars.$color-secondary-hover;
-      }
+    &:hover {
+      background-color: vars.$color-secondary-hover;
     }
   }
 
-  // -- Tema: Prefeitura (Azul Institucional) --
+  // -- Tema Prefeitura: Amarelo/Laranja do Mockup --
   &.card-admin {
-    .action-card__body {
-      background-color: vars.$color-primary-light;
-    }
+    background-color: vars.$color-accent;
 
-    .action-card__button {
-      background-color: vars.$color-primary;
-
-      &:hover {
-        background-color: vars.$color-primary-hover;
-      }
+    &:hover {
+      background-color: vars.$color-accent-hover;
     }
   }
 }
@@ -129,7 +113,7 @@ $card-shadow-active: 3px 3px 0 vars.$color-text-primary;
 @media (prefers-reduced-motion: reduce) {
   .action-card {
     &:hover,
-    &:focus-within,
+    &:focus-visible,
     &:active {
       transform: none;
     }

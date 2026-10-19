@@ -26,7 +26,12 @@ const ActionCard = ({
   const decorativa = altText === '';
 
   return (
-    <article className={`action-card ${colorClass}`.trim()}>
+    <button
+      type="button"
+      className={`action-card ${colorClass}`.trim()}
+      onClick={onClick}
+      aria-label={`Acessar ${title}`}
+    >
       <img
         src={imageSrc}
         alt={altText}
@@ -39,17 +44,8 @@ const ActionCard = ({
       <div className="action-card__body">
         <h2 className="action-card__title">{title}</h2>
         <p className="action-card__description">{description}</p>
-
-        <button
-          type="button"
-          className="action-card__button"
-          onClick={onClick}
-          aria-label={`Acessar ${title}`}
-        >
-          Acessar
-        </button>
       </div>
-    </article>
+    </button>
   );
 };
 

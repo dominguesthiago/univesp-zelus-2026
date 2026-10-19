@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import './CookieBanner.scss';
 
@@ -11,6 +11,7 @@ import './CookieBanner.scss';
  */
 const CookieBanner = () => {
   const [visivel, setVisivel] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     try {
@@ -34,49 +35,51 @@ const CookieBanner = () => {
     setVisivel(false);
   };
 
-  if (!visivel) {
+  if (!visivel || location.pathname === '/politica-privacidade') {
     return null;
   }
 
   return (
-    <aside
-      className="cookie-banner"
-      role="region"
-      aria-label="Aviso de Privacidade e Armazenamento Local"
-    >
-      <div className="cookie-banner__container">
-        <div className="cookie-banner__content">
-          <div className="cookie-banner__icon-wrapper" aria-hidden="true">
-            <ShieldCheck className="cookie-banner__icon" size={24} />
+    <div className="cookie-overlay">
+      <aside
+        className="cookie-banner"
+        role="region"
+        aria-label="Aviso de Privacidade e Armazenamento Local"
+      >
+        <div className="cookie-banner__container">
+          <div className="cookie-banner__content">
+            <div className="cookie-banner__icon-wrapper" aria-hidden="true">
+              <ShieldCheck className="cookie-banner__icon" size={24} />
+            </div>
+            <div className="cookie-banner__text">
+              <p className="cookie-banner__message">
+                O <strong>ZELUS</strong> utiliza armazenamento local essencial (tokens de sessão e preferências de acessibilidade)
+                para garantir a segurança e o pleno funcionamento da plataforma de zeladoria urbana municipal, em conformidade com a 
+                Lei Geral de Proteção de Dados (LGPD). Não utilizamos cookies de terceiros ou rastreamento comercial.{' '}
+                <Link
+                  to="/politica-privacidade"
+                  className="cookie-banner__link"
+                  title="Acessar a Política de Privacidade e Proteção de Dados do ZELUS"
+                >
+                  Conheça a nossa Política de Privacidade
+                </Link>.
+              </p>
+            </div>
           </div>
-          <div className="cookie-banner__text">
-            <p className="cookie-banner__message">
-              O <strong>ZELUS</strong> utiliza armazenamento local essencial (tokens de sessão e preferências de acessibilidade)
-              para garantir a segurança e o pleno funcionamento da plataforma de zeladoria urbana municipal, em conformidade com a 
-              Lei Geral de Proteção de Dados (LGPD). Não utilizamos cookies de terceiros ou rastreamento comercial.{' '}
-              <Link
-                to="/politica-privacidade"
-                className="cookie-banner__link"
-                title="Acessar a Política de Privacidade e Proteção de Dados do ZELUS"
-              >
-                Conheça a nossa Política de Privacidade
-              </Link>.
-            </p>
-          </div>
-        </div>
 
-        <div className="cookie-banner__actions">
-          <button
-            type="button"
-            className="cookie-banner__button"
-            onClick={handleAceitar}
-            aria-label="Aceitar e dispensar aviso de privacidade e armazenamento local"
-          >
-            Entendido e Concordar
-          </button>
+          <div className="cookie-banner__actions">
+            <button
+              type="button"
+              className="cookie-banner__button"
+              onClick={handleAceitar}
+              aria-label="Aceitar e dispensar aviso de privacidade e armazenamento local"
+            >
+              Entendido e Concordar
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </div>
   );
 };
 
