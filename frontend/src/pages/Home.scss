@@ -1,0 +1,38 @@
+// ==============================================================
+// Arquivo: Home.scss — Estilos da Tela Inicial do ZELUS
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+.home {
+  padding-top: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+  padding-bottom: clamp(vars.$spacing-lg, 6vw, vars.$spacing-3xl);
+
+  &__title {
+    margin-bottom: vars.$spacing-xl;
+    text-align: center;
+    font-size: vars.$font-size-3xl;
+    font-weight: vars.$font-weight-bold;
+    line-height: vars.$line-height-tight;
+    color: vars.$color-primary;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: vars.$font-size-4xl;
+    }
+  }
+
+  // Empilhado no mobile; lado a lado a partir de $breakpoint-md
+  &__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-xl;
+    align-items: stretch;
+    // Folga para a sombra sólida e a elevação do ActionCard
+    padding-right: 10px;
+    padding-bottom: 10px;
+
+    @media (min-width: vars.$breakpoint-md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

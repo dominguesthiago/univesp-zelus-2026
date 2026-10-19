@@ -1,0 +1,20 @@
+// ==============================================================
+// Arquivo: Footer.scss — Estilos do Rodapé Global do ZELUS
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+.footer {
+  background-color: vars.$color-surface;
+  border-top: 2px solid vars.$color-border;
+  padding: vars.$spacing-lg vars.$spacing-md;
+  text-align: center;
+
+  &__text {
+    margin: 0 auto;
+    max-width: 1200px;
+    font-size: vars.$font-size-sm;
+    color: vars.$color-text-primary;
+    line-height: vars.$line-height-normal;
+  }
+}

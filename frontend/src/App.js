@@ -1,27 +1,41 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
+import Home from './pages/Home';
 
 /**
  * Componente Raiz da Aplicação ZELUS
- * Fornece a casca semântica de layout com atalhos de acessibilidade (Skip Link)
- * e injeta componentes transversais como o CookieBanner.
+ * Define o roteamento e a casca semântica de layout:
+ * skip link -> <header> -> <main> (rotas) -> <footer>, mais componentes transversais.
+ * Header e Footer ficam fora do <main> para preservar os landmarks
+ * banner / main / contentinfo.
  */
 function App() {
   return (
-    <div className="app-layout">
-      {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
-      <a href="#conteudo-principal" className="skip-link">
-        Pular para o conteúdo principal
-      </a>
+    <BrowserRouter>
+      <div className="app-layout">
+        {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
+        <a href="#conteudo-principal" className="skip-link">
+          Pular para o conteúdo principal
+        </a>
 
-      {/* Área principal onde as rotas e páginas serão inseridas */}
-      <main id="conteudo-principal" className="app-main" tabIndex="-1">
-        {/* Próximos passos: Roteador e HomePage */}
-      </main>
+        <Header />
 
-      {/* Pop-up global de privacidade e cookies */}
-      <CookieBanner />
-    </div>
+        {/* Área principal onde as páginas das rotas são renderizadas */}
+        <main id="conteudo-principal" className="app-main" tabIndex="-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </main>
+
+        <Footer />
+
+        {/* Pop-up global de privacidade e cookies */}
+        <CookieBanner />
+      </div>
+    </BrowserRouter>
   );
 }
 

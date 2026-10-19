@@ -160,3 +160,20 @@ a {
     padding-right: vars.$spacing-xl;
   }
 }
+
+// -- Casca da aplicação: mantém o Footer na base quando o conteúdo é curto --
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+
+  // O foco programático (skip link) não precisa de anel no contêiner inteiro
+  &:focus {
+    outline: none;
+  }
+}
+

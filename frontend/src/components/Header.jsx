@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { HelpCircle } from 'lucide-react';
 import logoZelus from '../assets/images/logo-zelus.png';
 import './Header.scss';
@@ -7,13 +8,14 @@ import './Header.scss';
  * Componente Header
  * Cabeçalho global do ZELUS com logotipo acessível e botão de ajuda/acessibilidade.
  * Estrutura semântica: <header> (landmark banner) + <nav> (navegação principal).
+ * Deve ser renderizado dentro de um <BrowserRouter> (usa <Link>).
  */
 const Header = () => {
   return (
     <header className="header" role="banner">
       <div className="header__container">
-        <a
-          href="/"
+        <Link
+          to="/"
           className="header__brand"
           aria-label="ZELUS — Ir para a página inicial"
         >
@@ -24,7 +26,7 @@ const Header = () => {
             height="48"
             className="header__logo"
           />
-        </a>
+        </Link>
 
         <nav className="header__nav" aria-label="Navegação principal">
           <button
