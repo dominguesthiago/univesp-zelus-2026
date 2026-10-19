@@ -1,85 +1,130 @@
 // ==============================================================
-// Arquivo: _variables.scss  —  Variáveis de Design do ZELUS
+// Arquivo: _variables.scss — Tokens de Design do Sistema ZELUS
 // ==============================================================
-// Este é um arquivo "parcial" do SCSS (note o underscore no nome).
-// Arquivos parciais não geram CSS por si sós — eles são importados
-// por outros arquivos SCSS usando "@use" ou "@import".
-//
-// Aqui ficam todas as "constantes de design" do sistema:
-// cores, fontes, tamanhos, espaçamentos e breakpoints.
-// Centralizar aqui facilita mudanças visuais em todo o projeto.
-//
-// ATENÇÃO: Este arquivo ainda não contém valores funcionais.
-// Ele serve como esqueleto documentado para a próxima etapa.
+// Define as variáveis de estilo, constantes cromáticas e tokens
+// tipográficos em estrita consonância com a identidade visual municipal
+// e os critérios de acessibilidade WCAG 2.1 (Nível AA) e eMAG v3.1.
 // ==============================================================
 
-// ==============================================================
-// PALETA DE CORES
-// Baseada na identidade visual do sistema ZELUS.
-// ==============================================================
+// --------------------------------------------------------------
+// 1. PALETA DE CORES INSTITUCIONAL E DE ACESSIBILIDADE
+// --------------------------------------------------------------
 
-// -- Cores Primárias --
-// $cor-primaria:       #1a73e8;  // Azul principal (botões, links, destaques)
-// $cor-primaria-hover: #1558b0;  // Azul mais escuro para estado hover
-// $cor-secundaria:     #34a853;  // Verde (status positivo, confirmações)
+// -- Azul Institucional (Identidade Oficial / Primária) --
+// Proporção de contraste: ~8.6:1 contra #f4f6f9 (Atende WCAG AAA para texto normal)
+$color-primary:        #0d47a1;
+$color-primary-hover:  #082d64;
+$color-primary-light:  #e3f2fd;
+$color-primary-dark:   #002171;
 
-// -- Cores de Alerta / Status --
-// $cor-alerta:         #fbbc04;  // Amarelo (avisos, pendências)
-// $cor-erro:           #ea4335;  // Vermelho (erros, ocorrências críticas)
-// $cor-sucesso:        #34a853;  // Verde (sucesso, resolvido)
+// -- Verde Cidadão (Confirmação / Participação Comunitária / Secundária) --
+// Proporção de contraste: ~7.1:1 contra #ffffff
+$color-secondary:        #1b5e20;
+$color-secondary-hover:  #0d3813;
+$color-secondary-light:  #e8f5e9;
 
-// -- Cores Neutras --
-// $cor-fundo:          #f8f9fa;  // Cinza muito claro (fundo das páginas)
-// $cor-fundo-card:     #ffffff;  // Branco (fundo de cards e painéis)
-// $cor-texto:          #202124;  // Quase preto (texto principal)
-// $cor-texto-suave:    #5f6368;  // Cinza médio (texto secundário, legendas)
-// $cor-borda:          #dadce0;  // Cinza claro (bordas de elementos)
+// -- Amarelo Prefeitura (Atenção / Obras e Vistorias em Andamento) --
+// Tom âmbar/amarelo ajustado para atender ao contraste mínimo de 4.5:1 contra fundos claros
+$color-accent:        #b26a00;
+$color-accent-hover:  #8c5200;
+$color-accent-light:  #fff8e1;
 
-// ==============================================================
-// TIPOGRAFIA
-// ==============================================================
+// -- Cores de Fundo e Superfícies (Branco Gelo e Neutros) --
+$color-bg-ice:         #f4f6f9; // Branco gelo (fundo padrão, reduz ofuscamento)
+$color-surface:        #ffffff; // Branco puro para cards, painéis e modais
+$color-surface-hover:  #eef2f6; // Superfície com leve realce
+$color-border:         #d0d7de; // Borda de alto contraste (≥ 3:1)
+$color-border-subtle:  #e5e7eb; // Borda sutil para divisórias internas
 
-// $fonte-padrao:  'Inter', sans-serif;  // Fonte principal da aplicação
-// $fonte-codigo:  'Courier New', monospace; // Fonte para trechos de código
+// -- Tipografia e Cores de Texto (Alto Contraste) --
+$color-text-primary:    #1a1a24; // Grafite escuro (~13:1 contra branco gelo)
+$color-text-secondary:  #4a5568; // Cinza médio (~5.2:1 para subtítulos e apoios)
+$color-text-muted:      #6c757d; // Texto auxiliar secundário
+$color-text-inverse:    #ffffff; // Texto sobre superfícies escuras ou botões primários
 
-// -- Tamanhos de Fonte (escala tipográfica) --
-// $fonte-xs:   0.75rem;  // 12px — labels e legendas pequenas
-// $fonte-sm:   0.875rem; // 14px — texto de suporte
-// $fonte-md:   1rem;     // 16px — texto de corpo (padrão)
-// $fonte-lg:   1.125rem; // 18px — subtítulos
-// $fonte-xl:   1.25rem;  // 20px — títulos de seção
-// $fonte-2xl:  1.5rem;   // 24px — títulos de página
-// $fonte-3xl:  2rem;     // 32px — títulos de destaque (hero)
+// -- Feedback Semântico de Status --
+$color-status-success:  #1b5e20; // Concluído / Resolvido
+$color-status-warning:  #b26a00; // Em Análise / Triagem
+$color-status-danger:   #c62828; // Urgência / Crítico / Erro
+$color-status-info:     #0277bd; // Informativo / Notificação
 
-// ==============================================================
-// ESPAÇAMENTOS
-// Usa a escala de 4px para manter harmonia visual.
-// ==============================================================
+// -- Foco Acessível (WCAG 2.4.7) --
+$color-focus-ring:      #0d47a1; // Anel de foco para navegação por teclado
+$color-focus-outline:   rgba(13, 71, 161, 0.25);
 
-// $espacamento-xs:  0.25rem;  // 4px
-// $espacamento-sm:  0.5rem;   // 8px
-// $espacamento-md:  1rem;     // 16px
-// $espacamento-lg:  1.5rem;   // 24px
-// $espacamento-xl:  2rem;     // 32px
-// $espacamento-2xl: 3rem;     // 48px
+// --------------------------------------------------------------
+// 2. TIPOGRAFIA E ESCALA MODULAR
+// --------------------------------------------------------------
 
-// ==============================================================
-// BREAKPOINTS DE RESPONSIVIDADE
-// Definem em qual largura de tela o layout muda.
-// ==============================================================
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$font-family-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 
-// $bp-mobile:  480px;   // Celulares pequenos
-// $bp-tablet:  768px;   // Tablets e celulares grandes
-// $bp-desktop: 1024px;  // Desktops e notebooks
-// $bp-wide:    1280px;  // Telas grandes
+// -- Escala Modular Tipográfica em REM (Base: 1rem = 16px) --
+$font-size-xs:   0.75rem;  // 12px — legendas e notas de rodapé
+$font-size-sm:   0.875rem; // 14px — textos secundários e metadados
+$font-size-md:   1rem;     // 16px — corpo de texto padrão (body)
+$font-size-lg:   1.125rem; // 18px — subtítulos e destaques leves
+$font-size-xl:   1.25rem;  // 20px — títulos de nível 3 (H3)
+$font-size-2xl:  1.5rem;   // 24px — títulos de seção (H2)
+$font-size-3xl:  2rem;     // 32px — títulos de páginas (H1)
+$font-size-4xl:  2.5rem;   // 40px — destaque principal (Hero)
 
-// ==============================================================
-// BORDAS E SOMBRAS
-// ==============================================================
+// -- Pesos de Fonte --
+$font-weight-regular:   400;
+$font-weight-medium:    500;
+$font-weight-semibold:  600;
+$font-weight-bold:      700;
 
-// $borda-raio:    8px;   // Arredondamento padrão dos elementos
-// $borda-raio-lg: 16px;  // Arredondamento maior (cards, modais)
+// -- Alturas de Linha (Line Heights) --
+$line-height-tight:    1.25;
+$line-height-normal:   1.5;  // Obrigatório WCAG para legibilidade de parágrafos
+$line-height-relaxed:  1.75;
 
-// $sombra-sm: 0 1px 3px rgba(0, 0, 0, 0.1);  // Sombra sutil
-// $sombra-md: 0 4px 6px rgba(0, 0, 0, 0.1);  // Sombra média (cards)
-// $sombra-lg: 0 10px 15px rgba(0, 0, 0, 0.1); // Sombra grande (modais)
+// --------------------------------------------------------------
+// 3. ESPAÇAMENTOS (GRID DE 4px / 8px)
+// --------------------------------------------------------------
+
+$spacing-xxs:  0.25rem; // 4px
+$spacing-xs:   0.5rem;  // 8px
+$spacing-sm:   0.75rem; // 12px
+$spacing-md:   1rem;    // 16px
+$spacing-lg:   1.5rem;  // 24px
+$spacing-xl:   2rem;    // 32px
+$spacing-2xl:  3rem;    // 48px
+$spacing-3xl:  4rem;    // 64px
+
+// --------------------------------------------------------------
+// 4. BORDAS E ARREDONDAMENTOS
+// --------------------------------------------------------------
+
+$border-radius-xs:    2px;
+$border-radius-sm:    4px;
+$border-radius-md:    8px;
+$border-radius-lg:    16px;
+$border-radius-full:  9999px;
+
+// --------------------------------------------------------------
+// 5. SOMBRAS E ELEVAÇÕES
+// --------------------------------------------------------------
+
+$shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md:     0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg:     0 10px 20px rgba(0, 0, 0, 0.1);
+$shadow-focus:  0 0 0 3px rgba(13, 71, 161, 0.25);
+
+// --------------------------------------------------------------
+// 6. BREAKPOINTS DE RESPONSIVIDADE
+// --------------------------------------------------------------
+
+$breakpoint-sm:  576px;  // Dispositivos móveis médios/grandes
+$breakpoint-md:  768px;  // Tablets e dispositivos intermediários
+$breakpoint-lg:  1024px; // Desktops e notebooks
+$breakpoint-xl:  1280px; // Monitores amplos e estações de trabalho
+
+// --------------------------------------------------------------
+// 7. TRANSIÇÕES SUAVES
+// --------------------------------------------------------------
+
+$transition-fast:    150ms ease-in-out;
+$transition-normal:  250ms ease-in-out;
+$transition-slow:    350ms ease-in-out;

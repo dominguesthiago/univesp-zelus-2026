@@ -1,71 +1,162 @@
 // ==============================================================
-// Arquivo: global.scss  —  Estilos Globais do ZELUS
+// Arquivo: global.scss — Estilos Globais e Acessibilidade do ZELUS
 // ==============================================================
-// Este arquivo SCSS é importado uma única vez (em index.js) e
-// seus estilos se aplicam a TODA a aplicação.
-//
-// Estrutura deste arquivo:
-//   1. Importação de variáveis e fontes
-//   2. Reset CSS (zera estilos padrão inconsistentes do navegador)
-//   3. Estilos base do body e elementos tipográficos
-//   4. Classes utilitárias globais
-//
-// ATENÇÃO: Este arquivo ainda não contém estilos funcionais.
-// Ele serve como esqueleto documentado para a próxima etapa.
+// Aplica o reset universal, a tipografia base e as regras obrigatórias
+// de acessibilidade digital (WCAG 2.1 AA / eMAG v3.1) para toda a aplicação.
 // ==============================================================
 
-// -- 1. Importação das variáveis de design --
-// O "@use" importa o arquivo _variables.scss e o torna disponível
-// aqui com o namespace "vars" (ex: vars.$cor-primaria).
-// @use './variables' as vars;
+@use './variables' as vars;
 
-// -- Importação de fonte do Google Fonts --
-// A diretiva @import no SCSS permite importar folhas de estilo externas.
-// @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+// -- Importação da Fonte Oficial (Google Fonts: Inter) --
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-// ==============================================================
-// 2. RESET CSS
-// Zera margens, paddings e comportamentos inconsistentes entre
-// diferentes navegadores (Chrome, Firefox, Safari, Edge...).
-// ==============================================================
+// --------------------------------------------------------------
+// 1. RESET CSS MODERNO E RESPEITO AO SISTEMA OPERACIONAL
+// --------------------------------------------------------------
 
-// *, *::before, *::after {
-//   /* Remove a margem padrão de todos os elementos */
-//   margin: 0;
-//
-//   /* Remove o padding padrão de todos os elementos */
-//   padding: 0;
-//
-//   /* Faz o padding e border serem incluídos no tamanho total do elemento */
-//   box-sizing: border-box;
-// }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-// ==============================================================
-// 3. ESTILOS BASE DO BODY E TIPOGRAFIA
-// ==============================================================
+html {
+  // Mantém 100% como base (16px) respeitando o zoom configurado no SO/Browser
+  font-size: 100%;
+  scroll-behavior: smooth;
+  height: 100%;
+}
 
-// body {
-//   /* Define a fonte principal de toda a aplicação */
-//   font-family: 'Inter', sans-serif;
-//
-//   /* Cor de fundo padrão da aplicação */
-//   background-color: vars.$cor-fundo;
-//
-//   /* Cor do texto padrão */
-//   color: vars.$cor-texto;
-//
-//   /* Melhora a renderização das fontes */
-//   -webkit-font-smoothing: antialiased;
-// }
+body {
+  min-height: 100vh;
+  font-family: vars.$font-family-base;
+  background-color: vars.$color-bg-ice;
+  color: vars.$color-text-primary;
+  line-height: vars.$line-height-normal;
+  font-size: vars.$font-size-md;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
-// ==============================================================
-// 4. CLASSES UTILITÁRIAS GLOBAIS
-// Pequenas classes de uso geral reutilizáveis em toda a aplicação
-// ==============================================================
+// -- Elementos de Mídia Fluidos --
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
-// .container {
-//   /* Limita a largura máxima do conteúdo e centraliza na página */
-//   max-width: 1200px;
-//   margin: 0 auto;
-//   padding: 0 vars.$espacamento-md;
-// }
+// -- Resets de Controles e Formulários --
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+a {
+  color: vars.$color-primary;
+  text-decoration: none;
+  transition: color vars.$transition-fast;
+
+  &:hover {
+    color: vars.$color-primary-hover;
+    text-decoration: underline;
+  }
+}
+
+// --------------------------------------------------------------
+// 2. DIRETRIZES MANDATÓRIAS DE ACESSIBILIDADE DIGITAL
+// --------------------------------------------------------------
+
+// -- Foco Visível para Navegação por Teclado (WCAG 2.4.7) --
+*:focus-visible {
+  outline: 3px solid vars.$color-focus-ring;
+  outline-offset: 3px;
+  border-radius: vars.$border-radius-xs;
+}
+
+// Remove o contorno apenas em interações por mouse/touch, preservando o foco de teclado
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// -- Links de Salto para Conteúdo Principal (Skip Links - WCAG 2.4.1 / eMAG) --
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: vars.$spacing-md;
+  background-color: vars.$color-primary;
+  color: vars.$color-text-inverse;
+  padding: vars.$spacing-xs vars.$spacing-md;
+  border-radius: vars.$border-radius-sm;
+  font-weight: vars.$font-weight-semibold;
+  font-size: vars.$font-size-sm;
+  text-decoration: none;
+  z-index: 9999;
+  box-shadow: vars.$shadow-lg;
+
+  &:focus-visible {
+    top: vars.$spacing-md;
+    outline: 3px solid vars.$color-accent-light;
+    outline-offset: 2px;
+  }
+}
+
+// -- Utilitário para Leitores de Tela (WCAG 1.3.1 / 4.1.2) --
+// Oculta visualmente o elemento mas o mantém 100% perceptível para tecnologias assistivas
+.sr-only,
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// -- Respeito a Usuários com Sensibilidade a Movimento (WCAG 2.3.3) --
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// --------------------------------------------------------------
+// 3. ESTRUTURA E LAYOUT BASE
+// --------------------------------------------------------------
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: vars.$spacing-md;
+  padding-right: vars.$spacing-md;
+
+  @media (min-width: vars.$breakpoint-lg) {
+    padding-left: vars.$spacing-xl;
+    padding-right: vars.$spacing-xl;
+  }
+}
