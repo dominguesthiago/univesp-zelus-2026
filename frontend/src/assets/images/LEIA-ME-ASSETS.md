@@ -25,6 +25,7 @@ Para evitar erros de compilação durante o empacotamento (*build*) do React (`M
 | **`logo-zelus.svg`** | SVG (vetorial) | `Navbar.jsx` | Versão vetorial alternativa para telas de altíssima densidade (Retina/HiDPI). |
 | **`ilustracao-cidadao.png`** | WebP / PNG | `CardPerfilCidadao.jsx` | Ilustração temática da seção de acesso do munícipe (representando colaboração e zelo comunitário). |
 | **`ilustracao-prefeitura.png`** | WebP / PNG | `CardPerfilPrefeitura.jsx` | Ilustração temática da seção de acesso do servidor e gestor público (representando planejamento urbano e serviços de campo). |
+| **`login-cidadao.png`** | WebP / PNG | `LoginCidadao.jsx` | Ilustração de boas-vindas do portal do cidadão (casal acenando com balão 'Olá!'). |
 | **`hero-zeladoria.png`** | WebP / PNG | `HeroSection.jsx` | Imagem ilustrativa ou banner panorâmico que ambienta a cidade conectada e bem cuidada na tela inicial. |
 
 ---

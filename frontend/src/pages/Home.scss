@@ -1,5 +1,7 @@
 // ==============================================================
 // Arquivo: Home.scss — Estilos da Tela Inicial do ZELUS
+// Fidelidade com os Mockups Desktop (Gemini) e Mobile (1_2)
+// Uso estrito das variáveis globais (_variables.scss)
 // ==============================================================
 
 @use '../styles/variables' as vars;
@@ -7,47 +9,91 @@
 .home {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   flex: 1;
-  min-height: calc(100vh - 160px);
-  padding-top: vars.$spacing-lg;
-  padding-bottom: vars.$spacing-xl;
+  width: 100%;
+  height: 100%;
+  min-height: 0; // Permite ao flexbox encolher fluidamente sem provocar overflow
+  box-sizing: border-box;
+  background-color: vars.$color-surface;
+  padding: vars.$spacing-xs vars.$spacing-md;
 
-  &__title {
-    margin-bottom: vars.$spacing-xl;
-    text-align: center;
-    font-size: vars.$font-size-2xl;
-    font-weight: vars.$font-weight-bold;
-    line-height: vars.$line-height-tight;
-    color: vars.$color-primary;
+  @media (min-width: vars.$breakpoint-md) {
+    padding: vars.$spacing-sm vars.$spacing-lg;
+  }
+
+  &__header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto; // Centraliza verticalmente o conjunto título + cartões
+    margin-bottom: clamp(8px, 1.8vh, 16px);
 
     @media (min-width: vars.$breakpoint-md) {
-      font-size: vars.$font-size-4xl;
-      margin-bottom: vars.$spacing-2xl;
+      margin-top: auto;
+      margin-bottom: clamp(14px, 2.5vh, 26px);
     }
   }
 
-  // No mobile: largura contida para não tocar as bordas, empilhado com gap generoso
+  &__title {
+    color: vars.$color-primary;
+    text-align: center;
+    font-weight: vars.$font-weight-bold;
+    font-size: clamp(1.2rem, 3.5vw, 1.35rem);
+    line-height: vars.$line-height-tight;
+    letter-spacing: -0.3px;
+    margin: 0 auto;
+    max-width: 290px;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: clamp(1.8rem, 3.2vw, vars.$font-size-4xl);
+      max-width: none;
+    }
+  }
+
   &__cards {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 375px;
     margin: 0 auto;
-    gap: vars.$spacing-xl;
+    gap: clamp(10px, 1.6vh, 14px);
     align-items: stretch;
-    // Folga para a sombra sólida e a elevação do ActionCard
-    padding-right: 10px;
-    padding-bottom: 10px;
 
-    // No desktop: grid de 2 colunas com separação aumentada
+    // No desktop: 2 colunas amplas com os cards lado a lado
     @media (min-width: vars.$breakpoint-md) {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      width: 100%;
-      max-width: 900px;
-      gap: vars.$spacing-2xl; // gap aumentado entre as colunas
+      max-width: 1020px;
+      gap: clamp(20px, 3vw, vars.$spacing-2xl);
       margin: 0 auto;
+    }
+  }
+
+  &__footer {
+    width: 100%;
+    text-align: center;
+    padding: vars.$spacing-xs 0;
+    margin-top: auto; // Ancoragem perfeita na base da tela, sem flutuar no meio
+    margin-bottom: 0;
+    flex-shrink: 0;
+
+    @media (min-width: vars.$breakpoint-md) {
+      margin-top: auto;
+      margin-bottom: 0;
+      padding: vars.$spacing-xs 0;
+    }
+  }
+
+  &__tagline {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-primary;
+    font-weight: vars.$font-weight-medium;
+    letter-spacing: -0.2px;
+    margin: 0 auto;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: vars.$font-size-sm;
     }
   }
 }

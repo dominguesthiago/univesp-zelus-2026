@@ -12,19 +12,19 @@
 
 // -- Azul Institucional (Identidade Oficial / Primária) --
 // Proporção de contraste: ~8.6:1 contra #f4f6f9 (Atende WCAG AAA para texto normal)
-$color-primary:        #0d47a1;
-$color-primary-hover:  #082d64;
+$color-primary:        #1a3458;
+$color-primary-hover:  #122742;
 $color-primary-light:  #e3f2fd;
-$color-primary-dark:   #002171;
+$color-primary-dark:   #0d1e33;
 
 // -- Verde Cidadão (Verde/Menta do Mockup) --
-$color-secondary:        #a5d6a7;
-$color-secondary-hover:  #81c784;
+$color-secondary:        #aaebd3;
+$color-secondary-hover:  #92e0c3;
 $color-secondary-light:  #e8f5e9;
 
 // -- Amarelo/Laranja Prefeitura (Mockup) --
-$color-accent:        #ffb74d;
-$color-accent-hover:  #ffa726;
+$color-accent:        #fbd362;
+$color-accent-hover:  #f5c647;
 $color-accent-light:  #fff8e1;
 
 // -- Cores de Fundo e Superfícies (Branco Gelo e Neutros) --
@@ -101,6 +101,12 @@ $border-radius-md:    8px;
 $border-radius-lg:    16px;
 $border-radius-full:  9999px;
 
+// -- Tokens Cartum (Identidade Visual ZELUS) --
+$border-radius-cartoon:    20px;
+$border-radius-cartoon-lg: 28px;
+$border-cartoon:           3px solid $color-text-primary;
+$border-cartoon-lg:        3.5px solid $color-text-primary;
+
 // --------------------------------------------------------------
 // 5. SOMBRAS E ELEVAÇÕES
 // --------------------------------------------------------------
@@ -109,6 +115,12 @@ $shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.08);
 $shadow-md:     0 4px 8px rgba(0, 0, 0, 0.08);
 $shadow-lg:     0 10px 20px rgba(0, 0, 0, 0.1);
 $shadow-focus:  0 0 0 3px rgba(13, 71, 161, 0.25);
+
+// -- Sombras Sólidas Cartum --
+$shadow-cartoon:        4px 4px 0 $color-text-primary;
+$shadow-cartoon-lg:     6px 6px 0 $color-text-primary;
+$shadow-cartoon-hover:  9px 9px 0 $color-text-primary;
+$shadow-cartoon-active: 2px 2px 0 $color-text-primary;
 
 // --------------------------------------------------------------
 // 6. BREAKPOINTS DE RESPONSIVIDADE

@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { HelpCircle } from 'lucide-react';
-import logoZelus from '../assets/images/logo-zelus.png';
+import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import './Header.scss';
 
 /**
- * Componente Header
- * Cabeçalho global do ZELUS com logotipo acessível e botão de ajuda/acessibilidade.
- * Estrutura semântica: <header> (landmark banner) + <nav> (navegação principal).
- * Deve ser renderizado dentro de um <BrowserRouter> (usa <Link>).
+ * Componente Header Global
+ * Reproduz fielmente o cabeçalho azul marinho com cubo 3D e 'ZELUS / Zeladoria Urbana',
+ * exibindo 'Acessibilidade (?)' no desktop e marca centralizada no mobile conforme mockups.
  */
 const Header = () => {
   return (
@@ -20,22 +19,26 @@ const Header = () => {
           aria-label="ZELUS — Ir para a página inicial"
         >
           <img
-            src={logoZelus}
-            alt="ZELUS - Zeladoria Urbana"
-            width="160"
-            height="48"
-            className="header__logo"
+            src={logoZelusIcon}
+            alt="Ícone ZELUS"
+            width="32"
+            height="32"
+            className="header__logo-icon"
           />
+          <div className="header__brand-text">
+            <span className="header__brand-title">ZELUS</span>
+            <span className="header__brand-subtitle">Zeladoria Urbana</span>
+          </div>
         </Link>
 
         <nav className="header__nav" aria-label="Navegação principal">
           <button
             type="button"
             className="header__help-button"
-            aria-label="Abrir ajuda e recursos de acessibilidade"
+            aria-label="Abrir recursos de acessibilidade"
           >
-            <HelpCircle size={20} aria-hidden="true" />
-            <span className="header__help-label">Ajuda</span>
+            <span className="header__help-label">Acessibilidade</span>
+            <HelpCircle size={18} aria-hidden="true" />
           </button>
         </nav>
       </div>

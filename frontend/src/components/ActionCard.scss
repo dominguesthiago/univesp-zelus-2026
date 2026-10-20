@@ -1,96 +1,131 @@
 // ==============================================================
-// Arquivo: ActionCard.scss — Estilos do Card de Ação (estilo cartum)
-// ==============================================================
-// Layout horizontal lado a lado (mesmo no mobile), tamanho de imagem rígido,
-// botão completo clicável, borda grossa e cores temáticas do mockup.
+// Arquivo: ActionCard.scss — Estilos do Card de Ação (Estilo Cartum)
+// Fidelidade com os Mockups Desktop (Gemini) e Mobile (1_2)
+// Uso estrito das variáveis globais (_variables.scss)
 // ==============================================================
 
 @use '../styles/variables' as vars;
 
-$card-border: 4px solid vars.$color-text-primary;
-$card-shadow: 6px 6px 0 vars.$color-text-primary;
-$card-shadow-hover: 9px 9px 0 vars.$color-text-primary;
-$card-shadow-active: 3px 3px 0 vars.$color-text-primary;
-
 .action-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
   width: 100%;
-  height: 100%;
-  min-height: 240px;
-  padding: vars.$spacing-xl vars.$spacing-lg;
-  background-color: vars.$color-surface;
-  border: $card-border;
-  border-radius: 24px;
-  box-shadow: $card-shadow;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
+  height: clamp(128px, 18vh, 155px); // Altura fluida e proporcional no mobile
+  padding: 0;
+  border: vars.$border-cartoon;
+  border-radius: vars.$border-radius-cartoon;
+  box-shadow: vars.$shadow-cartoon;
   overflow: hidden;
+  position: relative;
   transition: transform vars.$transition-fast, box-shadow vars.$transition-fast, background-color vars.$transition-fast;
 
   @media (min-width: vars.$breakpoint-md) {
-    min-height: 280px;
-    padding: vars.$spacing-2xl vars.$spacing-xl;
+    height: clamp(170px, 25vh, 220px); // Proporcional e sem estourar em monitores desktop de menor altura
+    border: vars.$border-cartoon-lg;
+    border-radius: vars.$border-radius-cartoon-lg;
+    box-shadow: vars.$shadow-cartoon-lg;
   }
 
-  // Elevação interativa no hover e foco de teclado
+  // Elevação no hover e foco
   &:hover,
-  &:focus-visible {
-    transform: translate(-3px, -3px);
-    box-shadow: $card-shadow-hover;
+  &:focus-within {
+    transform: translate(-2px, -2px);
+    box-shadow: vars.$shadow-cartoon-hover;
+
+    @media (min-width: vars.$breakpoint-md) {
+      transform: translate(-3px, -3px);
+    }
   }
 
   &:active {
     transform: translate(2px, 2px);
-    box-shadow: $card-shadow-active;
+    box-shadow: vars.$shadow-cartoon-active;
   }
 
-  &:focus-visible {
-    outline: 3px solid vars.$color-text-primary;
-    outline-offset: 3px;
-  }
-
-  // Ajuste da Imagem (Fidelidade ao Mockup)
-  &__image,
-  img {
+  // Botão interativo que ocupa todo o interior do <article>
+  &__button {
+    display: flex;
+    flex-direction: row; // Layout estritamente horizontal
+    align-items: stretch;
+    justify-content: flex-start;
+    text-align: left;
     width: 100%;
-    max-width: 120px;
-    height: auto;
-    margin-bottom: vars.$spacing-md;
-    object-fit: contain;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 3px solid vars.$color-primary;
+      outline-offset: -3px;
+    }
+  }
+
+  // Ilustração no lado esquerdo do card
+  &__image {
+    width: 46%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
     flex-shrink: 0;
     border: none;
+    display: block;
+
+    @media (min-width: vars.$breakpoint-md) {
+      width: 48%;
+    }
   }
 
+  // Bloco de texto no lado direito do card
   &__body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    text-align: center;
-    gap: vars.$spacing-xs;
-    padding: 0;
+    align-items: flex-start;
+    text-align: left;
+    padding: vars.$spacing-xs vars.$spacing-sm;
     background-color: transparent;
+
+    @media (min-width: vars.$breakpoint-md) {
+      padding: vars.$spacing-md vars.$spacing-lg;
+    }
   }
 
   &__title {
-    font-size: vars.$font-size-xl;
+    font-size: 1.05rem;
     font-weight: vars.$font-weight-bold;
-    line-height: vars.$line-height-tight;
+    line-height: 1.15;
     color: vars.$color-text-primary;
+    text-transform: uppercase;
+    letter-spacing: -0.2px;
+    margin-bottom: vars.$spacing-xxs;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: vars.$font-size-2xl;
+      margin-bottom: vars.$spacing-xs;
+    }
   }
 
   &__description {
-    font-size: vars.$font-size-sm;
-    line-height: vars.$line-height-normal;
+    font-size: 0.78rem;
+    line-height: 1.35;
     color: vars.$color-text-primary;
+    font-weight: vars.$font-weight-medium;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: vars.$font-size-md;
+      line-height: vars.$line-height-normal;
+    }
   }
 
-  // -- Tema Cidadão: Verde/Menta do Mockup --
+  // -- Tema Cidadão: Verde Menta do Mockup --
   &.card-citizen {
     background-color: vars.$color-secondary;
 
@@ -99,7 +134,7 @@ $card-shadow-active: 3px 3px 0 vars.$color-text-primary;
     }
   }
 
-  // -- Tema Prefeitura: Amarelo/Laranja do Mockup --
+  // -- Tema Prefeitura: Amarelo Ouro do Mockup --
   &.card-admin {
     background-color: vars.$color-accent;
 
@@ -109,11 +144,11 @@ $card-shadow-active: 3px 3px 0 vars.$color-text-primary;
   }
 }
 
-// -- Movimento reduzido (WCAG 2.3.3): sem deslocamento, mantém só a sombra --
+// -- Movimento reduzido (WCAG 2.3.3) --
 @media (prefers-reduced-motion: reduce) {
   .action-card {
     &:hover,
-    &:focus-visible,
+    &:focus-within,
     &:active {
       transform: none;
     }

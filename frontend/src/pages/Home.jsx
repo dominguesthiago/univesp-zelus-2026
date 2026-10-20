@@ -1,18 +1,21 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ActionCard from '../components/ActionCard';
 import ilustracaoCidadao from '../assets/images/ilustracao-cidadao.png';
 import ilustracaoPrefeitura from '../assets/images/ilustracao-prefeitura.png';
 import './Home.scss';
 
 /**
- * Página Home (rota "/")
- * Contém apenas o conteúdo principal: <h1> e os dois cards de acesso.
- * Header e Footer são renderizados pelo App, fora do <main>.
+ * Página Inicial (Home.jsx)
+ * Estrutura 100% semântica com <main>, <header>, <section> e <footer>.
+ * Os cards de ação internos utilizam a tag semântica <article>.
+ * Alinhada fielmente com os mockups oficiais de Desktop e Mobile.
  */
 const Home = () => {
-  // TODO: substituir por navegação (useNavigate) quando as rotas /cidadao e /prefeitura existirem.
+  const navigate = useNavigate();
+
   const handleAcessoCidadao = () => {
-    console.log('ActionCard clicado: acesso Cidadão');
+    navigate('/login/cidadao');
   };
 
   const handleAcessoPrefeitura = () => {
@@ -20,29 +23,35 @@ const Home = () => {
   };
 
   return (
-    <div className="home container">
-      <h1 className="home__title">Como deseja acessar o ZELUS?</h1>
+    <main className="home container" id="conteudo-principal">
+      <header className="home__header">
+        <h1 className="home__title">Como deseja acessar o ZELUS?</h1>
+      </header>
 
-      <div className="home__cards">
+      <section className="home__cards" aria-label="Opções de acesso ao sistema ZELUS">
         <ActionCard
-          title="Sou Cidadão"
-          description="Registre ocorrências de zeladoria urbana e acompanhe o andamento no seu bairro."
+          title="SOU CIDADÃO"
+          description="Relatar buracos, bueiros, lixo e acompanhar meus chamados. 📱"
           imageSrc={ilustracaoCidadao}
-          altText=""
+          altText="Ilustração do portal do cidadão com munícipes e casas"
           colorClass="card-citizen"
           onClick={handleAcessoCidadao}
         />
 
         <ActionCard
-          title="Sou da Prefeitura"
-          description="Gerencie solicitações, organize equipes e acompanhe os serviços da cidade."
+          title="ACESSO PREFEITURA"
+          description="Painel administrativo, gestão de ocorrências e auditoria. 💻"
           imageSrc={ilustracaoPrefeitura}
-          altText=""
+          altText="Ilustração da prefeitura e servidor público com gráficos"
           colorClass="card-admin"
           onClick={handleAcessoPrefeitura}
         />
-      </div>
-    </div>
+      </section>
+
+      <footer className="home__footer">
+        <p className="home__tagline">ZELUS • Acessível e inclusivo para todos</p>
+      </footer>
+    </main>
   );
 };
 

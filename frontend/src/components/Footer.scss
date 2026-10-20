@@ -1,20 +1,30 @@
 // ==============================================================
 // Arquivo: Footer.scss — Estilos do Rodapé Global do ZELUS
+// Fidelidade com os Mockups Desktop (Gemini) e Mobile (1_2)
 // ==============================================================
 
 @use '../styles/variables' as vars;
 
 .footer {
-  background-color: vars.$color-surface;
-  border-top: 2px solid vars.$color-border;
-  padding: vars.$spacing-lg vars.$spacing-md;
+  background-color: #ffffff;
+  border-top: none;
+  padding: 10px 16px 14px;
   text-align: center;
+  flex-shrink: 0;
+
+  @media (min-width: vars.$breakpoint-md) {
+    padding: 16px 24px 20px;
+  }
 
   &__text {
     margin: 0 auto;
-    max-width: 1200px;
-    font-size: vars.$font-size-sm;
-    color: vars.$color-text-primary;
-    line-height: vars.$line-height-normal;
+    font-size: 0.82rem;
+    color: #1a1a24;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+
+    @media (min-width: vars.$breakpoint-md) {
+      font-size: 0.88rem;
+    }
   }
 }
