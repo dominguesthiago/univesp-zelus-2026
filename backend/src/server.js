@@ -81,11 +81,16 @@ app.get('/', (req, res) => {
 // INICIALIZAÇÃO DO SERVIDOR
 // ==============================================================
 
-// app.listen() coloca o servidor para "escutar" requisições na PORT.
+// app.listen() coloca o servidor para "escutar" requisições na PORT quando executado diretamente.
 // A função de callback é executada UMA VEZ assim que o servidor sobe.
-app.listen(PORT, () => {
-  console.log('======================================================');
-  console.log(`  Servidor ZELUS rodando em: http://localhost:${PORT}`);
-  console.log(`  Endpoint de status:        http://localhost:${PORT}/api/status`);
-  console.log('======================================================');
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('======================================================');
+    console.log(`  Servidor ZELUS rodando em: http://localhost:${PORT}`);
+    console.log(`  Endpoint de status:        http://localhost:${PORT}/api/status`);
+    console.log('======================================================');
+  });
+}
+
+// Exporta a instância do Express para compatibilidade com o ambiente serverless da Vercel
+module.exports = app;
