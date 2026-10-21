@@ -152,7 +152,7 @@ const LoginCidadao = () => {
               />
               <span className="login-header__title">ZELUS - Cidadão</span>
             </div>
-            <span className="login-header__subtitle">Zeladoria Urbana</span>
+            <span className="login-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
           </div>
         </header>
 

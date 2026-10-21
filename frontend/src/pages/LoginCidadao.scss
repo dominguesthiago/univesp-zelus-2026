@@ -5,6 +5,36 @@
 // Fidelidade visual 100% com o Mockup Oficial Mobile do ZELUS
 // ==============================================================
 
+// -- Regra Estrita para Mobile (max-width: 767px) --
+@media (max-width: 767px) {
+  .login-cidadao-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .login-card-mobile {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
 .login-cidadao-wrapper {
   display: flex;
   flex-direction: column;
@@ -15,10 +45,13 @@
   min-height: 100dvh;
   margin: 0;
   padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   background-color: #ffffff;
 
-  // No desktop: centraliza o mockup num elegante simulador de celular
-  @media (min-width: vars.$breakpoint-md) {
+  // No desktop (>= 768px): formato estrito de cartão simulador
+  @media (min-width: 768px) {
     padding: vars.$spacing-lg vars.$spacing-md;
     background-color: vars.$color-bg-ice;
   }
@@ -32,16 +65,17 @@
   max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  height: 100vh;
-  height: 100dvh;
   background-color: #ffffff;
   margin: 0;
   padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
 
-  // No desktop: formato estrito de smartphone (iPhone)
-  @media (min-width: vars.$breakpoint-md) {
-    max-width: 375px;
+  // No desktop (>= 768px): formato estrito de smartphone (iPhone)
+  @media (min-width: 768px) {
+    max-width: 385px;
     height: auto;
     min-height: 640px;
     border: 5px solid #1a1a24;
@@ -124,12 +158,13 @@
     letter-spacing: -0.2px;
   }
 
-  &__subtitle {
+  &__subtitle,
+  .auth-header__subtitle {
     font-size: 0.78rem;
-    color: vars.$color-accent;
+    color: vars.$color-accent !important;
     font-weight: 700;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
+    text-transform: uppercase !important;
     margin-top: 2px;
   }
 }

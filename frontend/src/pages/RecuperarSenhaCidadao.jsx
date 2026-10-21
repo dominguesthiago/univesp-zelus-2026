@@ -207,7 +207,7 @@ const RecuperarSenhaCidadao = () => {
               />
               <span className="recuperar-header__title">ZELUS - Cidadão</span>
             </div>
-            <span className="recuperar-header__subtitle">Zeladoria Urbana</span>
+            <span className="recuperar-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
           </div>
         </header>
 

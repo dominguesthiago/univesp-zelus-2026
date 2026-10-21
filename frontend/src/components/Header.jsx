@@ -27,7 +27,7 @@ const Header = () => {
           />
           <div className="header__brand-text">
             <span className="header__brand-title">ZELUS</span>
-            <span className="header__brand-subtitle">Zeladoria Urbana</span>
+            <span className="header__brand-subtitle auth-header__subtitle">Zeladoria Urbana</span>
           </div>
         </Link>
 

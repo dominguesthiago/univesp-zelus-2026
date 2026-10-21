@@ -175,7 +175,7 @@ a {
   &--home {
     background-color: vars.$color-surface;
 
-    @media (min-width: vars.$breakpoint-md) {
+    @media (min-width: 768px) {
       background-color: vars.$color-surface;
     }
   }
@@ -220,6 +220,71 @@ a {
   // O foco programático (skip link) não precisa de anel no contêiner inteiro
   &:focus {
     outline: none;
+  }
+}
+
+// --------------------------------------------------------------
+// 4. SUBTÍTULO INSTITUCIONAL UNIFICADO DOS CABEÇALHOS (WCAG AAA)
+// --------------------------------------------------------------
+.auth-header__subtitle,
+.header__brand-subtitle,
+.login-header__subtitle,
+.cadastro-header__subtitle,
+.recuperar-header__subtitle {
+  color: vars.$color-accent !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+  margin-top: 2px !important;
+  display: block !important;
+}
+
+// --------------------------------------------------------------
+// 5. REGRA ESTRITA PARA MOBILE (max-width: 767px): ZERO EFEITO CARTÃO
+// --------------------------------------------------------------
+@media (max-width: 767px) {
+  html,
+  body {
+    width: 100vw;
+    min-height: 100dvh;
+    background-color: #ffffff !important;
+    overflow-x: hidden;
+  }
+
+  .app-layout--auth,
+  .app-main--auth,
+  .login-cidadao-wrapper,
+  .cadastro-cidadao-wrapper,
+  .recuperar-senha-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+    overflow-x: hidden !important;
+  }
+
+  .login-card-mobile,
+  .cadastro-card-mobile,
+  .recuperar-card-mobile {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
   }
 }
 

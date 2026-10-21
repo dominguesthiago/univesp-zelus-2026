@@ -68,12 +68,13 @@
     letter-spacing: -0.2px;
   }
 
-  &__brand-subtitle {
+  &__brand-subtitle,
+  .auth-header__subtitle {
     font-size: 0.78rem;
-    color: vars.$color-accent;
+    color: vars.$color-accent !important;
     font-weight: 700;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
+    text-transform: uppercase !important;
     margin-top: 2px;
   }
 

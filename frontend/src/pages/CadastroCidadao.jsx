@@ -285,7 +285,7 @@ const CadastroCidadao = () => {
               />
               <span className="cadastro-header__title">ZELUS - Cadastro</span>
             </div>
-            <span className="cadastro-header__subtitle">Zeladoria Urbana</span>
+            <span className="cadastro-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
           </div>
         </header>
 
