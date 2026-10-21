@@ -130,7 +130,7 @@ const LoginCidadao = () => {
         </header>
 
         {/* Área Branca Principal com zero scroll */}
-        <div className="login-main-container">
+        <main className="login-main-container" id="conteudo-principal">
           {/* Ilustração original do casal acenando com balão 'Olá!' */}
           <div className="login-hero">
             <img
@@ -143,17 +143,24 @@ const LoginCidadao = () => {
           </div>
 
           {/* Título de chamada */}
-          <h1 className="login-title">Acesse sua conta</h1>
+          <h1 id="login-heading" className="login-title">
+            Acesse sua conta
+          </h1>
 
           {/* Mensagem de alerta se houver erro */}
           {mensagemErro && (
-            <div className="login-alert" role="alert" aria-live="polite">
+            <div id="login-erro" className="login-alert" role="alert" aria-live="polite">
               {mensagemErro}
             </div>
           )}
 
           {/* Formulário com bordas grossas estilo cartum */}
-          <form className="login-form" onSubmit={handleSubmit} noValidate>
+          <form
+            className="login-form"
+            onSubmit={handleSubmit}
+            noValidate
+            aria-labelledby="login-heading"
+          >
             {/* Campo CPF */}
             <div className="login-field">
               <label htmlFor="login-cpf" className="login-field__label">
@@ -163,6 +170,7 @@ const LoginCidadao = () => {
                 <IdCardIcon />
                 <input
                   id="login-cpf"
+                  name="cpf"
                   type="text"
                   inputMode="numeric"
                   autoComplete="username"
@@ -172,6 +180,9 @@ const LoginCidadao = () => {
                   className="login-input-box__field"
                   maxLength={14}
                   required
+                  aria-required="true"
+                  aria-invalid={mensagemErro ? 'true' : 'false'}
+                  aria-describedby={mensagemErro ? 'login-erro' : undefined}
                 />
               </div>
             </div>
@@ -185,6 +196,7 @@ const LoginCidadao = () => {
                 <LockIcon />
                 <input
                   id="login-senha"
+                  name="senha"
                   type={mostrarSenha ? 'text' : 'password'}
                   autoComplete="current-password"
                   value={senha}
@@ -192,12 +204,17 @@ const LoginCidadao = () => {
                   placeholder="••••••••"
                   className="login-input-box__field"
                   required
+                  aria-required="true"
+                  aria-invalid={mensagemErro ? 'true' : 'false'}
+                  aria-describedby={mensagemErro ? 'login-erro' : undefined}
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarSenha((prev) => !prev)}
                   className="login-input-box__eye-btn"
                   aria-label={mostrarSenha ? 'Ocultar senha' : 'Exibir senha'}
+                  aria-controls="login-senha"
+                  aria-pressed={mostrarSenha}
                 >
                   {mostrarSenha ? (
                     <EyeOff size={19} color="#1a3458" aria-hidden="true" />
@@ -221,6 +238,7 @@ const LoginCidadao = () => {
               disabled={carregando}
               className="login-submit-button"
               aria-label="Entrar na conta do cidadão"
+              aria-busy={carregando}
             >
               <span>{carregando ? 'ENTRANDO...' : 'ENTRAR'}</span>
               <Smartphone size={22} color="#ffffff" strokeWidth={2.5} aria-hidden="true" />
@@ -239,7 +257,7 @@ const LoginCidadao = () => {
           <footer className="login-footer-tagline">
             <span>ZELUS • Acessível e inclusivo para todos</span>
           </footer>
-        </div>
+        </main>
       </div>
     </div>
   );
