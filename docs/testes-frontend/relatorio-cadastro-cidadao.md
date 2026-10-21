@@ -4,7 +4,7 @@
 **Componente Alvo:** [`frontend/src/pages/CadastroCidadao.jsx`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/pages/CadastroCidadao.jsx)  
 **Data da Execução:** 21 de outubro de 2026  
 **Status Geral:** ✅ APROVADO (100% de sucesso)  
-**Total de Testes:** 12 executados / 12 aprovados  
+**Total de Testes:** 14 executados / 14 aprovados  
 
 ---
 
@@ -22,8 +22,13 @@ O objetivo desta suíte é assegurar a integridade visual, semântica e funciona
    - **E-mail:** Formato válido contendo `@` e domínio.
    - **Telefone:** Exatamente 15 caracteres com máscara.
    - **Senha:** Mínimo de 8 caracteres, contendo pelo menos uma letra e um número.
-7. Impedimento de `console.log` e avanço em qualquer caso de falha de validação, com renderização de mensagens de erro acessíveis (`role="alert"` e `aria-live="polite"`).
-8. Submissão bem-sucedida emitindo o payload JSON estruturado e higienizado.
+7. Tratamento de mensagens de erro assistivas (`role="alert"` e `aria-live="polite"`).
+8. **Integração com a Service Layer (`api.js`):**
+   - Sanitização de CPF e Telefone (remoção de caracteres não numéricos).
+   - Montagem e envio do payload JSON `{ nome_completo, cpf, email, whatsapp, senha }` para `registrarCidadao`.
+   - Gerenciamento de ciclo de vida: desabilitação do botão e exibição de "Cadastrando..." com `aria-busy="true"`.
+   - Redirecionamento bem-sucedido para `/login/cidadao` transmitindo a mensagem de sucesso no route state.
+   - Captura e exibição acessível de erros de API (ex: conflito de CPF ou E-mail).
 9. Links semânticos de navegação para a rota de login.
 
 ---
@@ -42,8 +47,10 @@ O objetivo desta suíte é assegurar a integridade visual, semântica e funciona
 | 8 | Validação de E-mail: exige estrutura formal com `@` e domínio válido | WCAG 3.3.1 / Requisito Crítico de Backend | ✅ Aprovado |
 | 9 | Validação de Telefone: exige exatamente 15 caracteres com a máscara (DDD + 9 dígitos) | WCAG 3.3.1 / Regra de Negócio ZELUS | ✅ Aprovado |
 | 10 | Validação de Senha: exige $\ge 8$ caracteres com combinação de pelo menos 1 letra e 1 número | WCAG 3.3.1 / Segurança e Integridade | ✅ Aprovado |
-| 11 | Submissão válida: dispara `console.log` com payload JSON completo e sanitizado | Interoperabilidade com Backend API | ✅ Aprovado |
-| 12 | Presença de links acessíveis para `/login/cidadao` (Voltar e Entrar aqui) | WCAG 2.4.4 (Propósito do Link) | ✅ Aprovado |
+| 11 | Submissão com sucesso: envia payload sanitizado à API e redireciona para `/login/cidadao` | Interoperabilidade / Service Layer | ✅ Aprovado |
+| 12 | Estado de carregamento: desabilita botão e exibe "Cadastrando..." com `aria-busy="true"` | WCAG 4.1.2 / WCAG 3.2.2 (Feedback de Ação) | ✅ Aprovado |
+| 13 | Tratamento de erro da API: renderiza mensagem de erro acessível no topo e reabilita botão | WCAG 3.3.1 / WCAG 4.1.3 (Mensagens de Status) | ✅ Aprovado |
+| 14 | Presença de links acessíveis para `/login/cidadao` (Voltar e Entrar aqui) | WCAG 2.4.4 (Propósito do Link) | ✅ Aprovado |
 
 ---
 
@@ -51,3 +58,4 @@ O objetivo desta suíte é assegurar a integridade visual, semântica e funciona
 
 * **Regra de Ouro (`100dvh`):** Layout otimizado com `min-height: 100dvh` e `flex-grow: 1`, evitando overflow em telas de smartphones.
 * **Mensagens de Erro Assistivas:** Notificações em texto vermelho acessível posicionadas diretamente abaixo de cada campo, vinculadas por `aria-describedby` e dotadas de `role="alert"` e `aria-live="polite"`.
+* **Alerta de API Integrado:** Bloco de feedback global com `role="alert"` e ícone de advertência para erros retornados pelo servidor backend.

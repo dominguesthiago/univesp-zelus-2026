@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Smartphone } from 'lucide-react';
 import loginCidadaoImg from '../assets/images/login-cidadao.png';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
@@ -48,10 +48,12 @@ const LockIcon = () => (
  */
 const LoginCidadao = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cpf, setCpf] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState(location.state?.mensagemSucesso || '');
   const [carregando, setCarregando] = useState(false);
 
   // Máscara numérica para CPF (000.000.000-00)
@@ -66,11 +68,13 @@ const LoginCidadao = () => {
   const handleCpfChange = (e) => {
     setCpf(formatarCPF(e.target.value));
     if (mensagemErro) setMensagemErro('');
+    if (mensagemSucesso) setMensagemSucesso('');
   };
 
   const handleSenhaChange = (e) => {
     setSenha(e.target.value);
     if (mensagemErro) setMensagemErro('');
+    if (mensagemSucesso) setMensagemSucesso('');
   };
 
   const handleSubmit = (e) => {
@@ -146,6 +150,13 @@ const LoginCidadao = () => {
           <h1 id="login-heading" className="login-title">
             Acesse sua conta
           </h1>
+
+          {/* Mensagem de sucesso (ex: redirecionamento após cadastro bem-sucedido) */}
+          {mensagemSucesso && (
+            <div id="login-sucesso" className="login-alert login-alert--success" role="status" aria-live="polite">
+              {mensagemSucesso}
+            </div>
+          )}
 
           {/* Mensagem de alerta se houver erro */}
           {mensagemErro && (

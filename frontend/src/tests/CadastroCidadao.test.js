@@ -1,8 +1,19 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import CadastroCidadao from '../pages/CadastroCidadao';
+import { registrarCidadao } from '../services/api';
+
+const mockedNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedNavigate,
+}));
+
+jest.mock('../services/api', () => ({
+  registrarCidadao: jest.fn(),
+}));
 
 const renderCadastroCidadao = () => {
   return render(
@@ -15,11 +26,10 @@ const renderCadastroCidadao = () => {
 describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    console.log.mockRestore();
+    registrarCidadao.mockResolvedValue({
+      sucesso: true,
+      mensagem: 'Cidadão cadastrado com sucesso.',
+    });
   });
 
   test('deve renderizar a estrutura semântica principal com landmark <main> e título <h1>', () => {
@@ -153,21 +163,21 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     let erroNome = document.getElementById('erro-nome');
     expect(erroNome).toBeInTheDocument();
     expect(erroNome).toHaveTextContent('Informe o seu nome completo.');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
 
     // 2. Apenas uma palavra
     fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos' } });
     fireEvent.click(submitButton);
     erroNome = document.getElementById('erro-nome');
     expect(erroNome).toHaveTextContent('pelo menos duas palavras');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
 
     // 3. Contendo números ou símbolos
     fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Silva 123' } });
     fireEvent.click(submitButton);
     erroNome = document.getElementById('erro-nome');
     expect(erroNome).toHaveTextContent('deve conter apenas letras');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
   });
 
   test('deve validar regra do CPF: exigir exatamente 14 caracteres com a máscara', () => {
@@ -176,7 +186,6 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
     const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
 
-    // Preenche nome válido
     fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Eduardo' } });
 
     // CPF incompleto (menos de 14 caracteres)
@@ -186,7 +195,7 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     const erroCpf = document.getElementById('erro-cpf');
     expect(erroCpf).toBeInTheDocument();
     expect(erroCpf).toHaveTextContent('totalmente preenchido com 14 caracteres');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
   });
 
   test('deve validar regra de E-mail: exigir formato padrão com @ e domínio', () => {
@@ -206,7 +215,7 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     const erroEmail = document.getElementById('erro-email');
     expect(erroEmail).toBeInTheDocument();
     expect(erroEmail).toHaveTextContent('e-mail válido contendo @ e domínio');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
   });
 
   test('deve validar regra de Telefone: exigir exatamente 15 caracteres com a máscara', () => {
@@ -228,7 +237,7 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     const erroTel = document.getElementById('erro-telefone');
     expect(erroTel).toBeInTheDocument();
     expect(erroTel).toHaveTextContent('totalmente preenchido com 15 caracteres');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
   });
 
   test('deve validar regra de Senha: exigir no mínimo 8 caracteres com pelo menos uma letra e um número', () => {
@@ -245,29 +254,78 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     fireEvent.change(emailInput, { target: { name: 'email', value: 'carlos@exemplo.com' } });
     fireEvent.change(telInput, { target: { name: 'whatsapp', value: '11999998888' } });
 
-    // 1. Senha curta (menos de 8 caracteres)
+    // Senha curta
     fireEvent.change(senhaInput, { target: { name: 'senha', value: 'Ab12' } });
     fireEvent.click(submitButton);
     let erroSenha = document.getElementById('erro-senha');
     expect(erroSenha).toHaveTextContent('mínimo 8 caracteres, contendo pelo menos uma letra e um número');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
 
-    // 2. Senha com 8 caracteres mas apenas letras
+    // Senha sem número
     fireEvent.change(senhaInput, { target: { name: 'senha', value: 'abcdefgh' } });
     fireEvent.click(submitButton);
     erroSenha = document.getElementById('erro-senha');
     expect(erroSenha).toHaveTextContent('pelo menos uma letra e um número');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
 
-    // 3. Senha com 8 caracteres mas apenas números
+    // Senha sem letra
     fireEvent.change(senhaInput, { target: { name: 'senha', value: '12345678' } });
     fireEvent.click(submitButton);
     erroSenha = document.getElementById('erro-senha');
     expect(erroSenha).toHaveTextContent('pelo menos uma letra e um número');
-    expect(console.log).not.toHaveBeenCalled();
+    expect(registrarCidadao).not.toHaveBeenCalled();
   });
 
-  test('deve submeter o formulário com dados válidos e fazer console.log do JSON preparado para o backend', () => {
+  test('deve enviar o payload sanitizado para a API registrarCidadao e navegar para /login/cidadao', async () => {
+    renderCadastroCidadao();
+
+    fireEvent.change(screen.getByLabelText(/^Nome Completo$/i), {
+      target: { name: 'nome_completo', value: 'Carlos Eduardo' },
+    });
+    fireEvent.change(screen.getByLabelText(/CPF \(apenas números\)/i), {
+      target: { name: 'cpf', value: '987.654.321-00' },
+    });
+    fireEvent.change(screen.getByLabelText(/^E-mail$/i), {
+      target: { name: 'email', value: 'carlos@exemplo.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Telefone$/i), {
+      target: { name: 'whatsapp', value: '(11) 99999-8888' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Senha$/i), {
+      target: { name: 'senha', value: 'SenhaForte123' },
+    });
+
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
+    fireEvent.click(submitButton);
+
+    // a) O payload sanitizado é enviado corretamente
+    await waitFor(() => {
+      expect(registrarCidadao).toHaveBeenCalledWith({
+        nome_completo: 'Carlos Eduardo',
+        cpf: '98765432100',
+        email: 'carlos@exemplo.com',
+        whatsapp: '11999998888',
+        senha: 'SenhaForte123',
+      });
+    });
+
+    // Redireciona com state de mensagem de sucesso
+    await waitFor(() => {
+      expect(mockedNavigate).toHaveBeenCalledWith('/login/cidadao', {
+        state: { mensagemSucesso: 'Cadastro realizado com sucesso! Faça login para continuar.' },
+      });
+    });
+  });
+
+  test('deve desabilitar o botão e exibir "Cadastrando..." enquanto a requisição estiver pendente', async () => {
+    let resolverPromise;
+    registrarCidadao.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolverPromise = resolve;
+        })
+    );
+
     renderCadastroCidadao();
 
     fireEvent.change(screen.getByLabelText(/^Nome Completo$/i), {
@@ -289,26 +347,47 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
     fireEvent.click(submitButton);
 
-    expect(console.log).toHaveBeenCalledWith(
-      'Dados do Cadastro do Cidadão:',
-      expect.stringContaining('"nome_completo": "Carlos Eduardo"')
-    );
-    expect(console.log).toHaveBeenCalledWith(
-      'Dados do Cadastro do Cidadão:',
-      expect.stringContaining('"email": "carlos@exemplo.com"')
-    );
-    expect(console.log).toHaveBeenCalledWith(
-      'Dados do Cadastro do Cidadão:',
-      expect.stringContaining('"cpf": "98765432100"')
-    );
-    expect(console.log).toHaveBeenCalledWith(
-      'Dados do Cadastro do Cidadão:',
-      expect.stringContaining('"whatsapp": "11999998888"')
-    );
-    expect(console.log).toHaveBeenCalledWith(
-      'Dados do Cadastro do Cidadão:',
-      expect.stringContaining('"senha": "SenhaForte123"')
-    );
+    // b) O botão fica desabilitado durante o carregamento e exibe "Cadastrando..."
+    expect(submitButton).toBeDisabled();
+    expect(submitButton).toHaveTextContent('Cadastrando...');
+    expect(submitButton).toHaveAttribute('aria-busy', 'true');
+
+    // Resolve a promise para liberar o estado
+    resolverPromise({ sucesso: true });
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalled());
+  });
+
+  test('deve renderizar erro retornado pela API na tela e reabilitar o botão de submissão', async () => {
+    registrarCidadao.mockRejectedValueOnce(new Error('CPF já cadastrado.'));
+
+    renderCadastroCidadao();
+
+    fireEvent.change(screen.getByLabelText(/^Nome Completo$/i), {
+      target: { name: 'nome_completo', value: 'Carlos Eduardo' },
+    });
+    fireEvent.change(screen.getByLabelText(/CPF \(apenas números\)/i), {
+      target: { name: 'cpf', value: '98765432100' },
+    });
+    fireEvent.change(screen.getByLabelText(/^E-mail$/i), {
+      target: { name: 'email', value: 'carlos@exemplo.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Telefone$/i), {
+      target: { name: 'whatsapp', value: '11999998888' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Senha$/i), {
+      target: { name: 'senha', value: 'SenhaForte123' },
+    });
+
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
+    fireEvent.click(submitButton);
+
+    // c) Erros da API são renderizados na tela de forma acessível
+    const erroAlerta = await screen.findByRole('alert');
+    expect(erroAlerta).toBeInTheDocument();
+    expect(erroAlerta).toHaveTextContent('CPF já cadastrado.');
+
+    expect(submitButton).not.toBeDisabled();
+    expect(submitButton).toHaveTextContent('CADASTRAR');
   });
 
   test('deve conter links acessíveis de voltar e entrar aqui apontando para /login/cidadao', () => {

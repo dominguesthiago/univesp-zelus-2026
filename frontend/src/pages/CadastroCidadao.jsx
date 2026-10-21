@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Smartphone } from 'lucide-react';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
+import { registrarCidadao } from '../services/api';
 import './CadastroCidadao.scss';
 
 // Ícone personalizado de Usuário / Nome Completo (estilo cartum do mockup)
@@ -99,7 +100,7 @@ const LockIcon = () => (
 
 /**
  * Página de Cadastro do Cidadão (CadastroCidadao.jsx)
- * Formulário semântico com validações rigorosas de frontend e acessibilidade WCAG 2.1 AA.
+ * Formulário semântico integrado à API REST com validações rigorosas e acessibilidade WCAG 2.1 AA.
  */
 const CadastroCidadao = () => {
   const navigate = useNavigate();
@@ -116,6 +117,7 @@ const CadastroCidadao = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erros, setErros] = useState({});
   const [mensagemErroGeral, setMensagemErroGeral] = useState('');
+  const [erroApi, setErroApi] = useState('');
   const [carregando, setCarregando] = useState(false);
 
   // Máscara numérica para CPF (000.000.000-00)
@@ -155,6 +157,9 @@ const CadastroCidadao = () => {
     }
     if (mensagemErroGeral) {
       setMensagemErroGeral('');
+    }
+    if (erroApi) {
+      setErroApi('');
     }
   };
 
@@ -205,7 +210,7 @@ const CadastroCidadao = () => {
     return novosErros;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const novosErros = validarFormulario();
@@ -214,17 +219,19 @@ const CadastroCidadao = () => {
       setErros(novosErros);
       const primeiroErro = Object.values(novosErros)[0];
       setMensagemErroGeral(primeiroErro);
-      return; // Impede console.log e avanço em caso de falha de validação
+      return; // Impede envio e avanço em caso de falha de validação
     }
 
     setErros({});
     setMensagemErroGeral('');
+    setErroApi('');
     setCarregando(true);
 
+    // Sanitização: remoção de pontuações e caracteres de máscara
     const apenasNumerosCpf = formData.cpf.replace(/\D/g, '');
     const apenasNumerosTel = formData.whatsapp.replace(/\D/g, '');
 
-    // Payload estruturado em conformidade com o backend ZELUS
+    // Payload estruturado estritamente conforme exigido pelo backend ZELUS
     const payload = {
       nome_completo: formData.nome_completo.trim(),
       cpf: apenasNumerosCpf,
@@ -233,15 +240,20 @@ const CadastroCidadao = () => {
       senha: formData.senha,
     };
 
-    console.log('Dados do Cadastro do Cidadão:', JSON.stringify(payload, null, 2));
-
-    setTimeout(() => {
+    try {
+      await registrarCidadao(payload);
       setCarregando(false);
-      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-        window.alert('Cadastro realizado com sucesso! Faça login para continuar.');
-      }
-      navigate('/login/cidadao');
-    }, 500);
+      navigate('/login/cidadao', {
+        state: { mensagemSucesso: 'Cadastro realizado com sucesso! Faça login para continuar.' },
+      });
+    } catch (error) {
+      setCarregando(false);
+      const mensagem =
+        error.data?.mensagem ||
+        error.message ||
+        'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
+      setErroApi(mensagem);
+    }
   };
 
   return (
@@ -286,10 +298,10 @@ const CadastroCidadao = () => {
             </h1>
           </div>
 
-          {/* Mensagem de alerta geral se houver erro */}
-          {mensagemErroGeral && (
+          {/* Mensagem de alerta se houver erro da API ou geral */}
+          {(erroApi || mensagemErroGeral) && (
             <div id="cadastro-erro-geral" className="cadastro-alert" role="alert" aria-live="polite">
-              {mensagemErroGeral}
+              {erroApi || mensagemErroGeral}
             </div>
           )}
 
@@ -489,7 +501,7 @@ const CadastroCidadao = () => {
               )}
             </div>
 
-            {/* Botão CADASTRAR com borda espessa e ícone de smartphone */}
+            {/* Botão CADASTRAR com borda espessa e estado de carregamento */}
             <button
               type="submit"
               disabled={carregando}
@@ -497,7 +509,7 @@ const CadastroCidadao = () => {
               aria-label="Cadastrar nova conta do cidadão"
               aria-busy={carregando}
             >
-              <span>{carregando ? 'CADASTRANDO...' : 'CADASTRAR'}</span>
+              <span>{carregando ? 'Cadastrando...' : 'CADASTRAR'}</span>
               <Smartphone size={22} color="#ffffff" strokeWidth={2.5} aria-hidden="true" />
             </button>
 
