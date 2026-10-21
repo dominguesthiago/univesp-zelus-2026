@@ -1,7 +1,7 @@
 # Registro de Rastreabilidade de Prompt de IA — Afinação dos Cartões na Tela Home
 
 **Documento:** Registro de Governança de Engenharia de Prompt  
-**ID do Registro:** `12-afinacao-cartoes-home`  
+**ID do Registro:** `13-afinacao-cartoes-home`  
 **Fase do Projeto:** Fase 2 — Frontend, Governança e Experiência do Usuário (ZELUS)  
 **Etapa:** Refinamento de espaçamentos e proporções dos ActionCards e do layout da Home  
 **Data/Hora do Registro:** 19 de outubro de 2026 - 20:35 (UTC-03:00)  

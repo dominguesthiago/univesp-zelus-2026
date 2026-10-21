@@ -1,7 +1,7 @@
 # Registro de Rastreabilidade de Prompt de IA — Refatoração Semântica e Acessibilidade do Login do Cidadão
 
 **Documento:** Registro de Governança de Engenharia de Prompt  
-**ID do Registro:** `10-refatoracao-logincidadao`  
+**ID do Registro:** `17-refatoracao-logincidadao`  
 **Fase do Projeto:** Fase 2 — Frontend, Governança e Experiência do Usuário (ZELUS)  
 **Etapa:** Refatoração Semântica HTML5, Acessibilidade WCAG 2.1 AA / ARIA e Aplicação da Regra de Ouro `dvh` (`LoginCidadao.jsx`, `LoginCidadao.scss`, `LoginCidadao.test.js`)  
 **Data/Hora do Registro:** 21 de outubro de 2026 - 09:30 (UTC-03:00)  

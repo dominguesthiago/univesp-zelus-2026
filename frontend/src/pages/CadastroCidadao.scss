@@ -201,6 +201,15 @@
     color: #1a1a24;
     margin-left: 2px;
   }
+
+  &__error {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #c62828;
+    margin-top: 2px;
+    margin-left: 4px;
+    line-height: 1.25;
+  }
 }
 
 // -- Caixa do Input com Borda Grossa Cartum --
@@ -219,6 +228,16 @@
   &:focus-within {
     border-color: #1a3458;
     box-shadow: 0 0 0 2px rgba(26, 52, 88, 0.2);
+  }
+
+  &--invalid {
+    border-color: #c62828;
+    background-color: #fffafa;
+
+    &:focus-within {
+      border-color: #c62828;
+      box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.25);
+    }
   }
 
   .cadastro-input-icon {

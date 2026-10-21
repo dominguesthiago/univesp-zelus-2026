@@ -99,7 +99,7 @@ const LockIcon = () => (
 
 /**
  * Página de Cadastro do Cidadão (CadastroCidadao.jsx)
- * Reprodução rigorosa do mockup do ZELUS com inclusão do campo de e-mail e semântica WCAG 2.1 AA.
+ * Formulário semântico com validações rigorosas de frontend e acessibilidade WCAG 2.1 AA.
  */
 const CadastroCidadao = () => {
   const navigate = useNavigate();
@@ -114,7 +114,8 @@ const CadastroCidadao = () => {
   });
 
   const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [mensagemErro, setMensagemErro] = useState('');
+  const [erros, setErros] = useState({});
+  const [mensagemErroGeral, setMensagemErroGeral] = useState('');
   const [carregando, setCarregando] = useState(false);
 
   // Máscara numérica para CPF (000.000.000-00)
@@ -126,14 +127,11 @@ const CadastroCidadao = () => {
     return `${apenasDigitos.slice(0, 3)}.${apenasDigitos.slice(3, 6)}.${apenasDigitos.slice(6, 9)}-${apenasDigitos.slice(9, 11)}`;
   };
 
-  // Máscara para Telefone / WhatsApp: (00) 90000-0000 ou (00) 0000-0000
+  // Máscara para Telefone / WhatsApp: (00) 90000-0000 (15 caracteres com máscara)
   const formatarTelefone = (valor) => {
     const apenasDigitos = valor.replace(/\D/g, '').slice(0, 11);
     if (apenasDigitos.length <= 2) return apenasDigitos;
-    if (apenasDigitos.length <= 6) return `(${apenasDigitos.slice(0, 2)}) ${apenasDigitos.slice(2)}`;
-    if (apenasDigitos.length <= 10) {
-      return `(${apenasDigitos.slice(0, 2)}) ${apenasDigitos.slice(2, 6)}-${apenasDigitos.slice(6)}`;
-    }
+    if (apenasDigitos.length <= 7) return `(${apenasDigitos.slice(0, 2)}) ${apenasDigitos.slice(2)}`;
     return `(${apenasDigitos.slice(0, 2)}) ${apenasDigitos.slice(2, 7)}-${apenasDigitos.slice(7, 11)}`;
   };
 
@@ -152,47 +150,79 @@ const CadastroCidadao = () => {
       [name]: formattedValue,
     }));
 
-    if (mensagemErro) setMensagemErro('');
+    if (erros[name]) {
+      setErros((prev) => ({ ...prev, [name]: '' }));
+    }
+    if (mensagemErroGeral) {
+      setMensagemErroGeral('');
+    }
+  };
+
+  // Regras de validação estritas de negócio
+  const validarFormulario = () => {
+    const novosErros = {};
+
+    // 1. Nome Completo: pelo menos duas palavras (separadas por espaço) e apenas letras
+    const nomeTrim = formData.nome_completo.trim();
+    const regexApenasLetrasEspacos = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
+    const palavrasNome = nomeTrim ? nomeTrim.split(/\s+/) : [];
+
+    if (!nomeTrim) {
+      novosErros.nome_completo = 'Informe o seu nome completo.';
+    } else if (!regexApenasLetrasEspacos.test(nomeTrim)) {
+      novosErros.nome_completo = 'O nome completo deve conter apenas letras.';
+    } else if (palavrasNome.length < 2 || palavrasNome.some((p) => p.length < 1)) {
+      novosErros.nome_completo = 'O nome completo deve conter pelo menos duas palavras (nome e sobrenome).';
+    }
+
+    // 2. CPF: totalmente preenchido (exatamente 14 caracteres com a máscara: 000.000.000-00)
+    const regexCPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!formData.cpf || formData.cpf.length !== 14 || !regexCPF.test(formData.cpf)) {
+      novosErros.cpf = 'O CPF deve estar totalmente preenchido com 14 caracteres (000.000.000-00).';
+    }
+
+    // 3. E-mail: regex padrão (deve conter @ e domínio)
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim() || !regexEmail.test(formData.email.trim())) {
+      novosErros.email = 'Informe um e-mail válido contendo @ e domínio (ex: usuario@dominio.com).';
+    }
+
+    // 4. Telefone: totalmente preenchido (exatamente 15 caracteres com a máscara: (00) 90000-0000)
+    const regexTelefone = /^\(\d{2}\) \d{5}-\d{4}$/;
+    if (!formData.whatsapp || formData.whatsapp.length !== 15 || !regexTelefone.test(formData.whatsapp)) {
+      novosErros.whatsapp = 'O telefone deve estar totalmente preenchido com 15 caracteres (00) 90000-0000.';
+    }
+
+    // 5. Senha: no mínimo 8 caracteres, contendo obrigatoriamente pelo menos uma letra e um número
+    const temPeloMenos8 = formData.senha && formData.senha.length >= 8;
+    const temLetra = /[A-Za-z]/.test(formData.senha || '');
+    const temNumero = /\d/.test(formData.senha || '');
+
+    if (!formData.senha || !temPeloMenos8 || !temLetra || !temNumero) {
+      novosErros.senha = 'A senha deve ter no mínimo 8 caracteres, contendo pelo menos uma letra e um número.';
+    }
+
+    return novosErros;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 1. Validação de Nome Completo
-    if (!formData.nome_completo.trim()) {
-      setMensagemErro('Informe o seu nome completo.');
-      return;
+    const novosErros = validarFormulario();
+
+    if (Object.keys(novosErros).length > 0) {
+      setErros(novosErros);
+      const primeiroErro = Object.values(novosErros)[0];
+      setMensagemErroGeral(primeiroErro);
+      return; // Impede console.log e avanço em caso de falha de validação
     }
 
-    // 2. Validação de CPF (11 dígitos)
-    const apenasNumerosCpf = formData.cpf.replace(/\D/g, '');
-    if (!apenasNumerosCpf || apenasNumerosCpf.length !== 11) {
-      setMensagemErro('Informe um CPF válido com 11 dígitos.');
-      return;
-    }
-
-    // 3. Validação de E-mail (requisito do backend)
-    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim() || !regexEmail.test(formData.email.trim())) {
-      setMensagemErro('Informe um endereço de e-mail válido.');
-      return;
-    }
-
-    // 4. Validação de Telefone / WhatsApp
-    const apenasNumerosTel = formData.whatsapp.replace(/\D/g, '');
-    if (!apenasNumerosTel || apenasNumerosTel.length < 10) {
-      setMensagemErro('Informe um número de telefone com DDD válido.');
-      return;
-    }
-
-    // 5. Validação de Senha
-    if (!formData.senha || formData.senha.length < 6) {
-      setMensagemErro('A senha deve ter no mínimo 6 caracteres.');
-      return;
-    }
-
-    setMensagemErro('');
+    setErros({});
+    setMensagemErroGeral('');
     setCarregando(true);
+
+    const apenasNumerosCpf = formData.cpf.replace(/\D/g, '');
+    const apenasNumerosTel = formData.whatsapp.replace(/\D/g, '');
 
     // Payload estruturado em conformidade com o backend ZELUS
     const payload = {
@@ -256,10 +286,10 @@ const CadastroCidadao = () => {
             </h1>
           </div>
 
-          {/* Mensagem de alerta se houver erro */}
-          {mensagemErro && (
-            <div id="cadastro-erro" className="cadastro-alert" role="alert" aria-live="polite">
-              {mensagemErro}
+          {/* Mensagem de alerta geral se houver erro */}
+          {mensagemErroGeral && (
+            <div id="cadastro-erro-geral" className="cadastro-alert" role="alert" aria-live="polite">
+              {mensagemErroGeral}
             </div>
           )}
 
@@ -275,7 +305,7 @@ const CadastroCidadao = () => {
               <label htmlFor="cadastro-nome" className="cadastro-field__label">
                 Nome Completo
               </label>
-              <div className="cadastro-input-box">
+              <div className={`cadastro-input-box ${erros.nome_completo ? 'cadastro-input-box--invalid' : ''}`}>
                 <UserIcon />
                 <input
                   id="cadastro-nome"
@@ -288,10 +318,20 @@ const CadastroCidadao = () => {
                   className="cadastro-input-box__field"
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'cadastro-erro' : undefined}
+                  aria-invalid={erros.nome_completo ? 'true' : 'false'}
+                  aria-describedby={erros.nome_completo ? 'erro-nome' : undefined}
                 />
               </div>
+              {erros.nome_completo && (
+                <span
+                  id="erro-nome"
+                  className="cadastro-field__error"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  {erros.nome_completo}
+                </span>
+              )}
             </div>
 
             {/* 2. Campo CPF (apenas números) */}
@@ -299,7 +339,7 @@ const CadastroCidadao = () => {
               <label htmlFor="cadastro-cpf" className="cadastro-field__label">
                 CPF (apenas números)
               </label>
-              <div className="cadastro-input-box">
+              <div className={`cadastro-input-box ${erros.cpf ? 'cadastro-input-box--invalid' : ''}`}>
                 <IdCardIcon />
                 <input
                   id="cadastro-cpf"
@@ -314,10 +354,20 @@ const CadastroCidadao = () => {
                   maxLength={14}
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'cadastro-erro' : undefined}
+                  aria-invalid={erros.cpf ? 'true' : 'false'}
+                  aria-describedby={erros.cpf ? 'erro-cpf' : undefined}
                 />
               </div>
+              {erros.cpf && (
+                <span
+                  id="erro-cpf"
+                  className="cadastro-field__error"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  {erros.cpf}
+                </span>
+              )}
             </div>
 
             {/* 3. Campo E-mail (Ajuste Crítico de Backend) */}
@@ -325,7 +375,7 @@ const CadastroCidadao = () => {
               <label htmlFor="cadastro-email" className="cadastro-field__label">
                 E-mail
               </label>
-              <div className="cadastro-input-box">
+              <div className={`cadastro-input-box ${erros.email ? 'cadastro-input-box--invalid' : ''}`}>
                 <EnvelopeIcon />
                 <input
                   id="cadastro-email"
@@ -339,10 +389,20 @@ const CadastroCidadao = () => {
                   className="cadastro-input-box__field"
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'cadastro-erro' : undefined}
+                  aria-invalid={erros.email ? 'true' : 'false'}
+                  aria-describedby={erros.email ? 'erro-email' : undefined}
                 />
               </div>
+              {erros.email && (
+                <span
+                  id="erro-email"
+                  className="cadastro-field__error"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  {erros.email}
+                </span>
+              )}
             </div>
 
             {/* 4. Campo Telefone */}
@@ -350,7 +410,7 @@ const CadastroCidadao = () => {
               <label htmlFor="cadastro-telefone" className="cadastro-field__label">
                 Telefone
               </label>
-              <div className="cadastro-input-box">
+              <div className={`cadastro-input-box ${erros.whatsapp ? 'cadastro-input-box--invalid' : ''}`}>
                 <PhoneIcon />
                 <input
                   id="cadastro-telefone"
@@ -365,10 +425,20 @@ const CadastroCidadao = () => {
                   maxLength={15}
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'cadastro-erro' : undefined}
+                  aria-invalid={erros.whatsapp ? 'true' : 'false'}
+                  aria-describedby={erros.whatsapp ? 'erro-telefone' : undefined}
                 />
               </div>
+              {erros.whatsapp && (
+                <span
+                  id="erro-telefone"
+                  className="cadastro-field__error"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  {erros.whatsapp}
+                </span>
+              )}
             </div>
 
             {/* 5. Campo Senha */}
@@ -376,7 +446,7 @@ const CadastroCidadao = () => {
               <label htmlFor="cadastro-senha" className="cadastro-field__label">
                 Senha
               </label>
-              <div className="cadastro-input-box">
+              <div className={`cadastro-input-box ${erros.senha ? 'cadastro-input-box--invalid' : ''}`}>
                 <LockIcon />
                 <input
                   id="cadastro-senha"
@@ -389,8 +459,8 @@ const CadastroCidadao = () => {
                   className="cadastro-input-box__field"
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'cadastro-erro' : undefined}
+                  aria-invalid={erros.senha ? 'true' : 'false'}
+                  aria-describedby={erros.senha ? 'erro-senha' : undefined}
                 />
                 <button
                   type="button"
@@ -407,6 +477,16 @@ const CadastroCidadao = () => {
                   )}
                 </button>
               </div>
+              {erros.senha && (
+                <span
+                  id="erro-senha"
+                  className="cadastro-field__error"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  {erros.senha}
+                </span>
+              )}
             </div>
 
             {/* Botão CADASTRAR com borda espessa e ícone de smartphone */}

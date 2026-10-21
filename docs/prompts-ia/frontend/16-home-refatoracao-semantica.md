@@ -1,7 +1,7 @@
 # Registro de Rastreabilidade de Prompt de IA — Refatoração Semântica da Tela Inicial
 
 **Documento:** Registro de Governança de Engenharia de Prompt  
-**ID do Registro:** `15-home-refatoracao-semantica`  
+**ID do Registro:** `16-home-refatoracao-semantica`  
 **Fase do Projeto:** Fase 2 — Frontend, Governança e Experiência do Usuário (ZELUS)  
 **Etapa:** Refatoração Semântica HTML5 e Padronização de Design Tokens da Home (`Home.jsx`, `Home.scss`, `ActionCard.jsx`, `ActionCard.scss`)  
 **Data/Hora do Registro:** 20 de outubro de 2026 - 18:25 (UTC-03:00)  

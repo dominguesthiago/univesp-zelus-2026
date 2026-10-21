@@ -69,7 +69,7 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     expect(cpfInput).toHaveAttribute('inputmode', 'numeric');
     expect(cpfInput).toBeRequired();
 
-    // 3. E-mail (requisito do backend)
+    // 3. E-mail (requisito crítico do backend)
     const emailLabel = screen.getByText(/^E-mail$/i);
     expect(emailLabel).toBeInTheDocument();
     expect(emailLabel.tagName).toBe('LABEL');
@@ -143,48 +143,128 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     expect(toggleButton).toHaveAttribute('aria-pressed', 'false');
   });
 
-  test('deve exibir mensagem de erro ao submeter com campos inválidos', () => {
+  test('deve validar regra do Nome Completo: rejeitar vazio, nome único ou caracteres não-alfabéticos', () => {
     renderCadastroCidadao();
-
     const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
-    expect(submitButton).toHaveAttribute('type', 'submit');
+    const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
 
     // 1. Nome vazio
     fireEvent.click(submitButton);
-    let alertMessage = screen.getByRole('alert');
-    expect(alertMessage).toHaveTextContent('Informe o seu nome completo.');
+    let erroNome = document.getElementById('erro-nome');
+    expect(erroNome).toBeInTheDocument();
+    expect(erroNome).toHaveTextContent('Informe o seu nome completo.');
+    expect(console.log).not.toHaveBeenCalled();
 
-    // 2. Preenche nome, tenta com CPF incompleto
+    // 2. Apenas uma palavra
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos' } });
+    fireEvent.click(submitButton);
+    erroNome = document.getElementById('erro-nome');
+    expect(erroNome).toHaveTextContent('pelo menos duas palavras');
+    expect(console.log).not.toHaveBeenCalled();
+
+    // 3. Contendo números ou símbolos
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Silva 123' } });
+    fireEvent.click(submitButton);
+    erroNome = document.getElementById('erro-nome');
+    expect(erroNome).toHaveTextContent('deve conter apenas letras');
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  test('deve validar regra do CPF: exigir exatamente 14 caracteres com a máscara', () => {
+    renderCadastroCidadao();
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
     const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
-    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Maria da Silva' } });
-    fireEvent.click(submitButton);
-
-    alertMessage = screen.getByRole('alert');
-    expect(alertMessage).toHaveTextContent('Informe um CPF válido com 11 dígitos.');
-
-    // 3. Preenche CPF, tenta com e-mail inválido
     const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
-    fireEvent.change(cpfInput, { target: { name: 'cpf', value: '12345678901' } });
+
+    // Preenche nome válido
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Eduardo' } });
+
+    // CPF incompleto (menos de 14 caracteres)
+    fireEvent.change(cpfInput, { target: { name: 'cpf', value: '123456789' } });
     fireEvent.click(submitButton);
 
-    alertMessage = screen.getByRole('alert');
-    expect(alertMessage).toHaveTextContent('Informe um endereço de e-mail válido.');
+    const erroCpf = document.getElementById('erro-cpf');
+    expect(erroCpf).toBeInTheDocument();
+    expect(erroCpf).toHaveTextContent('totalmente preenchido com 14 caracteres');
+    expect(console.log).not.toHaveBeenCalled();
+  });
 
-    // 4. Preenche e-mail, tenta com telefone incompleto
+  test('deve validar regra de E-mail: exigir formato padrão com @ e domínio', () => {
+    renderCadastroCidadao();
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
+    const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
     const emailInput = screen.getByLabelText(/^E-mail$/i);
-    fireEvent.change(emailInput, { target: { name: 'email', value: 'maria@exemplo.com' } });
+
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Eduardo' } });
+    fireEvent.change(cpfInput, { target: { name: 'cpf', value: '12345678901' } });
+
+    // E-mail sem @ ou sem domínio
+    fireEvent.change(emailInput, { target: { name: 'email', value: 'carlossemdominio' } });
     fireEvent.click(submitButton);
 
-    alertMessage = screen.getByRole('alert');
-    expect(alertMessage).toHaveTextContent('Informe um número de telefone com DDD válido.');
+    const erroEmail = document.getElementById('erro-email');
+    expect(erroEmail).toBeInTheDocument();
+    expect(erroEmail).toHaveTextContent('e-mail válido contendo @ e domínio');
+    expect(console.log).not.toHaveBeenCalled();
+  });
 
-    // 5. Preenche telefone, tenta com senha curta
+  test('deve validar regra de Telefone: exigir exatamente 15 caracteres com a máscara', () => {
+    renderCadastroCidadao();
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
+    const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
+    const emailInput = screen.getByLabelText(/^E-mail$/i);
     const telInput = screen.getByLabelText(/^Telefone$/i);
-    fireEvent.change(telInput, { target: { name: 'whatsapp', value: '11987654321' } });
+
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Eduardo' } });
+    fireEvent.change(cpfInput, { target: { name: 'cpf', value: '12345678901' } });
+    fireEvent.change(emailInput, { target: { name: 'email', value: 'carlos@exemplo.com' } });
+
+    // Telefone incompleto (menos de 15 caracteres)
+    fireEvent.change(telInput, { target: { name: 'whatsapp', value: '119999988' } });
     fireEvent.click(submitButton);
 
-    alertMessage = screen.getByRole('alert');
-    expect(alertMessage).toHaveTextContent('A senha deve ter no mínimo 6 caracteres.');
+    const erroTel = document.getElementById('erro-telefone');
+    expect(erroTel).toBeInTheDocument();
+    expect(erroTel).toHaveTextContent('totalmente preenchido com 15 caracteres');
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  test('deve validar regra de Senha: exigir no mínimo 8 caracteres com pelo menos uma letra e um número', () => {
+    renderCadastroCidadao();
+    const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
+    const nomeInput = screen.getByLabelText(/^Nome Completo$/i);
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
+    const emailInput = screen.getByLabelText(/^E-mail$/i);
+    const telInput = screen.getByLabelText(/^Telefone$/i);
+    const senhaInput = screen.getByLabelText(/^Senha$/i);
+
+    fireEvent.change(nomeInput, { target: { name: 'nome_completo', value: 'Carlos Eduardo' } });
+    fireEvent.change(cpfInput, { target: { name: 'cpf', value: '12345678901' } });
+    fireEvent.change(emailInput, { target: { name: 'email', value: 'carlos@exemplo.com' } });
+    fireEvent.change(telInput, { target: { name: 'whatsapp', value: '11999998888' } });
+
+    // 1. Senha curta (menos de 8 caracteres)
+    fireEvent.change(senhaInput, { target: { name: 'senha', value: 'Ab12' } });
+    fireEvent.click(submitButton);
+    let erroSenha = document.getElementById('erro-senha');
+    expect(erroSenha).toHaveTextContent('mínimo 8 caracteres, contendo pelo menos uma letra e um número');
+    expect(console.log).not.toHaveBeenCalled();
+
+    // 2. Senha com 8 caracteres mas apenas letras
+    fireEvent.change(senhaInput, { target: { name: 'senha', value: 'abcdefgh' } });
+    fireEvent.click(submitButton);
+    erroSenha = document.getElementById('erro-senha');
+    expect(erroSenha).toHaveTextContent('pelo menos uma letra e um número');
+    expect(console.log).not.toHaveBeenCalled();
+
+    // 3. Senha com 8 caracteres mas apenas números
+    fireEvent.change(senhaInput, { target: { name: 'senha', value: '12345678' } });
+    fireEvent.click(submitButton);
+    erroSenha = document.getElementById('erro-senha');
+    expect(erroSenha).toHaveTextContent('pelo menos uma letra e um número');
+    expect(console.log).not.toHaveBeenCalled();
   });
 
   test('deve submeter o formulário com dados válidos e fazer console.log do JSON preparado para o backend', () => {
@@ -203,7 +283,7 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
       target: { name: 'whatsapp', value: '11999998888' },
     });
     fireEvent.change(screen.getByLabelText(/^Senha$/i), {
-      target: { name: 'senha', value: 'senha123' },
+      target: { name: 'senha', value: 'SenhaForte123' },
     });
 
     const submitButton = screen.getByRole('button', { name: /Cadastrar nova conta do cidadão/i });
@@ -220,6 +300,14 @@ describe('Página de Cadastro do Cidadão (CadastroCidadao)', () => {
     expect(console.log).toHaveBeenCalledWith(
       'Dados do Cadastro do Cidadão:',
       expect.stringContaining('"cpf": "98765432100"')
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      'Dados do Cadastro do Cidadão:',
+      expect.stringContaining('"whatsapp": "11999998888"')
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      'Dados do Cadastro do Cidadão:',
+      expect.stringContaining('"senha": "SenhaForte123"')
     );
   });
 

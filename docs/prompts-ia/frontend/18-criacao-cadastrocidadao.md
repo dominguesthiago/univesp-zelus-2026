@@ -1,7 +1,7 @@
 # Registro de Rastreabilidade de Prompt de IA — Criação da Tela de Cadastro do Cidadão
 
 **Documento:** Registro de Governança de Engenharia de Prompt  
-**ID do Registro:** `11-criacao-cadastrocidadao`  
+**ID do Registro:** `18-criacao-cadastrocidadao`  
 **Fase do Projeto:** Fase 2 — Frontend, Governança e Experiência do Usuário (ZELUS)  
 **Etapa:** Criação da Tela de Cadastro do Cidadão (`CadastroCidadao.jsx`, `CadastroCidadao.scss`, `CadastroCidadao.test.js`) com Inclusão do Campo E-mail, Semântica HTML5 e Acessibilidade WCAG 2.1 AA  
 **Data/Hora do Registro:** 21 de outubro de 2026 - 10:05 (UTC-03:00)  
