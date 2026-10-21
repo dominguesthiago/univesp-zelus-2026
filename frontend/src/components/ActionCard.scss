@@ -8,7 +8,7 @@
 
 .action-card {
   width: 100%;
-  height: clamp(128px, 18vh, 155px); // Altura fluida e proporcional no mobile
+  height: clamp(128px, 18dvh, 155px); // Altura fluida e proporcional no mobile com dvh
   padding: 0;
   border: vars.$border-cartoon;
   border-radius: vars.$border-radius-cartoon;
@@ -18,7 +18,7 @@
   transition: transform vars.$transition-fast, box-shadow vars.$transition-fast, background-color vars.$transition-fast;
 
   @media (min-width: vars.$breakpoint-md) {
-    height: clamp(170px, 25vh, 220px); // Proporcional e sem estourar em monitores desktop de menor altura
+    height: clamp(170px, 25dvh, 220px); // Proporcional e sem estourar em monitores desktop de menor altura
     border: vars.$border-cartoon-lg;
     border-radius: vars.$border-radius-cartoon-lg;
     box-shadow: vars.$shadow-cartoon-lg;
