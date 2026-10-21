@@ -113,6 +113,8 @@ const LoginCidadao = () => {
         localStorage.setItem('zelus_cidadao', JSON.stringify(resposta.dados));
       }
 
+      setMensagemErro('');
+      setErroApi('');
       navigate('/cidadao/painel');
     } catch (erro) {
       const msg = erro?.message || 'Erro ao realizar login. Verifique suas credenciais.';

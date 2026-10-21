@@ -10,6 +10,7 @@ import './PainelCidadao.scss';
 const PainelCidadao = () => {
   const navigate = useNavigate();
   const [cidadao, setCidadao] = useState(null);
+  const [aviso, setAviso] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('zelus_token');
@@ -86,6 +87,17 @@ const PainelCidadao = () => {
           </div>
         </section>
 
+        {/* Aviso de funcionalidade em desenvolvimento */}
+        {aviso && (
+          <div
+            className="painel-cidadao__aviso"
+            role="status"
+            aria-live="polite"
+          >
+            <span>{aviso}</span>
+          </div>
+        )}
+
         {/* Grade de Ações Rápidas */}
         <section
           className="painel-cidadao__actions-section"
@@ -107,7 +119,7 @@ const PainelCidadao = () => {
               <button
                 type="button"
                 className="painel-card__button"
-                onClick={() => alert('Módulo de Abertura de Solicitação em desenvolvimento.')}
+                onClick={() => setAviso('Módulo de Abertura de Solicitação em desenvolvimento.')}
               >
                 Abrir Chamado
               </button>
@@ -124,7 +136,7 @@ const PainelCidadao = () => {
               <button
                 type="button"
                 className="painel-card__button"
-                onClick={() => alert('Módulo de Acompanhamento em desenvolvimento.')}
+                onClick={() => setAviso('Módulo de Acompanhamento em desenvolvimento.')}
               >
                 Ver Histórico
               </button>
@@ -141,7 +153,7 @@ const PainelCidadao = () => {
               <button
                 type="button"
                 className="painel-card__button"
-                onClick={() => alert('Módulo de Perfil em desenvolvimento.')}
+                onClick={() => setAviso('Módulo de Perfil em desenvolvimento.')}
               >
                 Editar Perfil
               </button>

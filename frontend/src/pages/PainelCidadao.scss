@@ -75,6 +75,16 @@
     }
   }
 
+  &__aviso {
+    padding: vars.$spacing-md vars.$spacing-lg;
+    background-color: vars.$color-accent-light;
+    border-left: 4px solid vars.$color-accent;
+    border-radius: vars.$border-radius-sm;
+    color: vars.$color-text-primary;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
   // Cartão de Pontos
   &__score-card {
     display: flex;
