@@ -41,6 +41,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/login/cidadao" element={<LoginCidadao />} />
           <Route path="/cadastro/cidadao" element={<CadastroCidadao />} />
+          <Route path="/recuperar-senha" element={<RecuperarSenhaCidadao />} />
           <Route path="/recuperar-senha/cidadao" element={<RecuperarSenhaCidadao />} />
           <Route path="/cidadao/painel" element={<PainelCidadao />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />
