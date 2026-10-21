@@ -70,8 +70,10 @@
 
   &__brand-subtitle {
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.88);
-    font-weight: 400;
+    color: vars.$color-accent;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     margin-top: 2px;
   }
 

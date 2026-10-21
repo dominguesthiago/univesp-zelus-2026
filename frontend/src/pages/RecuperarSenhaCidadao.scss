@@ -7,33 +7,51 @@
 
 .recuperar-senha-wrapper {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100dvh;
+  justify-content: center;
   width: 100%;
-  padding: 12px;
-  background-color: vars.$color-bg-ice;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
   box-sizing: border-box;
+
+  // No desktop: centraliza o mockup num elegante simulador de celular
+  @media (min-width: vars.$breakpoint-md) {
+    padding: vars.$spacing-lg vars.$spacing-md;
+    background-color: vars.$color-bg-ice;
+  }
 }
 
-// -- Moldura de Smartphone (Pixel Perfect / Cartoon Pop) --
+// -- Moldura do Celular --
 .recuperar-card-mobile {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 420px;
-  min-height: min(620px, calc(100dvh - 24px));
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   background-color: #ffffff;
-  border: 3.5px solid #1a1a24;
-  border-radius: 28px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
-  box-shadow: 6px 6px 0 #1a1a24;
   box-sizing: border-box;
 
-  @media (max-width: 480px) {
-    max-width: 100%;
-    min-height: calc(100dvh - 24px);
-    border-radius: 22px;
+  // No desktop: formato estrito de smartphone (iPhone)
+  @media (min-width: vars.$breakpoint-md) {
+    max-width: 385px;
+    height: auto;
+    min-height: 640px;
+    border: 5px solid #1a1a24;
+    border-radius: 40px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
   }
 }
 
@@ -109,7 +127,7 @@
   }
 
   &__subtitle {
-    color: #fbd362;
+    color: vars.$color-accent;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -353,9 +371,10 @@
 .recuperar-footer-tagline {
   text-align: center;
   font-size: 0.78rem;
-  color: #6c757d;
+  color: #1a1a24;
   font-weight: 500;
   margin-top: auto;
   padding-top: 10px;
+  padding-bottom: 8px;
   letter-spacing: -0.2px;
 }

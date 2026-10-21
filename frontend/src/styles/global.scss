@@ -161,11 +161,15 @@ a {
   }
 }
 
-// -- Casca da aplicação: mantém o Footer na base quando o conteúdo é curto --
+// -- Casca da aplicação: mantém o Rodapé na base e garante 100% de preenchimento --
 .app-layout {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   min-height: 100dvh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 
   &--auth,
   &--home {
@@ -174,6 +178,16 @@ a {
     @media (min-width: vars.$breakpoint-md) {
       background-color: vars.$color-surface;
     }
+  }
+
+  &--auth {
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: vars.$color-surface;
+    border: none;
   }
 
   &--home {
@@ -190,10 +204,17 @@ a {
   flex-direction: column;
   width: 100%;
   min-height: 0; // Permite que os filhos flexíveis encolham sem provocar overflow
+  margin: 0;
+  padding: 0;
 
   &--auth {
     width: 100%;
+    min-height: 100vh;
     min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: vars.$color-surface;
   }
 
   // O foco programático (skip link) não precisa de anel no contêiner inteiro
