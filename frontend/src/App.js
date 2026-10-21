@@ -6,6 +6,7 @@ import CookieBanner from './components/CookieBanner';
 import Home from './pages/Home';
 import LoginCidadao from './pages/LoginCidadao';
 import CadastroCidadao from './pages/CadastroCidadao';
+import PainelCidadao from './pages/PainelCidadao';
 import Privacidade from './pages/Privacidade';
 import NotFound from './pages/NotFound';
 
@@ -36,6 +37,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/login/cidadao" element={<LoginCidadao />} />
           <Route path="/cadastro/cidadao" element={<CadastroCidadao />} />
+          <Route path="/cidadao/painel" element={<PainelCidadao />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

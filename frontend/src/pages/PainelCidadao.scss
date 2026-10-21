@@ -1,0 +1,249 @@
+// ==============================================================
+// Arquivo: PainelCidadao.scss — Estilos do Painel do Cidadão
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+.painel-cidadao {
+  width: 100%;
+  min-height: calc(100dvh - 140px);
+  padding: clamp(vars.$spacing-lg, 4vw, vars.$spacing-2xl) vars.$spacing-md;
+  background-color: vars.$color-bg-ice;
+
+  &__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-xl;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vars.$spacing-md;
+    flex-wrap: wrap;
+    padding-bottom: vars.$spacing-md;
+    border-bottom: 2px solid rgba(26, 52, 88, 0.1);
+  }
+
+  &__greeting {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  &__title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: vars.$color-primary;
+    line-height: 1.2;
+    margin-bottom: vars.$spacing-xs;
+  }
+
+  &__highlight {
+    color: vars.$color-accent;
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    color: vars.$color-text-secondary;
+  }
+
+  &__logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1.5px solid #f87171;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color vars.$transition-fast, transform vars.$transition-fast;
+
+    &:hover {
+      background-color: #fecaca;
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #b91c1c;
+      outline-offset: 2px;
+    }
+  }
+
+  // Cartão de Pontos
+  &__score-card {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-lg;
+    padding: vars.$spacing-lg vars.$spacing-xl;
+    background: linear-gradient(135deg, #1a3458 0%, #2a528a 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(26, 52, 88, 0.15);
+    flex-wrap: wrap;
+  }
+
+  &__score-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: #f6c343;
+    flex-shrink: 0;
+  }
+
+  &__score-info {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  &__score-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #ffffff;
+  }
+
+  &__score-desc {
+    font-size: 0.92rem;
+    opacity: 0.9;
+    line-height: 1.4;
+  }
+
+  &__score-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    color: #1a3458;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &__score-number {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    color: vars.$color-accent;
+  }
+
+  &__score-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: vars.$color-text-secondary;
+  }
+
+  // Seção de Ações
+  &__actions-section {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-md;
+  }
+
+  &__section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: vars.$color-primary;
+  }
+
+  &__cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: vars.$spacing-md;
+  }
+}
+
+// Cards Individuais
+.painel-card {
+  display: flex;
+  flex-direction: column;
+  padding: vars.$spacing-lg;
+  background-color: #ffffff;
+  border: 2px solid rgba(26, 52, 88, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast, border-color vars.$transition-fast;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(26, 52, 88, 0.3);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    margin-bottom: vars.$spacing-sm;
+
+    &--blue {
+      background-color: #eff6ff;
+      color: #2563eb;
+    }
+
+    &--green {
+      background-color: #f0fdf4;
+      color: #16a34a;
+    }
+
+    &--orange {
+      background-color: #fff7ed;
+      color: #ea580c;
+    }
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: vars.$color-primary;
+    margin-bottom: vars.$spacing-xs;
+  }
+
+  &__desc {
+    font-size: 0.9rem;
+    color: vars.$color-text-secondary;
+    line-height: 1.5;
+    flex: 1;
+    margin-bottom: vars.$spacing-md;
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    background-color: #1a3458;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color vars.$transition-fast;
+
+    &:hover {
+      background-color: #132742;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #1a3458;
+      outline-offset: 2px;
+    }
+  }
+}

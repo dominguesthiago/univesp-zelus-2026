@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Smartphone } from 'lucide-react';
 import loginCidadaoImg from '../assets/images/login-cidadao.png';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
+import { loginCidadao } from '../services/api';
 import './LoginCidadao.scss';
 
 // Ícone personalizado de cartão de identificação (fiel ao mockup)
@@ -53,6 +54,7 @@ const LoginCidadao = () => {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+  const [erroApi, setErroApi] = useState('');
   const [mensagemSucesso, setMensagemSucesso] = useState(location.state?.mensagemSucesso || '');
   const [carregando, setCarregando] = useState(false);
 
@@ -68,16 +70,18 @@ const LoginCidadao = () => {
   const handleCpfChange = (e) => {
     setCpf(formatarCPF(e.target.value));
     if (mensagemErro) setMensagemErro('');
+    if (erroApi) setErroApi('');
     if (mensagemSucesso) setMensagemSucesso('');
   };
 
   const handleSenhaChange = (e) => {
     setSenha(e.target.value);
     if (mensagemErro) setMensagemErro('');
+    if (erroApi) setErroApi('');
     if (mensagemSucesso) setMensagemSucesso('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const apenasNumerosCpf = cpf.replace(/\D/g, '');
@@ -93,12 +97,29 @@ const LoginCidadao = () => {
 
     setCarregando(true);
     setMensagemErro('');
+    setErroApi('');
+    setMensagemSucesso('');
 
-    setTimeout(() => {
+    try {
+      const resposta = await loginCidadao({
+        cpf: apenasNumerosCpf,
+        senha,
+      });
+
+      if (resposta?.token) {
+        localStorage.setItem('zelus_token', resposta.token);
+      }
+      if (resposta?.dados) {
+        localStorage.setItem('zelus_cidadao', JSON.stringify(resposta.dados));
+      }
+
+      navigate('/cidadao/painel');
+    } catch (erro) {
+      const msg = erro?.message || 'Erro ao realizar login. Verifique suas credenciais.';
+      setErroApi(msg);
+    } finally {
       setCarregando(false);
-      alert('Login validado com sucesso!');
-      navigate('/');
-    }, 500);
+    }
   };
 
   return (
@@ -152,16 +173,16 @@ const LoginCidadao = () => {
           </h1>
 
           {/* Mensagem de sucesso (ex: redirecionamento após cadastro bem-sucedido) */}
-          {mensagemSucesso && (
+          {mensagemSucesso && !erroApi && !mensagemErro && (
             <div id="login-sucesso" className="login-alert login-alert--success" role="status" aria-live="polite">
               {mensagemSucesso}
             </div>
           )}
 
-          {/* Mensagem de alerta se houver erro */}
-          {mensagemErro && (
+          {/* Mensagem de alerta se houver erro de validação local ou da API */}
+          {(erroApi || mensagemErro) && (
             <div id="login-erro" className="login-alert" role="alert" aria-live="polite">
-              {mensagemErro}
+              {erroApi || mensagemErro}
             </div>
           )}
 
@@ -192,8 +213,8 @@ const LoginCidadao = () => {
                   maxLength={14}
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'login-erro' : undefined}
+                  aria-invalid={erroApi || mensagemErro ? 'true' : 'false'}
+                  aria-describedby={erroApi || mensagemErro ? 'login-erro' : undefined}
                 />
               </div>
             </div>
@@ -216,8 +237,8 @@ const LoginCidadao = () => {
                   className="login-input-box__field"
                   required
                   aria-required="true"
-                  aria-invalid={mensagemErro ? 'true' : 'false'}
-                  aria-describedby={mensagemErro ? 'login-erro' : undefined}
+                  aria-invalid={erroApi || mensagemErro ? 'true' : 'false'}
+                  aria-describedby={erroApi || mensagemErro ? 'login-erro' : undefined}
                 />
                 <button
                   type="button"
@@ -251,7 +272,7 @@ const LoginCidadao = () => {
               aria-label="Entrar na conta do cidadão"
               aria-busy={carregando}
             >
-              <span>{carregando ? 'ENTRANDO...' : 'ENTRAR'}</span>
+              <span>{carregando ? 'Entrando...' : 'ENTRAR'}</span>
               <Smartphone size={22} color="#ffffff" strokeWidth={2.5} aria-hidden="true" />
             </button>
 

@@ -75,9 +75,26 @@ export async function registrarCidadao(dados) {
   });
 }
 
+/**
+ * Autentica (login) um cidadão no sistema ZELUS
+ * POST /api/auth/cidadao/login
+ * @param {Object} credenciais
+ * @param {string} credenciais.cpf - 11 dígitos numéricos sanitizados
+ * @param {string} credenciais.senha
+ * @returns {Promise<{sucesso: boolean, mensagem: string, token: string, dados: any}>}
+ */
+export async function loginCidadao(credenciais) {
+  return request('/api/auth/cidadao/login', {
+    method: 'POST',
+    body: JSON.stringify(credenciais),
+  });
+}
+
 const api = {
   request,
   registrarCidadao,
+  loginCidadao,
 };
 
 export default api;
+

@@ -3,7 +3,7 @@
 **Documento:** Painel Consolidado de Qualidade de Software e Acessibilidade (QA / Testes)  
 **Projeto:** ZELUS — Sistema de Gestão de Zeladoria Urbana  
 **Data:** 21 de outubro de 2026  
-**Status da Suíte Completa:** ✅ 100% APROVADO (5 suítes / 37 testes automatizados)  
+**Status da Suíte Completa:** ✅ 100% APROVADO (5 suítes / 41 testes automatizados)  
 
 ---
 
@@ -16,13 +16,13 @@ A qualidade do código do frontend do projeto **ZELUS** é assegurada por testes
 RESULTADO DA EXECUÇÃO CONSOLIDADA (npm test -- --watchAll=false / CI=true)
 ========================================================================================
 PASS  src/tests/Home.test.js (5 testes)
-PASS  src/tests/LoginCidadao.test.js (10 testes)
+PASS  src/tests/LoginCidadao.test.js (14 testes)
 PASS  src/tests/CadastroCidadao.test.js (14 testes)
 PASS  src/tests/ActionCard.test.js (4 testes)
 PASS  src/tests/CookieBanner.test.js (4 testes)
 
 Test Suites: 5 passed, 5 total
-Tests:       37 passed, 37 total
+Tests:       41 passed, 41 total
 Snapshots:   0 total
 Ran all test suites.
 ========================================================================================
@@ -35,11 +35,11 @@ Ran all test suites.
 | Módulo / Componente Testado | Arquivo de Teste | Relatório Detalhado | Testes | Status |
 |---|---|---|:---:|:---:|
 | **Página Inicial** | [`Home.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/Home.test.js) | [relatorio-home.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-home.md) | 5 | ✅ 100% |
-| **Login do Cidadão** | [`LoginCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/LoginCidadao.test.js) | [relatorio-login-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-login-cidadao.md) | 10 | ✅ 100% |
+| **Login do Cidadão** | [`LoginCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/LoginCidadao.test.js) | [relatorio-login-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-login-cidadao.md) | 14 | ✅ 100% |
 | **Cadastro do Cidadão** | [`CadastroCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/CadastroCidadao.test.js) | [relatorio-cadastro-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-cadastro-cidadao.md) | 14 | ✅ 100% |
 | **Cartão de Ação** | [`ActionCard.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/ActionCard.test.js) | [relatorio-action-card.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-action-card.md) | 4 | ✅ 100% |
 | **Privacidade e LGPD** | [`CookieBanner.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/CookieBanner.test.js) | [relatorio-cookie-banner.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-cookie-banner.md) | 4 | ✅ 100% |
-| **Total Consolidado** | **5 suítes** | — | **37** | **✅ APROVADO** |
+| **Total Consolidado** | **5 suítes** | — | **41** | **✅ APROVADO** |
 
 ---
 

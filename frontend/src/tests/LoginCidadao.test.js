@@ -3,10 +3,21 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import LoginCidadao from '../pages/LoginCidadao';
+import { loginCidadao } from '../services/api';
 
-const renderLoginCidadao = () => {
+const mockedNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedNavigate,
+}));
+
+jest.mock('../services/api', () => ({
+  loginCidadao: jest.fn(),
+}));
+
+const renderLoginCidadao = (initialEntries = ['/login/cidadao']) => {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={initialEntries}>
       <LoginCidadao />
     </MemoryRouter>
   );
@@ -15,6 +26,18 @@ const renderLoginCidadao = () => {
 describe('Página de Login do Cidadão (LoginCidadao)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
+    loginCidadao.mockResolvedValue({
+      sucesso: true,
+      mensagem: 'Login realizado com sucesso.',
+      token: 'jwt-token-teste-12345',
+      dados: {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        nome_completo: 'Carlos Silva',
+        cpf: '12345678901',
+        pontos: 15,
+      },
+    });
   });
 
   test('deve renderizar a estrutura semântica principal com landmark <main> e título <h1>', () => {
@@ -122,6 +145,7 @@ describe('Página de Login do Cidadão (LoginCidadao)', () => {
     expect(alertMessage).toBeInTheDocument();
     expect(alertMessage).toHaveTextContent('Informe um CPF válido com 11 dígitos.');
     expect(cpfInput).toHaveAttribute('aria-invalid', 'true');
+    expect(loginCidadao).not.toHaveBeenCalled();
   });
 
   test('deve exibir mensagem de erro ao submeter CPF válido mas com senha em branco', () => {
@@ -136,6 +160,117 @@ describe('Página de Login do Cidadão (LoginCidadao)', () => {
     const alertMessage = screen.getByRole('alert');
     expect(alertMessage).toBeInTheDocument();
     expect(alertMessage).toHaveTextContent('Informe a sua senha.');
+    expect(loginCidadao).not.toHaveBeenCalled();
+  });
+
+  test('deve chamar loginCidadao com payload sanitizado, salvar token no localStorage e redirecionar para /cidadao/painel', async () => {
+    renderLoginCidadao();
+
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
+    const senhaInput = screen.getByLabelText(/^Senha$/i);
+    const submitButton = screen.getByRole('button', { name: /Entrar na conta do cidadão/i });
+
+    // Digita com máscara
+    fireEvent.change(cpfInput, { target: { value: '123.456.789-01' } });
+    fireEvent.change(senhaInput, { target: { value: 'SenhaForte123' } });
+
+    fireEvent.click(submitButton);
+
+    // Valida que o payload foi sanitizado (apenas números no CPF)
+    await waitFor(() => {
+      expect(loginCidadao).toHaveBeenCalledWith({
+        cpf: '12345678901',
+        senha: 'SenhaForte123',
+      });
+    });
+
+    // Valida armazenamento no localStorage
+    expect(localStorage.getItem('zelus_token')).toBe('jwt-token-teste-12345');
+    expect(localStorage.getItem('zelus_cidadao')).toContain('Carlos Silva');
+
+    // Valida redirecionamento
+    await waitFor(() => {
+      expect(mockedNavigate).toHaveBeenCalledWith('/cidadao/painel');
+    });
+  });
+
+  test('deve desabilitar o botão e exibir "Entrando..." durante o carregamento da requisição', async () => {
+    let resolverPromise;
+    loginCidadao.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolverPromise = resolve;
+        })
+    );
+
+    renderLoginCidadao();
+
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
+    const senhaInput = screen.getByLabelText(/^Senha$/i);
+    const submitButton = screen.getByRole('button', { name: /Entrar na conta do cidadão/i });
+
+    fireEvent.change(cpfInput, { target: { value: '12345678901' } });
+    fireEvent.change(senhaInput, { target: { value: 'SenhaForte123' } });
+
+    fireEvent.click(submitButton);
+
+    // O botão deve desabilitar e indicar carregamento
+    expect(submitButton).toBeDisabled();
+    expect(submitButton).toHaveTextContent(/Entrando.../i);
+    expect(submitButton).toHaveAttribute('aria-busy', 'true');
+
+    // Libera a promise
+    resolverPromise({
+      sucesso: true,
+      token: 'token-abc',
+      dados: { nome_completo: 'Carlos' },
+    });
+
+    await waitFor(() => {
+      expect(mockedNavigate).toHaveBeenCalledWith('/cidadao/painel');
+    });
+  });
+
+  test('deve renderizar erro da API na tela com role="alert" e reabilitar o botão quando o login falhar', async () => {
+    loginCidadao.mockRejectedValueOnce(new Error('Credenciais inválidas.'));
+
+    renderLoginCidadao();
+
+    const cpfInput = screen.getByLabelText(/CPF \(apenas números\)/i);
+    const senhaInput = screen.getByLabelText(/^Senha$/i);
+    const submitButton = screen.getByRole('button', { name: /Entrar na conta do cidadão/i });
+
+    fireEvent.change(cpfInput, { target: { value: '12345678901' } });
+    fireEvent.change(senhaInput, { target: { value: 'SenhaIncorreta' } });
+
+    fireEvent.click(submitButton);
+
+    const alertMessage = await screen.findByRole('alert');
+    expect(alertMessage).toBeInTheDocument();
+    expect(alertMessage).toHaveTextContent('Credenciais inválidas.');
+
+    expect(submitButton).not.toBeDisabled();
+    expect(submitButton).toHaveTextContent('ENTRAR');
+    expect(localStorage.getItem('zelus_token')).toBeNull();
+  });
+
+  test('deve exibir mensagem de sucesso quando fornecida no location state', () => {
+    render(
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/login/cidadao',
+            state: { mensagemSucesso: 'Cadastro realizado com sucesso! Faça login para continuar.' },
+          },
+        ]}
+      >
+        <LoginCidadao />
+      </MemoryRouter>
+    );
+
+    const alertSucesso = screen.getByRole('status');
+    expect(alertSucesso).toBeInTheDocument();
+    expect(alertSucesso).toHaveTextContent('Cadastro realizado com sucesso! Faça login para continuar.');
   });
 
   test('deve renderizar links de navegação acessíveis para recuperação de senha, cadastro e voltar', () => {
