@@ -282,7 +282,7 @@ describe('Página de Login do Cidadão (LoginCidadao)', () => {
 
     const forgotLink = screen.getByRole('link', { name: /Esqueci minha senha/i });
     expect(forgotLink).toBeInTheDocument();
-    expect(forgotLink).toHaveAttribute('href', '/recuperar-senha');
+    expect(forgotLink).toHaveAttribute('href', '/recuperar-senha/cidadao');
 
     const signupLink = screen.getByRole('link', { name: /Cadastre-se aqui/i });
     expect(signupLink).toBeInTheDocument();

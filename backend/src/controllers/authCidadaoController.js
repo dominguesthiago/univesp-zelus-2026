@@ -151,3 +151,66 @@ exports.loginCidadao = async (req, res) => {
     });
   }
 };
+
+exports.redefinirSenhaCidadao = async (req, res) => {
+  try {
+    const { cpf, email, nova_senha, senha } = req.body;
+    const senhaFinal = nova_senha || senha;
+
+    // 1. Validação básica de campos
+    if (!cpf || !email || !senhaFinal) {
+      return res.status(400).json({
+        sucesso: false,
+        mensagem: 'CPF, e-mail e nova senha são obrigatórios.'
+      });
+    }
+
+    // 2. Buscar o cidadão associando CPF e E-mail
+    const { data: cidadao, error: errorBusca } = await supabaseAdmin
+      .from('cidadaos')
+      .select('id, cpf, email')
+      .eq('cpf', cpf)
+      .eq('email', email)
+      .maybeSingle();
+
+    if (errorBusca) {
+      console.error('[authCidadaoController] Erro ao buscar cidadão para redefinição:', errorBusca);
+      return res.status(500).json({ sucesso: false, mensagem: 'Erro interno ao validar dados.' });
+    }
+
+    if (!cidadao) {
+      return res.status(404).json({
+        sucesso: false,
+        mensagem: 'Dados não conferem. Verifique o CPF e o e-mail informados.'
+      });
+    }
+
+    // 3. Criptografar nova senha
+    const salt = await bcrypt.genSalt(10);
+    const senhaHash = await bcrypt.hash(senhaFinal, salt);
+
+    // 4. Atualizar no banco de dados
+    const { error: errorUpdate } = await supabaseAdmin
+      .from('cidadaos')
+      .update({ senha: senhaHash })
+      .eq('id', cidadao.id);
+
+    if (errorUpdate) {
+      console.error('[authCidadaoController] Erro ao atualizar senha no banco:', errorUpdate);
+      return res.status(500).json({ sucesso: false, mensagem: 'Erro interno ao atualizar a senha.' });
+    }
+
+    return res.status(200).json({
+      sucesso: true,
+      mensagem: 'Senha redefinida com sucesso!'
+    });
+
+  } catch (erro) {
+    console.error('[authCidadaoController] Erro inesperado na redefinição de senha:', erro);
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro interno do servidor.'
+    });
+  }
+};
+

@@ -261,7 +261,7 @@ const LoginCidadao = () => {
 
             {/* Link Esqueci minha senha */}
             <div className="login-forgot-row">
-              <Link to="/recuperar-senha" className="login-forgot-link">
+              <Link to="/recuperar-senha/cidadao" className="login-forgot-link">
                 Esqueci minha senha
               </Link>
             </div>

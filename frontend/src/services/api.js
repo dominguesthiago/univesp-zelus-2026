@@ -90,11 +90,29 @@ export async function loginCidadao(credenciais) {
   });
 }
 
+/**
+ * Redefine a senha de acesso do cidadão
+ * PUT /api/auth/cidadao/nova-senha
+ * @param {Object} dados
+ * @param {string} dados.cpf - 11 dígitos numéricos sanitizados
+ * @param {string} dados.email
+ * @param {string} dados.nova_senha
+ * @returns {Promise<{sucesso: boolean, mensagem: string}>}
+ */
+export async function redefinirSenhaCidadao(dados) {
+  return request('/api/auth/cidadao/nova-senha', {
+    method: 'PUT',
+    body: JSON.stringify(dados),
+  });
+}
+
 const api = {
   request,
   registrarCidadao,
   loginCidadao,
+  redefinirSenhaCidadao,
 };
 
 export default api;
+
 

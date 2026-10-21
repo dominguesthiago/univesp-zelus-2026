@@ -10,4 +10,9 @@ router.post('/registro', authCidadaoController.registrarCidadao);
 // POST /api/auth/cidadao/login
 router.post('/login', authCidadaoController.loginCidadao);
 
+// Rota para redefinir senha do cidadão
+// PUT /api/auth/cidadao/nova-senha
+router.put('/nova-senha', authCidadaoController.redefinirSenhaCidadao);
+
 module.exports = router;
+

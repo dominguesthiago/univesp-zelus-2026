@@ -1,0 +1,361 @@
+// ==============================================================
+// Arquivo: RecuperarSenhaCidadao.scss — Estilos de Recuperação de Senha
+// Design System ZELUS: Cores institucionais, acessibilidade WCAG e bordas cartum
+// ==============================================================
+
+@use '../styles/variables' as vars;
+
+.recuperar-senha-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
+  width: 100%;
+  padding: 12px;
+  background-color: vars.$color-bg-ice;
+  box-sizing: border-box;
+}
+
+// -- Moldura de Smartphone (Pixel Perfect / Cartoon Pop) --
+.recuperar-card-mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 420px;
+  min-height: min(620px, calc(100dvh - 24px));
+  background-color: #ffffff;
+  border: 3.5px solid #1a1a24;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0 #1a1a24;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+    min-height: calc(100dvh - 24px);
+    border-radius: 22px;
+  }
+}
+
+// -- Cabeçalho Azul Institucional --
+.recuperar-header {
+  background-color: #1a3458;
+  padding: 12px 16px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 3px solid #1a1a24;
+
+  &__top {
+    display: flex;
+    align-items: center;
+  }
+
+  &__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity vars.$transition-fast;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__back-chevron {
+    font-size: 1.4rem;
+    line-height: 1;
+    font-weight: bold;
+    display: inline-block;
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -6px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__logo-icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.4));
+  }
+
+  &__title {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    line-height: 1;
+  }
+
+  &__subtitle {
+    color: #fbd362;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+}
+
+// -- Conteúdo Principal (Zero Scroll) --
+.recuperar-main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  padding: 14px 20px 16px 20px;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+.recuperar-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1a1a24;
+  text-align: center;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.3px;
+}
+
+// -- Caixa de Aviso Acadêmico (role="note") --
+.recuperar-aviso-academico {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background-color: #f0f7ff;
+  border: 1.5px solid #b8daff;
+  border-left: 4px solid #1a3458;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  &__icon {
+    color: #1a3458;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: #1a3458;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+}
+
+// -- Mensagens de Alerta (Sucesso e Erro) --
+.recuperar-alert {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1.5px solid #ef9a9a;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  box-sizing: border-box;
+
+  &--success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+  }
+}
+
+// -- Formulário --
+.recuperar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.recuperar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+
+  &__label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1a1a24;
+    margin-left: 2px;
+  }
+
+  &__error {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #c62828;
+    margin-top: 2px;
+    margin-left: 2px;
+  }
+}
+
+// -- Caixa do Input com Borda Grossa --
+.recuperar-input-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  background-color: #ffffff;
+  border: 2px solid #1a1a24;
+  border-radius: 12px;
+  box-sizing: border-box;
+  transition: border-color vars.$transition-fast, box-shadow vars.$transition-fast;
+
+  &:focus-within {
+    border-color: #1a3458;
+    box-shadow: 0 0 0 2px rgba(26, 52, 88, 0.2);
+  }
+
+  &--invalid {
+    border-color: #c62828;
+    background-color: #fffbfa;
+
+    &:focus-within {
+      border-color: #c62828;
+      box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.2);
+    }
+  }
+
+  .recuperar-input-icon {
+    flex-shrink: 0;
+  }
+
+  &__field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1a1a24;
+    font-family: inherit;
+
+    &::placeholder {
+      color: #6c757d;
+      opacity: 0.9;
+    }
+  }
+
+  &__eye-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #1a3458;
+    }
+  }
+}
+
+// -- Botão Redefinir Senha --
+.recuperar-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 46px;
+  margin-top: 6px;
+  background-color: #1a3458;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border: 2.5px solid #1a1a24;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color vars.$transition-fast, transform vars.$transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: #132742;
+    transform: scale(1.008);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #1a3458;
+    outline-offset: 2px;
+  }
+}
+
+// -- Link Lembrou a senha? Voltar ao Login --
+.recuperar-login-row {
+  text-align: center;
+  font-size: 0.88rem;
+  color: #1a1a24;
+  margin-top: 8px;
+}
+
+.recuperar-login-link {
+  color: #1a3458;
+  font-weight: 700;
+  text-decoration: underline;
+  margin-left: 2px;
+
+  &:hover {
+    color: #0e2038;
+  }
+}
+
+// -- Rodapé Tagline --
+.recuperar-footer-tagline {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-top: auto;
+  padding-top: 10px;
+  letter-spacing: -0.2px;
+}

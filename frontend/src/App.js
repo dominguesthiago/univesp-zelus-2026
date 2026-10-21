@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import LoginCidadao from './pages/LoginCidadao';
 import CadastroCidadao from './pages/CadastroCidadao';
 import PainelCidadao from './pages/PainelCidadao';
+import RecuperarSenhaCidadao from './pages/RecuperarSenhaCidadao';
 import Privacidade from './pages/Privacidade';
 import NotFound from './pages/NotFound';
 
@@ -14,11 +15,14 @@ import NotFound from './pages/NotFound';
  * Componente Interno de Conteúdo e Layout
  * Controla a convivência harmônica de cabeçalhos:
  * - Rotas institucionais exibem o Header e Footer globais.
- * - Rotas de autenticação/fluxo mobile (/login/..., /cadastro/...) usam seu cabeçalho próprio dedicado.
+ * - Rotas de autenticação/fluxo mobile (/login/..., /cadastro/..., /recuperar-senha/...) usam seu cabeçalho próprio dedicado.
  */
 function AppContent() {
   const location = useLocation();
-  const isAuthRoute = location.pathname.startsWith('/login') || location.pathname.startsWith('/cadastro');
+  const isAuthRoute =
+    location.pathname.startsWith('/login') ||
+    location.pathname.startsWith('/cadastro') ||
+    location.pathname.startsWith('/recuperar-senha');
   const isHomeRoute = location.pathname === '/';
 
   return (
@@ -37,6 +41,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/login/cidadao" element={<LoginCidadao />} />
           <Route path="/cadastro/cidadao" element={<CadastroCidadao />} />
+          <Route path="/recuperar-senha/cidadao" element={<RecuperarSenhaCidadao />} />
           <Route path="/cidadao/painel" element={<PainelCidadao />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />
           <Route path="*" element={<NotFound />} />
