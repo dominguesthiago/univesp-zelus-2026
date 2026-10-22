@@ -72,7 +72,7 @@
   &__brand-subtitle,
   .auth-header__subtitle {
     font-size: 0.78rem;
-    color: vars.$color-accent !important;
+    color: #ffffff !important;
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase !important;
@@ -116,7 +116,8 @@
     font-size: 0.88rem;
   }
 
-  // -- Link "Sair" (área logada do cidadão) --
+  // -- Ação de Navegação (Sair / Voltar) alinhada no canto superior esquerdo --
+  &__nav-action,
   &__sair {
     position: absolute;
     left: 16px;

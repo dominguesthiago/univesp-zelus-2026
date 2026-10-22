@@ -130,16 +130,14 @@ const LoginCidadao = () => {
       <div className="login-card-mobile" role="region" aria-label="Tela de Login do Cidadão">
         {/* Cabeçalho azul institucional fiel ao mockup */}
         <header className="login-header">
-          <div className="login-header__top">
-            <Link
-              to="/"
-              className="login-header__back-link"
-              aria-label="Voltar para a página inicial"
-            >
-              <span className="login-header__back-chevron">&lsaquo;</span>
-              <span>Voltar</span>
-            </Link>
-          </div>
+          <Link
+            to="/"
+            className="login-header__back-link"
+            aria-label="Voltar para a página inicial"
+          >
+            <span className="login-header__back-chevron">&lsaquo;</span>
+            <span>Voltar</span>
+          </Link>
 
           <div className="login-header__brand">
             <div className="login-header__title-row">

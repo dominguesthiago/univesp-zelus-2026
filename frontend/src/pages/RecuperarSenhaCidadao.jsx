@@ -185,16 +185,14 @@ const RecuperarSenhaCidadao = () => {
       <div className="recuperar-card-mobile" role="region" aria-label="Tela de Recuperação de Senha do Cidadão">
         {/* Cabeçalho azul institucional */}
         <header className="recuperar-header">
-          <div className="recuperar-header__top">
-            <Link
-              to="/login/cidadao"
-              className="recuperar-header__back-link"
-              aria-label="Voltar para a página de login"
-            >
-              <span className="recuperar-header__back-chevron">&lsaquo;</span>
-              <span>Voltar</span>
-            </Link>
-          </div>
+          <Link
+            to="/login/cidadao"
+            className="recuperar-header__back-link"
+            aria-label="Voltar para a página de login"
+          >
+            <span className="recuperar-header__back-chevron">&lsaquo;</span>
+            <span>Voltar</span>
+          </Link>
 
           <div className="recuperar-header__brand">
             <div className="recuperar-header__title-row">

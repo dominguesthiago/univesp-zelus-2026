@@ -262,16 +262,14 @@ const CadastroCidadao = () => {
       <div className="cadastro-card-mobile" role="region" aria-label="Tela de Cadastro do Cidadão">
         {/* Cabeçalho azul institucional fiel ao mockup */}
         <header className="cadastro-header">
-          <div className="cadastro-header__top">
-            <Link
-              to="/login/cidadao"
-              className="cadastro-header__back-link"
-              aria-label="Voltar para a página de login"
-            >
-              <span className="cadastro-header__back-chevron" aria-hidden="true">&lsaquo;</span>
-              <span>Voltar</span>
-            </Link>
-          </div>
+          <Link
+            to="/login/cidadao"
+            className="cadastro-header__back-link"
+            aria-label="Voltar para a página de login"
+          >
+            <span className="cadastro-header__back-chevron" aria-hidden="true">&lsaquo;</span>
+            <span>Voltar</span>
+          </Link>
 
           <div className="cadastro-header__brand">
             <div className="cadastro-header__title-row">

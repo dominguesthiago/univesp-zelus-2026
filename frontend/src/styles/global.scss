@@ -165,11 +165,13 @@ a {
 .app-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   width: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; // Previne qualquer rolagem da casca externa
 
   &--auth,
   &--home {
@@ -181,19 +183,33 @@ a {
   }
 
   &--auth {
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     width: 100%;
     margin: 0;
     padding: 0;
     background-color: vars.$color-surface;
     border: none;
+    overflow: hidden;
   }
 
   &--home {
     height: 100dvh;
     max-height: 100dvh;
     overflow: hidden; // Elimina qualquer barra de rolagem lateral ou vertical na Tela Inicial
+  }
+
+  &--painel {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    background-color: vars.$color-bg-ice;
+
+    .app-main {
+      min-height: 0;
+      overflow: hidden; // Scroll isolado exclusivamente na lista interna
+    }
   }
 }
 
@@ -206,15 +222,17 @@ a {
   min-height: 0; // Permite que os filhos flexíveis encolham sem provocar overflow
   margin: 0;
   padding: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   &--auth {
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: none;
     background-color: vars.$color-surface;
+    overflow-y: auto;
   }
 
   // O foco programático (skip link) não precisa de anel no contêiner inteiro
@@ -224,14 +242,14 @@ a {
 }
 
 // --------------------------------------------------------------
-// 4. SUBTÍTULO INSTITUCIONAL UNIFICADO DOS CABEÇALHOS (WCAG AAA)
+// 4. SUBTÍTULO INSTITUCIONAL UNIFICADO DOS CABEÇALHOS (BRANCO PURO)
 // --------------------------------------------------------------
 .auth-header__subtitle,
 .header__brand-subtitle,
 .login-header__subtitle,
 .cadastro-header__subtitle,
 .recuperar-header__subtitle {
-  color: vars.$color-accent !important;
+  color: #ffffff !important;
   font-size: 0.78rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.5px !important;
