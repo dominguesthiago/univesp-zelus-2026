@@ -2,8 +2,8 @@
 
 **Documento:** Painel Consolidado de Qualidade de Software e Acessibilidade (QA / Testes)  
 **Projeto:** ZELUS — Sistema de Gestão de Zeladoria Urbana  
-**Data:** 21 de outubro de 2026  
-**Status da Suíte Completa:** ✅ 100% APROVADO (6 suítes / 54 testes automatizados)  
+**Data:** 22 de outubro de 2026  
+**Status da Suíte Completa:** ✅ 100% APROVADO (8 suítes / 66 testes automatizados)  
 
 ---
 
@@ -21,9 +21,11 @@ PASS  src/tests/CadastroCidadao.test.js (14 testes)
 PASS  src/tests/RecuperarSenhaCidadao.test.js (13 testes)
 PASS  src/tests/ActionCard.test.js (4 testes)
 PASS  src/tests/CookieBanner.test.js (4 testes)
+PASS  src/tests/PainelCidadao.test.js (9 testes)
+PASS  src/tests/Header.test.js (3 testes)
 
-Test Suites: 6 passed, 6 total
-Tests:       54 passed, 54 total
+Test Suites: 8 passed, 8 total
+Tests:       66 passed, 66 total
 Snapshots:   0 total
 Ran all test suites.
 ========================================================================================
@@ -41,7 +43,9 @@ Ran all test suites.
 | **Recuperação de Senha** | [`RecuperarSenhaCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/RecuperarSenhaCidadao.test.js) | [relatorio-recuperar-senha.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-recuperar-senha.md) | 13 | ✅ 100% |
 | **Cartão de Ação** | [`ActionCard.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/ActionCard.test.js) | [relatorio-action-card.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-action-card.md) | 4 | ✅ 100% |
 | **Privacidade e LGPD** | [`CookieBanner.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/CookieBanner.test.js) | [relatorio-cookie-banner.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-cookie-banner.md) | 4 | ✅ 100% |
-| **Total Consolidado** | **6 suítes** | — | **54** | **✅ APROVADO** |
+| **Painel do Cidadão** | [`PainelCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/PainelCidadao.test.js) | Registro: [23-refatoracao-painel-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/prompts-ia/frontend/23-refatoracao-painel-cidadao.md) | 9 | ✅ 100% |
+| **Cabeçalho Global (Header)** | [`Header.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/Header.test.js) *(nova suíte)* | Registro: [23-refatoracao-painel-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/prompts-ia/frontend/23-refatoracao-painel-cidadao.md) | 3 | ✅ 100% |
+| **Total Consolidado** | **8 suítes** | — | **66** | **✅ APROVADO** |
 
 ---
 
