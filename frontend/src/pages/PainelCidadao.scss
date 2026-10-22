@@ -8,8 +8,8 @@
 
 @use '../styles/variables' as vars;
 
-$painel-verde: #00c853;
-$painel-verde-hover: #00b248;
+$painel-verde: vars.$color-secondary;
+$painel-verde-hover: vars.$color-secondary-hover;
 $painel-borda: vars.$color-text-primary; // #1a1a24
 $painel-max-width: 640px;
 
@@ -80,20 +80,19 @@ body.painel-cidadao-ativo {
   &__cta {
     width: 100%;
     padding: vars.$spacing-lg vars.$spacing-md;
-    background-color: $painel-verde;
-    color: #ffffff;
+    background-color: vars.$color-secondary;
+    color: vars.$color-text-primary;
     border: vars.$border-cartoon-lg;
     border-radius: vars.$border-radius-cartoon-lg;
     font-size: clamp(1.15rem, 4.8vw, 1.5rem);
     font-weight: 900;
     letter-spacing: 0.3px;
-    text-shadow: 1px 1px 0 $painel-borda;
     box-shadow: vars.$shadow-cartoon-lg;
     transition: transform vars.$transition-fast, box-shadow vars.$transition-fast,
       background-color vars.$transition-fast;
 
     &:hover {
-      background-color: $painel-verde-hover;
+      background-color: vars.$color-secondary-hover;
       transform: translate(-2px, -2px);
       box-shadow: 8px 8px 0 $painel-borda;
     }

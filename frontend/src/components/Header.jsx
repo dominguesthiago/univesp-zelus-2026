@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, LogOut } from 'lucide-react';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import './Header.scss';
 
@@ -17,7 +17,7 @@ const limparSessao = () => {
  * Reproduz fielmente o cabeçalho azul marinho com cubo 3D e 'ZELUS / Zeladoria Urbana',
  * exibindo 'Acessibilidade (?)' no desktop e marca centralizada no mobile conforme mockups.
  * Quando `mostrarSair` é verdadeiro (área logada do cidadão), exibe o link discreto
- * "Sair 🚪" no canto superior esquerdo.
+ * "Sair" com ícone LogOut no canto superior esquerdo.
  */
 const Header = ({ mostrarSair = false }) => {
   return (
@@ -33,7 +33,8 @@ const Header = ({ mostrarSair = false }) => {
             className="header__sair"
             aria-label="Sair da conta e encerrar sessão"
           >
-            Sair <span aria-hidden="true">🚪</span>
+            <LogOut size={16} aria-hidden="true" />
+            <span>Sair</span>
           </Link>
         )}
 

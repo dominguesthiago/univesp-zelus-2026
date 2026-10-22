@@ -14,6 +14,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
   &__container {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center; // Centralizado no mobile
@@ -117,18 +118,28 @@
 
   // -- Link "Sair" (área logada do cidadão) --
   &__sair {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    align-self: flex-start;
+    gap: 6px;
     background: transparent;
     color: #ffffff;
     border: none;
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
     cursor: pointer;
+    z-index: 10;
+    transition: opacity vars.$transition-fast;
+
+    @media (min-width: vars.$breakpoint-md) {
+      left: 24px;
+      font-size: 0.9rem;
+    }
 
     &:hover {
       color: #ffffff;
@@ -143,27 +154,10 @@
     }
   }
 
-  // Mobile: "Sair" ocupa uma linha fina no topo-esquerdo, sem inflar o cabeçalho
-  &--com-sair &__container {
-    flex-wrap: wrap;
-    row-gap: 4px;
-    padding: 6px 14px 8px;
-
+  // No desktop com o botão sair ativo, dá respiro à marca para evitar sobreposição
+  &--com-sair &__brand {
     @media (min-width: vars.$breakpoint-md) {
-      flex-wrap: nowrap;
-      row-gap: 0;
-      padding: 12px 24px;
-    }
-  }
-
-  &--com-sair &__sair {
-    flex: 0 0 100%;
-    justify-content: flex-start;
-
-    @media (min-width: vars.$breakpoint-md) {
-      flex: 0 0 auto;
-      align-self: center;
-      font-size: 0.88rem;
+      margin-left: 70px;
     }
   }
 }
