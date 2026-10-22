@@ -24,9 +24,10 @@ function AppContent() {
     location.pathname.startsWith('/cadastro') ||
     location.pathname.startsWith('/recuperar-senha');
   const isHomeRoute = location.pathname === '/';
+  const isPainelRoute = location.pathname.startsWith('/cidadao/painel');
 
   return (
-    <div className={`app-layout ${isAuthRoute ? 'app-layout--auth' : ''} ${isHomeRoute ? 'app-layout--home' : ''}`}>
+    <div className={`app-layout ${isAuthRoute ? 'app-layout--auth' : ''} ${isHomeRoute ? 'app-layout--home' : ''} ${isPainelRoute ? 'app-layout--painel' : ''}`}>
       {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
       <a href="#conteudo-principal" className="skip-link">
         Pular para o conteúdo principal

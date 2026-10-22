@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Award, LogOut, PlusCircle, List, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './PainelCidadao.scss';
 
 /**
- * Painel Provisório do Cidadão (PainelCidadao.jsx)
- * Destino pós-autenticação contendo a sessão ativa e dados do munícipe.
+ * Classe aplicada em <html> e <body> enquanto o painel está montado.
+ * Garante a "Regra de Ouro": a tela não rola; apenas a lista de solicitações.
+ */
+const CLASSE_TELA_TRAVADA = 'painel-cidadao-ativo';
+
+/**
+ * Painel do Cidadão (PainelCidadao.jsx)
+ * Dashboard colaborativo: boas-vindas, botão de nova solicitação e
+ * lista rolável (scroll isolado) de "Minhas Solicitações Recentes".
+ * O Header e o Footer institucionais são renderizados globalmente pelo App.js.
  */
 const PainelCidadao = () => {
-  const navigate = useNavigate();
   const [cidadao, setCidadao] = useState(null);
-  const [aviso, setAviso] = useState('');
+
+  // Mock de dados (simulação até a integração com a API de solicitações)
+  const solicitacoes = [
+    { id: 1, tipo: 'Buraco na Rua / Asfalto', protocolo: '#3842', data: '10/11/2026', status: 'Pendente', icone: '🕳️' },
+    { id: 2, tipo: 'Iluminação Pública Apagada', protocolo: '#3611', data: '02/11/2026', status: 'Concluído', icone: '💡' },
+    { id: 3, tipo: 'Descarte Irregular de Entulho', protocolo: '#3407', data: '25/10/2026', status: 'Pendente', icone: '🗑️' },
+  ];
 
   useEffect(() => {
-    const token = localStorage.getItem('zelus_token');
     const dadosSalvos = localStorage.getItem('zelus_cidadao');
-
     if (dadosSalvos) {
       try {
         setCidadao(JSON.parse(dadosSalvos));
@@ -23,144 +33,84 @@ const PainelCidadao = () => {
         console.error('Erro ao interpretar dados do cidadão:', e);
       }
     }
+  }, []);
 
-    // Se não houver token, permite navegação ou fallback seguro
-    if (!token) {
-      // Caso não esteja autenticado, pode optar por redirecionar
-    }
-  }, [navigate]);
+  // Trava a rolagem do documento enquanto o painel estiver ativo
+  useEffect(() => {
+    document.documentElement.classList.add(CLASSE_TELA_TRAVADA);
+    document.body.classList.add(CLASSE_TELA_TRAVADA);
+    return () => {
+      document.documentElement.classList.remove(CLASSE_TELA_TRAVADA);
+      document.body.classList.remove(CLASSE_TELA_TRAVADA);
+    };
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('zelus_token');
     localStorage.removeItem('zelus_cidadao');
-    navigate('/login/cidadao');
   };
 
   const primeiroNome = cidadao?.nome_completo
     ? cidadao.nome_completo.split(' ')[0]
     : 'Cidadão';
 
+  const classeBadge = (status) =>
+    status === 'Concluído' ? 'badge badge--concluido' : 'badge badge--pendente';
+
   return (
     <main id="conteudo-principal" className="painel-cidadao" tabIndex={-1}>
-      <div className="painel-cidadao__container">
-        {/* Cabeçalho de Boas-Vindas */}
-        <header className="painel-cidadao__header">
-          <div className="painel-cidadao__greeting">
-            <h1 className="painel-cidadao__title">
-              Olá, <span className="painel-cidadao__highlight">{primeiroNome}</span>!
-            </h1>
-            <p className="painel-cidadao__subtitle">
-              Bem-vindo ao seu espaço de colaboração e zeladoria urbana no ZELUS.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="painel-cidadao__logout-btn"
-            aria-label="Sair da conta e encerrar sessão"
-          >
-            <LogOut size={18} aria-hidden="true" />
-            <span>Sair</span>
-          </button>
-        </header>
-
-        {/* Cartão de Pontuação / Cidadania Ativa */}
-        <section
-          className="painel-cidadao__score-card"
-          aria-labelledby="score-card-title"
+      {/* Área fixa: Sair + boas-vindas + botão principal */}
+      <div className="painel-cidadao__topo">
+        <Link
+          to="/login/cidadao"
+          onClick={handleLogout}
+          className="painel-cidadao__sair"
+          aria-label="Sair da conta e encerrar sessão"
         >
-          <div className="painel-cidadao__score-icon-wrap" aria-hidden="true">
-            <Award size={32} />
-          </div>
-          <div className="painel-cidadao__score-info">
-            <h2 id="score-card-title" className="painel-cidadao__score-title">
-              Pontuação de Cidadania
-            </h2>
-            <p className="painel-cidadao__score-desc">
-              Você acumula pontos a cada zeladoria reportada e validada pela prefeitura.
-            </p>
-          </div>
-          <div className="painel-cidadao__score-badge" aria-label={`${cidadao?.pontos || 0} pontos acumulados`}>
-            <span className="painel-cidadao__score-number">{cidadao?.pontos || 0}</span>
-            <span className="painel-cidadao__score-label">pontos</span>
-          </div>
+          Sair -&gt;
+        </Link>
+
+        <section className="painel-cidadao__boas-vindas" aria-labelledby="painel-titulo">
+          <h1 id="painel-titulo" className="painel-cidadao__titulo">
+            Olá, {primeiroNome}! 👋
+          </h1>
+          <p className="painel-cidadao__subtitulo">
+            Acompanhe suas solicitações ou abra uma nova.
+          </p>
         </section>
 
-        {/* Aviso de funcionalidade em desenvolvimento */}
-        {aviso && (
-          <div
-            className="painel-cidadao__aviso"
-            role="status"
-            aria-live="polite"
-          >
-            <span>{aviso}</span>
-          </div>
-        )}
-
-        {/* Grade de Ações Rápidas */}
-        <section
-          className="painel-cidadao__actions-section"
-          aria-labelledby="actions-section-title"
-        >
-          <h2 id="actions-section-title" className="painel-cidadao__section-title">
-            Serviços Disponíveis
-          </h2>
-
-          <div className="painel-cidadao__cards-grid">
-            <div className="painel-card">
-              <div className="painel-card__icon painel-card__icon--blue" aria-hidden="true">
-                <PlusCircle size={28} />
-              </div>
-              <h3 className="painel-card__title">Nova Solicitação</h3>
-              <p className="painel-card__desc">
-                Reporte buracos, iluminação apagada, descarte irregular de entulho e mais.
-              </p>
-              <button
-                type="button"
-                className="painel-card__button"
-                onClick={() => setAviso('Módulo de Abertura de Solicitação em desenvolvimento.')}
-              >
-                Abrir Chamado
-              </button>
-            </div>
-
-            <div className="painel-card">
-              <div className="painel-card__icon painel-card__icon--green" aria-hidden="true">
-                <List size={28} />
-              </div>
-              <h3 className="painel-card__title">Minhas Solicitações</h3>
-              <p className="painel-card__desc">
-                Acompanhe o andamento das solicitações que você abriu na sua comunidade.
-              </p>
-              <button
-                type="button"
-                className="painel-card__button"
-                onClick={() => setAviso('Módulo de Acompanhamento em desenvolvimento.')}
-              >
-                Ver Histórico
-              </button>
-            </div>
-
-            <div className="painel-card">
-              <div className="painel-card__icon painel-card__icon--orange" aria-hidden="true">
-                <User size={28} />
-              </div>
-              <h3 className="painel-card__title">Meus Dados</h3>
-              <p className="painel-card__desc">
-                Gerencie suas informações cadastrais, e-mail de contato e telefone WhatsApp.
-              </p>
-              <button
-                type="button"
-                className="painel-card__button"
-                onClick={() => setAviso('Módulo de Perfil em desenvolvimento.')}
-              >
-                Editar Perfil
-              </button>
-            </div>
-          </div>
-        </section>
+        <button type="button" className="painel-cidadao__cta">
+          + NOVA SOLICITAÇÃO 📱
+        </button>
       </div>
+
+      {/* Área flexível: único contêiner com rolagem */}
+      <section
+        className="painel-cidadao__solicitacoes"
+        aria-labelledby="solicitacoes-titulo"
+      >
+        <h2 id="solicitacoes-titulo" className="painel-cidadao__secao-titulo">
+          Minhas Solicitações Recentes
+        </h2>
+
+        <ul className="painel-cidadao__lista" data-testid="lista-solicitacoes">
+          {solicitacoes.map((item) => (
+            <li key={item.id} className="solicitacao-card">
+              <div className="solicitacao-card__icone" aria-hidden="true">
+                {item.icone}
+              </div>
+              <div className="solicitacao-card__info">
+                <h3 className="solicitacao-card__tipo">{item.tipo}</h3>
+                <p className="solicitacao-card__meta">
+                  Protocolo: <strong>{item.protocolo}</strong>
+                </p>
+                <p className="solicitacao-card__meta">Data: {item.data}</p>
+                <span className={classeBadge(item.status)}>{item.status}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 };
