@@ -43,8 +43,8 @@ Ran all test suites.
 | **Recuperação de Senha** | [`RecuperarSenhaCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/RecuperarSenhaCidadao.test.js) | [relatorio-recuperar-senha.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-recuperar-senha.md) | 13 | ✅ 100% |
 | **Cartão de Ação** | [`ActionCard.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/ActionCard.test.js) | [relatorio-action-card.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-action-card.md) | 4 | ✅ 100% |
 | **Privacidade e LGPD** | [`CookieBanner.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/CookieBanner.test.js) | [relatorio-cookie-banner.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-cookie-banner.md) | 4 | ✅ 100% |
-| **Painel do Cidadão** | [`PainelCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/PainelCidadao.test.js) | Registro: [23-refatoracao-painel-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/prompts-ia/frontend/23-refatoracao-painel-cidadao.md) | 9 | ✅ 100% |
-| **Cabeçalho Global (Header)** | [`Header.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/Header.test.js) *(nova suíte)* | Registro: [23-refatoracao-painel-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/prompts-ia/frontend/23-refatoracao-painel-cidadao.md) | 3 | ✅ 100% |
+| **Painel do Cidadão** | [`PainelCidadao.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/PainelCidadao.test.js) | [relatorio-painel-cidadao.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-painel-cidadao.md) | 9 | ✅ 100% |
+| **Cabeçalho Global (Header)** | [`Header.test.js`](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/tests/Header.test.js) *(nova suíte)* | [relatorio-header.md](file:///c:/Users/dfeni/univesp-zelus-2026/docs/testes-frontend/relatorio-header.md) | 3 | ✅ 100% |
 | **Total Consolidado** | **8 suítes** | — | **66** | **✅ APROVADO** |
 
 ---
