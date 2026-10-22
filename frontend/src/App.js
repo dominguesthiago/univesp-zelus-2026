@@ -34,7 +34,7 @@ function AppContent() {
       </a>
 
       {/* Cabeçalho global (omitido em telas de login/cadastro com cabeçalho próprio) */}
-      {!isAuthRoute && <Header />}
+      {!isAuthRoute && <Header mostrarSair={isPainelRoute} />}
 
       {/* Área onde as páginas das rotas são renderizadas (cada página possui seu landmark <main>) */}
       <div className={`app-main ${isAuthRoute ? 'app-main--auth' : ''}`}>

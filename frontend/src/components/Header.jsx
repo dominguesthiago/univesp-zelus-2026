@@ -5,14 +5,38 @@ import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import './Header.scss';
 
 /**
+ * Encerra a sessão local do cidadão.
+ */
+const limparSessao = () => {
+  localStorage.removeItem('zelus_token');
+  localStorage.removeItem('zelus_cidadao');
+};
+
+/**
  * Componente Header Global
  * Reproduz fielmente o cabeçalho azul marinho com cubo 3D e 'ZELUS / Zeladoria Urbana',
  * exibindo 'Acessibilidade (?)' no desktop e marca centralizada no mobile conforme mockups.
+ * Quando `mostrarSair` é verdadeiro (área logada do cidadão), exibe o link discreto
+ * "Sair 🚪" no canto superior esquerdo.
  */
-const Header = () => {
+const Header = ({ mostrarSair = false }) => {
   return (
-    <header className="header" role="banner">
+    <header
+      className={`header${mostrarSair ? ' header--com-sair' : ''}`}
+      role="banner"
+    >
       <div className="header__container">
+        {mostrarSair && (
+          <Link
+            to="/login/cidadao"
+            onClick={limparSessao}
+            className="header__sair"
+            aria-label="Sair da conta e encerrar sessão"
+          >
+            Sair <span aria-hidden="true">🚪</span>
+          </Link>
+        )}
+
         <Link
           to="/"
           className="header__brand"

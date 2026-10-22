@@ -58,34 +58,6 @@ body.painel-cidadao-ativo {
     gap: vars.$spacing-md;
   }
 
-  &__sair {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 14px;
-    background-color: vars.$color-surface;
-    color: $painel-borda;
-    border: vars.$border-cartoon;
-    border-radius: vars.$border-radius-full;
-    font-size: vars.$font-size-sm;
-    font-weight: vars.$font-weight-bold;
-    text-decoration: none;
-    box-shadow: 2px 2px 0 $painel-borda;
-    transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
-
-    &:hover {
-      color: $painel-borda;
-      text-decoration: none;
-      transform: translate(-1px, -1px);
-      box-shadow: 3px 3px 0 $painel-borda;
-    }
-
-    &:active {
-      transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0 $painel-borda;
-    }
-  }
-
   &__boas-vindas {
     display: flex;
     flex-direction: column;
@@ -138,12 +110,14 @@ body.painel-cidadao-ativo {
     display: flex;
     flex-direction: column;
     min-height: 0; // Permite encolher e delegar a rolagem à lista
-    margin-top: vars.$spacing-lg;
+    margin-top: vars.$spacing-md;
   }
 
   &__secao-titulo {
     flex-shrink: 0;
-    margin-bottom: vars.$spacing-sm;
+    position: relative;
+    z-index: 1;
+    margin-bottom: vars.$spacing-md;
     font-size: vars.$font-size-xl;
     font-weight: 800;
     color: vars.$color-primary;
@@ -153,9 +127,12 @@ body.painel-cidadao-ativo {
   &__lista {
     flex: 1;
     min-height: 0;
+    margin-top: 4px;
     overflow-y: auto;
     list-style: none;
-    padding: 2px 6px vars.$spacing-md 2px; // espaço para sombras cartum
+    // Folga no topo/direita/base para a borda de 3px e a sombra cartum não serem cortadas
+    padding: 8px 8px 16px 4px;
+    scroll-padding-top: 8px;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
@@ -165,25 +142,31 @@ body.painel-cidadao-ativo {
 .solicitacao-card {
   display: flex;
   align-items: center;
-  gap: vars.$spacing-md;
-  margin-bottom: vars.$spacing-md;
-  padding: vars.$spacing-md;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 16px 18px;
   background-color: vars.$color-surface;
   border: 3px solid #1a1a24;
   border-radius: vars.$border-radius-cartoon;
   box-shadow: vars.$shadow-cartoon;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &__icone {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 56px;
-    height: 56px;
-    background-color: vars.$color-accent-light;
-    border: 3px solid #1a1a24;
-    border-radius: vars.$border-radius-cartoon;
-    font-size: 1.6rem;
+    width: 76px;
+    height: 76px;
+  }
+
+  &__imagem {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   &__info {
@@ -191,28 +174,39 @@ body.painel-cidadao-ativo {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  // Linha superior: título à esquerda + badge no canto superior direito
+  &__topo {
+    display: flex;
+    justify-content: space-between;
     align-items: flex-start;
-    gap: 2px;
+    gap: 10px;
   }
 
   &__tipo {
+    flex: 1;
+    min-width: 0;
     font-size: vars.$font-size-md;
     font-weight: 800;
-    line-height: vars.$line-height-tight;
+    line-height: 1.2;
     color: vars.$color-primary;
   }
 
   &__meta {
     font-size: vars.$font-size-sm;
+    line-height: 1.35;
     color: vars.$color-text-secondary;
   }
 }
 
 // -- Badges de Status --
 .badge {
+  flex-shrink: 0;
   display: inline-block;
-  margin-top: vars.$spacing-xxs;
-  padding: 2px 12px;
+  padding: 3px 10px;
   border: 2px solid #1a1a24;
   border-radius: vars.$border-radius-full;
   color: #1a1a24;
@@ -220,6 +214,7 @@ body.painel-cidadao-ativo {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.4px;
+  white-space: nowrap;
 
   &--pendente {
     background-color: #ffe08a;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import PainelCidadao from '../pages/PainelCidadao';
@@ -69,14 +69,32 @@ describe('Painel do Cidadão (PainelCidadao.jsx)', () => {
     expect(screen.getByText(/10\/11\/2026/)).toBeInTheDocument();
   });
 
-  test('deve exibir os badges de status com as classes corretas', () => {
+  test('deve exibir os badges de status com as classes corretas e alinhados ao título', () => {
     renderPainel();
 
     const pendente = screen.getAllByText('Pendente')[0];
     expect(pendente).toHaveClass('badge', 'badge--pendente');
+    expect(pendente.parentElement).toHaveClass('solicitacao-card__topo');
 
     const concluido = screen.getByText('Concluído');
     expect(concluido).toHaveClass('badge', 'badge--concluido');
+    expect(concluido.parentElement).toHaveClass('solicitacao-card__topo');
+  });
+
+  test('deve renderizar uma ilustração (imagem) em cada cartão de solicitação', () => {
+    renderPainel();
+
+    const lista = screen.getByTestId('lista-solicitacoes');
+    const cartoes = within(lista).getAllByRole('listitem');
+    cartoes.forEach((c) => {
+      expect(c.querySelector('img.solicitacao-card__imagem')).toBeInTheDocument();
+    });
+  });
+
+  test('não deve renderizar o "Sair" dentro da página (fica no Header)', () => {
+    renderPainel();
+
+    expect(screen.queryByRole('link', { name: /Sair/i })).not.toBeInTheDocument();
   });
 
   test('não deve exibir mais a Pontuação de Cidadania nem os Serviços Disponíveis', () => {
@@ -95,18 +113,5 @@ describe('Painel do Cidadão (PainelCidadao.jsx)', () => {
     unmount();
     expect(document.body).not.toHaveClass('painel-cidadao-ativo');
     expect(document.documentElement).not.toHaveClass('painel-cidadao-ativo');
-  });
-
-  test('deve exibir o link "Sair ->" e encerrar a sessão ao clicar', () => {
-    renderPainel();
-
-    const sair = screen.getByRole('link', { name: /Sair da conta/i });
-    expect(sair).toHaveTextContent('Sair ->');
-
-    fireEvent.click(sair);
-
-    expect(localStorage.getItem('zelus_token')).toBeNull();
-    expect(localStorage.getItem('zelus_cidadao')).toBeNull();
-    expect(screen.getByText('Tela de Login')).toBeInTheDocument();
   });
 });

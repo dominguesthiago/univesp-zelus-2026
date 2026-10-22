@@ -114,4 +114,56 @@
   &__help-label {
     font-size: 0.88rem;
   }
+
+  // -- Link "Sair" (área logada do cidadão) --
+  &__sair {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: #ffffff;
+      text-decoration: underline;
+      opacity: 0.85;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-accent-light;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  // Mobile: "Sair" ocupa uma linha fina no topo-esquerdo, sem inflar o cabeçalho
+  &--com-sair &__container {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding: 6px 14px 8px;
+
+    @media (min-width: vars.$breakpoint-md) {
+      flex-wrap: nowrap;
+      row-gap: 0;
+      padding: 12px 24px;
+    }
+  }
+
+  &--com-sair &__sair {
+    flex: 0 0 100%;
+    justify-content: flex-start;
+
+    @media (min-width: vars.$breakpoint-md) {
+      flex: 0 0 auto;
+      align-self: center;
+      font-size: 0.88rem;
+    }
+  }
 }

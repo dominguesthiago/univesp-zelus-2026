@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import ilustracaoBuraco from '../assets/images/solicitacao-buraco.jpg';
+import ilustracaoBueiro from '../assets/images/solicitacao-bueiro.jpg';
+import ilustracaoEntulho from '../assets/images/solicitacao-entulho.jpg';
 import './PainelCidadao.scss';
 
 /**
@@ -19,9 +21,9 @@ const PainelCidadao = () => {
 
   // Mock de dados (simulação até a integração com a API de solicitações)
   const solicitacoes = [
-    { id: 1, tipo: 'Buraco na Rua / Asfalto', protocolo: '#3842', data: '10/11/2026', status: 'Pendente', icone: '🕳️' },
-    { id: 2, tipo: 'Iluminação Pública Apagada', protocolo: '#3611', data: '02/11/2026', status: 'Concluído', icone: '💡' },
-    { id: 3, tipo: 'Descarte Irregular de Entulho', protocolo: '#3407', data: '25/10/2026', status: 'Pendente', icone: '🗑️' },
+    { id: 1, tipo: 'Buraco na Rua / Asfalto', protocolo: '#3842', data: '10/11/2026', status: 'Pendente', imagem: ilustracaoBuraco },
+    { id: 2, tipo: 'Bueiro / Boca-de-lobo', protocolo: '#1542', data: '08/11/2026', status: 'Concluído', imagem: ilustracaoBueiro },
+    { id: 3, tipo: 'Descarte Irregular de Entulho', protocolo: '#3407', data: '25/10/2026', status: 'Pendente', imagem: ilustracaoEntulho },
   ];
 
   useEffect(() => {
@@ -45,11 +47,6 @@ const PainelCidadao = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('zelus_token');
-    localStorage.removeItem('zelus_cidadao');
-  };
-
   const primeiroNome = cidadao?.nome_completo
     ? cidadao.nome_completo.split(' ')[0]
     : 'Cidadão';
@@ -59,17 +56,8 @@ const PainelCidadao = () => {
 
   return (
     <main id="conteudo-principal" className="painel-cidadao" tabIndex={-1}>
-      {/* Área fixa: Sair + boas-vindas + botão principal */}
+      {/* Área fixa: boas-vindas + botão principal (o "Sair" fica no Header) */}
       <div className="painel-cidadao__topo">
-        <Link
-          to="/login/cidadao"
-          onClick={handleLogout}
-          className="painel-cidadao__sair"
-          aria-label="Sair da conta e encerrar sessão"
-        >
-          Sair -&gt;
-        </Link>
-
         <section className="painel-cidadao__boas-vindas" aria-labelledby="painel-titulo">
           <h1 id="painel-titulo" className="painel-cidadao__titulo">
             Olá, {primeiroNome}! 👋
@@ -96,16 +84,28 @@ const PainelCidadao = () => {
         <ul className="painel-cidadao__lista" data-testid="lista-solicitacoes">
           {solicitacoes.map((item) => (
             <li key={item.id} className="solicitacao-card">
-              <div className="solicitacao-card__icone" aria-hidden="true">
-                {item.icone}
+              <div className="solicitacao-card__icone">
+                <img
+                  src={item.imagem}
+                  alt=""
+                  aria-hidden="true"
+                  className="solicitacao-card__imagem"
+                  width="72"
+                  height="72"
+                />
               </div>
               <div className="solicitacao-card__info">
-                <h3 className="solicitacao-card__tipo">{item.tipo}</h3>
+                <div className="solicitacao-card__topo">
+                  <h3 className="solicitacao-card__tipo">{item.tipo}</h3>
+                  <span className={classeBadge(item.status)}>
+                    {item.status}{' '}
+                    <span aria-hidden="true">{item.status === 'Concluído' ? '✓' : '⏳'}</span>
+                  </span>
+                </div>
                 <p className="solicitacao-card__meta">
                   Protocolo: <strong>{item.protocolo}</strong>
                 </p>
                 <p className="solicitacao-card__meta">Data: {item.data}</p>
-                <span className={classeBadge(item.status)}>{item.status}</span>
               </div>
             </li>
           ))}
