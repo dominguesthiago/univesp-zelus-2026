@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Smartphone } from 'lucide-react';
+import { Eye, EyeOff, Smartphone, ChevronLeft } from 'lucide-react';
 import loginCidadaoImg from '../assets/images/login-cidadao.png';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import { loginCidadao } from '../services/api';
@@ -135,7 +135,7 @@ const LoginCidadao = () => {
             className="login-header__back-link"
             aria-label="Voltar para a página inicial"
           >
-            <span className="login-header__back-chevron">&lsaquo;</span>
+            <ChevronLeft size={16} aria-hidden="true" />
             <span>Voltar</span>
           </Link>
 
@@ -145,12 +145,12 @@ const LoginCidadao = () => {
                 src={logoZelusIcon}
                 alt="Ícone ZELUS"
                 className="login-header__logo-icon"
-                width="28"
-                height="28"
+                width="22"
+                height="22"
               />
               <span className="login-header__title">ZELUS - Cidadão</span>
             </div>
-            <span className="login-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
+            <span className="login-header__subtitle auth-header__subtitle" style={{ color: '#ffffff' }}>Zeladoria Urbana</span>
           </div>
         </header>
 
@@ -284,12 +284,12 @@ const LoginCidadao = () => {
               </Link>
             </div>
           </form>
-
-          {/* Rodapé institucional sutil */}
-          <footer className="login-footer-tagline">
-            <span>ZELUS • Acessível e inclusivo para todos</span>
-          </footer>
         </main>
+
+        {/* Rodapé institucional sutil */}
+        <footer className="login-footer-tagline">
+          <span>ZELUS • Acessível e inclusivo para todos</span>
+        </footer>
       </div>
     </div>
   );

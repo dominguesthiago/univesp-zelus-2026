@@ -41,8 +41,9 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
   margin: 0;
   padding: 0;
   border: none;
@@ -50,10 +51,11 @@
   box-shadow: none;
   background-color: #ffffff;
   box-sizing: border-box;
+  overflow: hidden;
 
   // No desktop (>= 768px): formato estrito de cartão simulador
   @media (min-width: 768px) {
-    padding: vars.$spacing-lg vars.$spacing-md;
+    padding: vars.$spacing-md;
     background-color: vars.$color-bg-ice;
   }
 }
@@ -64,8 +66,8 @@
   flex-direction: column;
   width: 100%;
   max-width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  max-height: 100%;
   background-color: #ffffff;
   margin: 0;
   padding: 0;
@@ -78,8 +80,8 @@
   // No desktop (>= 768px): formato estrito de smartphone (iPhone)
   @media (min-width: 768px) {
     max-width: 385px;
-    height: auto;
-    min-height: 640px;
+    height: 100%;
+    max-height: min(720px, calc(100dvh - 32px));
     border: 5px solid #1a1a24;
     border-radius: 40px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
@@ -95,23 +97,26 @@
   width: 100%;
   background-color: #1a3458;
   color: #ffffff;
-  padding: 10px 16px;
+  padding: 14px 12px;
+  min-height: 68px;
+  box-sizing: border-box;
   flex-shrink: 0;
 
   @media (min-width: vars.$breakpoint-md) {
-    padding: 12px 24px;
+    padding: 16px 20px;
+    min-height: 72px;
   }
 
   &__back-link {
     position: absolute;
-    left: 16px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
@@ -119,8 +124,8 @@
     transition: opacity vars.$transition-fast;
 
     @media (min-width: vars.$breakpoint-md) {
-      left: 24px;
-      font-size: 0.9rem;
+      left: 20px;
+      font-size: 0.88rem;
     }
 
     &:hover {
@@ -135,12 +140,6 @@
     }
   }
 
-  &__back-chevron {
-    font-size: 1.3rem;
-    line-height: 1;
-    font-weight: 300;
-  }
-
   &__brand {
     display: flex;
     flex-direction: column;
@@ -148,50 +147,57 @@
     justify-content: center;
     text-align: center;
     line-height: 1.1;
+    padding: 0 54px; // Respiro generoso de 54px para nunca colidir com o botão Voltar
+    box-sizing: border-box;
   }
 
   &__title-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   &__logo-icon {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
     border-radius: 4px;
+    flex-shrink: 0;
   }
 
   &__title {
     color: #ffffff;
-    font-size: 1.25rem;
-    font-weight: 800;
-    letter-spacing: -0.3px;
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
     line-height: 1;
+    white-space: nowrap;
   }
 
   &__subtitle,
   .auth-header__subtitle {
     color: #ffffff !important;
-    font-size: 0.78rem;
+    font-size: 0.70rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     text-transform: uppercase !important;
     margin-top: 2px;
   }
 }
 
-// -- Conteúdo Principal (Zero Scroll) --
+// -- Conteúdo Principal (Scroll Interno Isolado com Header/Footer Fixos) --
 .recuperar-main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1 1 0;
   flex-grow: 1;
+  min-height: 0;
   padding: 14px 20px 16px 20px;
   background-color: #ffffff;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .recuperar-title {
@@ -414,14 +420,16 @@
   }
 }
 
-// -- Rodapé Tagline --
+// -- Rodapé Tagline (Fixo na Base) --
 .recuperar-footer-tagline {
+  flex-shrink: 0;
+  width: 100%;
+  background-color: #ffffff;
   text-align: center;
   font-size: 0.78rem;
   color: #1a1a24;
   font-weight: 500;
-  margin-top: auto;
-  padding-top: 10px;
-  padding-bottom: 8px;
+  padding: 8px 16px 14px;
   letter-spacing: -0.2px;
+  box-sizing: border-box;
 }

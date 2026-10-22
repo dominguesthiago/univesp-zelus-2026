@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Smartphone } from 'lucide-react';
+import { Eye, EyeOff, Smartphone, ChevronLeft } from 'lucide-react';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import { registrarCidadao } from '../services/api';
 import './CadastroCidadao.scss';
@@ -267,7 +267,7 @@ const CadastroCidadao = () => {
             className="cadastro-header__back-link"
             aria-label="Voltar para a página de login"
           >
-            <span className="cadastro-header__back-chevron" aria-hidden="true">&lsaquo;</span>
+            <ChevronLeft size={16} aria-hidden="true" />
             <span>Voltar</span>
           </Link>
 
@@ -277,13 +277,13 @@ const CadastroCidadao = () => {
                 src={logoZelusIcon}
                 alt=""
                 className="cadastro-header__logo-icon"
-                width="28"
-                height="28"
+                width="22"
+                height="22"
                 aria-hidden="true"
               />
               <span className="cadastro-header__title">ZELUS - Cadastro</span>
             </div>
-            <span className="cadastro-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
+            <span className="cadastro-header__subtitle auth-header__subtitle" style={{ color: '#ffffff' }}>Zeladoria Urbana</span>
           </div>
         </header>
 
@@ -519,12 +519,12 @@ const CadastroCidadao = () => {
               </Link>
             </div>
           </form>
-
-          {/* Rodapé institucional sutil */}
-          <footer className="cadastro-footer-tagline">
-            <span>ZELUS • Acessível e inclusivo para todos</span>
-          </footer>
         </main>
+
+        {/* Rodapé institucional sutil */}
+        <footer className="cadastro-footer-tagline">
+          <span>ZELUS • Acessível e inclusivo para todos</span>
+        </footer>
       </div>
     </div>
   );

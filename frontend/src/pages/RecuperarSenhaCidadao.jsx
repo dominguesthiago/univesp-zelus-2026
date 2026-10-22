@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, KeyRound, Info } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, Info, ChevronLeft } from 'lucide-react';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import { redefinirSenhaCidadao } from '../services/api';
 import './RecuperarSenhaCidadao.scss';
@@ -190,7 +190,7 @@ const RecuperarSenhaCidadao = () => {
             className="recuperar-header__back-link"
             aria-label="Voltar para a página de login"
           >
-            <span className="recuperar-header__back-chevron">&lsaquo;</span>
+            <ChevronLeft size={16} aria-hidden="true" />
             <span>Voltar</span>
           </Link>
 
@@ -200,12 +200,12 @@ const RecuperarSenhaCidadao = () => {
                 src={logoZelusIcon}
                 alt="Ícone ZELUS"
                 className="recuperar-header__logo-icon"
-                width="28"
-                height="28"
+                width="22"
+                height="22"
               />
               <span className="recuperar-header__title">ZELUS - Cidadão</span>
             </div>
-            <span className="recuperar-header__subtitle auth-header__subtitle">Zeladoria Urbana</span>
+            <span className="recuperar-header__subtitle auth-header__subtitle" style={{ color: '#ffffff' }}>Zeladoria Urbana</span>
           </div>
         </header>
 
@@ -406,12 +406,12 @@ const RecuperarSenhaCidadao = () => {
               </Link>
             </div>
           </form>
-
-          {/* Rodapé institucional */}
-          <footer className="recuperar-footer-tagline">
-            <span>ZELUS • Acessível e inclusivo para todos</span>
-          </footer>
         </main>
+
+        {/* Rodapé institucional */}
+        <footer className="recuperar-footer-tagline">
+          <span>ZELUS • Acessível e inclusivo para todos</span>
+        </footer>
       </div>
     </div>
   );
