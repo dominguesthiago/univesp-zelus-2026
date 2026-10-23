@@ -76,7 +76,7 @@ describe('Painel do Cidadão (PainelCidadao.jsx)', () => {
     expect(pendente).toHaveClass('badge', 'badge--pendente');
     expect(pendente.parentElement).toHaveClass('solicitacao-card__topo');
 
-    const concluido = screen.getByText('Concluído');
+    const concluido = screen.getAllByText('Concluído')[0];
     expect(concluido).toHaveClass('badge', 'badge--concluido');
     expect(concluido.parentElement).toHaveClass('solicitacao-card__topo');
   });

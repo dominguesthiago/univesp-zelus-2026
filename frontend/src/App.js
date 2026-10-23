@@ -8,6 +8,7 @@ import LoginCidadao from './pages/LoginCidadao';
 import CadastroCidadao from './pages/CadastroCidadao';
 import PainelCidadao from './pages/PainelCidadao';
 import RecuperarSenhaCidadao from './pages/RecuperarSenhaCidadao';
+import NovaSolicitacaoStep1 from './pages/NovaSolicitacaoStep1';
 import Privacidade from './pages/Privacidade';
 import NotFound from './pages/NotFound';
 
@@ -15,19 +16,46 @@ import NotFound from './pages/NotFound';
  * Componente Interno de Conteúdo e Layout
  * Controla a convivência harmônica de cabeçalhos:
  * - Rotas institucionais exibem o Header e Footer globais.
- * - Rotas de autenticação/fluxo mobile (/login/..., /cadastro/..., /recuperar-senha/...) usam seu cabeçalho próprio dedicado.
+ * - Rotas de autenticação e fluxo mobile (/login/..., /cadastro/..., /recuperar-senha/..., /solicitacao/...) usam seu cabeçalho próprio dedicado.
  */
 function AppContent() {
   const location = useLocation();
   const isAuthRoute =
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/cadastro') ||
-    location.pathname.startsWith('/recuperar-senha');
+    location.pathname.startsWith('/recuperar-senha') ||
+    location.pathname.startsWith('/solicitacao') ||
+    location.pathname.startsWith('/nova-solicitacao');
   const isHomeRoute = location.pathname === '/';
   const isPainelRoute = location.pathname.startsWith('/cidadao/painel');
 
+  if (isPainelRoute) {
+    return (
+      <div className="app-layout app-layout--auth">
+        {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
+        <a href="#conteudo-principal" className="skip-link">
+          Pular para o conteúdo principal
+        </a>
+
+        <div className="app-main app-main--auth">
+          <div className="painel-cidadao-wrapper">
+            <div className="painel-card-mobile" role="region" aria-label="Painel do Cidadão">
+              <Header mostrarSair={true} />
+              <Routes>
+                <Route path="/cidadao/painel" element={<PainelCidadao />} />
+              </Routes>
+              <Footer />
+            </div>
+          </div>
+        </div>
+
+        <CookieBanner />
+      </div>
+    );
+  }
+
   return (
-    <div className={`app-layout ${isAuthRoute ? 'app-layout--auth' : ''} ${isHomeRoute ? 'app-layout--home' : ''} ${isPainelRoute ? 'app-layout--painel' : ''}`}>
+    <div className={`app-layout ${isAuthRoute ? 'app-layout--auth' : ''} ${isHomeRoute ? 'app-layout--home' : ''}`}>
       {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
       <a href="#conteudo-principal" className="skip-link">
         Pular para o conteúdo principal
@@ -45,6 +73,9 @@ function AppContent() {
           <Route path="/recuperar-senha" element={<RecuperarSenhaCidadao />} />
           <Route path="/recuperar-senha/cidadao" element={<RecuperarSenhaCidadao />} />
           <Route path="/cidadao/painel" element={<PainelCidadao />} />
+          <Route path="/solicitacao/etapa-1" element={<NovaSolicitacaoStep1 />} />
+          <Route path="/solicitacao/nova" element={<NovaSolicitacaoStep1 />} />
+          <Route path="/nova-solicitacao" element={<NovaSolicitacaoStep1 />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

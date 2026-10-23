@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ilustracaoBuraco from '../assets/images/solicitacao-buraco.jpg';
 import ilustracaoBueiro from '../assets/images/solicitacao-bueiro.jpg';
 import ilustracaoEntulho from '../assets/images/solicitacao-entulho.jpg';
@@ -17,6 +18,7 @@ const CLASSE_TELA_TRAVADA = 'painel-cidadao-ativo';
  * O Header e o Footer institucionais são renderizados globalmente pelo App.js.
  */
 const PainelCidadao = () => {
+  const navigate = useNavigate();
   const [cidadao, setCidadao] = useState(null);
 
   // Mock de dados (simulação até a integração com a API de solicitações)
@@ -24,6 +26,11 @@ const PainelCidadao = () => {
     { id: 1, tipo: 'Buraco na Rua / Asfalto', protocolo: '#3842', data: '10/11/2026', status: 'Pendente', imagem: ilustracaoBuraco },
     { id: 2, tipo: 'Bueiro / Boca-de-lobo', protocolo: '#1542', data: '08/11/2026', status: 'Concluído', imagem: ilustracaoBueiro },
     { id: 3, tipo: 'Descarte Irregular de Entulho', protocolo: '#3407', data: '25/10/2026', status: 'Pendente', imagem: ilustracaoEntulho },
+    { id: 4, tipo: 'Lâmpada Queimada na Praça', protocolo: '#4102', data: '20/10/2026', status: 'Pendente', imagem: ilustracaoBuraco },
+    { id: 5, tipo: 'Poda de Árvore', protocolo: '#4189', data: '18/10/2026', status: 'Concluído', imagem: ilustracaoBueiro },
+    { id: 6, tipo: 'Sinalização Apagada', protocolo: '#4255', data: '15/10/2026', status: 'Em Análise', imagem: ilustracaoBuraco },
+    { id: 7, tipo: 'Entulho na Calçada', protocolo: '#4310', data: '12/10/2026', status: 'Pendente', imagem: ilustracaoEntulho },
+    { id: 8, tipo: 'Vazamento de Água', protocolo: '#4401', data: '10/10/2026', status: 'Em Análise', imagem: ilustracaoBueiro },
   ];
 
   useEffect(() => {
@@ -56,7 +63,7 @@ const PainelCidadao = () => {
 
   return (
     <main id="conteudo-principal" className="painel-cidadao" tabIndex={-1}>
-      {/* Área fixa: boas-vindas + botão principal (o "Sair" fica no Header) */}
+      {/* Área fixa: boas-vindas + botão principal (o "Sair" fica no Header global) */}
       <div className="painel-cidadao__topo">
         <section className="painel-cidadao__boas-vindas" aria-labelledby="painel-titulo">
           <h1 id="painel-titulo" className="painel-cidadao__titulo">
@@ -67,7 +74,11 @@ const PainelCidadao = () => {
           </p>
         </section>
 
-        <button type="button" className="painel-cidadao__cta">
+        <button
+          type="button"
+          className="painel-cidadao__cta"
+          onClick={() => navigate('/solicitacao/etapa-1')}
+        >
           + NOVA SOLICITAÇÃO 📱
         </button>
       </div>
