@@ -1,0 +1,351 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// Estilos da Página: NovaSolicitacaoStep2.scss
+// Estrutura idêntica à Etapa 1 com fidelidade ao padrão Mobile ZELUS
+// ==============================================================
+
+// -- Regra Estrita para Mobile (max-width: 767px) --
+@media (max-width: 767px) {
+  .nova-solicitacao-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .nova-solicitacao-card-mobile {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
+.nova-solicitacao-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: #ffffff;
+  overflow: hidden;
+
+  // No desktop (>= 768px): formato estrito de smartphone simulador
+  @media (min-width: 768px) {
+    padding: vars.$spacing-md;
+    background-color: vars.$color-bg-ice;
+  }
+}
+
+// -- Moldura de Smartphone (iPhone) no Desktop --
+.nova-solicitacao-card-mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    max-width: 385px;
+    height: 100%;
+    max-height: min(720px, calc(100dvh - 32px));
+    border: 5px solid #1a1a24;
+    border-radius: 40px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+  }
+}
+
+// -- Cabeçalho Azul Institucional (Fiel à Auth / Painel) --
+.nova-solicitacao-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #1a3458;
+  color: #ffffff;
+  padding: 14px 12px;
+  min-height: 68px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  @media (min-width: vars.$breakpoint-md) {
+    padding: 16px 20px;
+    min-height: 72px;
+  }
+
+  &__back-link {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    z-index: 10;
+    transition: opacity vars.$transition-fast;
+
+    @media (min-width: vars.$breakpoint-md) {
+      left: 20px;
+      font-size: 0.88rem;
+    }
+
+    &:hover {
+      opacity: 0.85;
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-accent-light;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+    padding: 0 54px; // Respiro generoso anti-colisão com o botão lateral
+    box-sizing: border-box;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  &__logo-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+  }
+
+  &__subtitle,
+  .auth-header__subtitle {
+    font-size: 0.70rem;
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase !important;
+    margin-top: 2px;
+  }
+}
+
+// -- Área Central (Main com Header e Footer 100% Fixos) --
+.nova-solicitacao-main-container {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px 8px;
+  background-color: #ffffff;
+  overflow: hidden; // A casca do main não rola
+}
+
+// -- Topo Fixo com Título e Subtítulo --
+.nova-solicitacao-topo {
+  flex-shrink: 0;
+  text-align: center;
+  margin-bottom: 14px;
+
+  .nova-solicitacao-titulo {
+    font-size: 1.26rem;
+    font-weight: 800;
+    color: #1a1a24;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+
+  .nova-solicitacao-etapa {
+    font-size: 0.90rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-top: 4px;
+    letter-spacing: -0.1px;
+  }
+}
+
+// -- Lista de Botões: SCROLL ISOLADO E EXPANSÍVEL --
+.nova-solicitacao-lista-categorias {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px; // Respiro confortável de 28px entre os botões
+  padding: 4px 2px 16px;
+  overflow-y: auto; // Área exclusiva de scroll
+  -webkit-overflow-scrolling: touch;
+
+  // Ocultação visual da barra de rolagem (invisível para o usuário)
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// -- Card/Botão de Subcategoria no Estilo Cartum Neobrutalista --
+.categoria-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 100%;
+  min-height: 124px;
+  padding: 14px 18px;
+  background-color: #eff0da; // Padrão base restaurado para a Etapa 1
+  border: 2.5px solid #1a1a24;
+  border-radius: 20px;
+  box-shadow: 0 4px 0 #1a1a24;
+  box-sizing: border-box;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Modificador isolado para os botões da Etapa 2
+  &--step2 {
+    background-color: #F4ECDC;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #1a1a24;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #1a1a24;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #1a3458;
+    outline-offset: 3px;
+  }
+
+  &__icone-wrapper {
+    flex-shrink: 0;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__imagem {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  &__svg {
+    border-radius: 12px;
+  }
+
+  &__textos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  &__titulo {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1a1a24;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    word-break: break-word;
+  }
+
+  &__badge-construcao {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #4a5568;
+    background-color: #d8dbbf;
+    border: 1.5px solid #1a1a24;
+    border-radius: 6px;
+    line-height: 1.1;
+  }
+}
+
+// -- Rodapé Institucional Fixo na Base --
+.nova-solicitacao-footer-tagline {
+  flex-shrink: 0;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: center;
+  background-color: #ffffff;
+  border-top: 1px solid #edf2f7;
+  box-sizing: border-box;
+
+  span {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #718096;
+    letter-spacing: 0.2px;
+  }
+}

@@ -128,9 +128,20 @@ const NovaSolicitacaoStep1 = () => {
   const navigate = useNavigate();
 
   const handleSelecionarCategoria = (categoria) => {
+    // Define a chave da categoria para a Etapa 2 dinamicamente
+    let chaveCategoria = 'asfalto';
+    if (categoria.id === 'bueiro-boca-de-lobo' || categoria.id === 'bueiro') {
+      chaveCategoria = 'bueiro';
+    } else if (categoria.id === 'asfalto-rua' || categoria.id === 'asfalto') {
+      chaveCategoria = 'asfalto';
+    } else {
+      chaveCategoria = categoria.id;
+    }
+
     // Persistência local do estado da solicitação para as etapas subsequentes
     const dadosAtuais = {
       categoriaId: categoria.id,
+      categoria: chaveCategoria,
       categoriaTitulo: categoria.titulo,
       emConstrucao: Boolean(categoria.emConstrucao),
       atualizadoEm: new Date().toISOString(),
@@ -141,10 +152,10 @@ const NovaSolicitacaoStep1 = () => {
       console.warn('Não foi possível salvar rascunho da solicitação:', e);
     }
 
-    // Navega para a Etapa 2 passando o contexto selecionado
+    // Navega para a Etapa 2 passando o estado na navegação
     navigate('/solicitacao/etapa-2', {
       state: {
-        categoria: categoria.id,
+        categoria: chaveCategoria,
         categoriaTitulo: categoria.titulo,
         emConstrucao: Boolean(categoria.emConstrucao),
       },
