@@ -10,6 +10,7 @@ import PainelCidadao from './pages/PainelCidadao';
 import RecuperarSenhaCidadao from './pages/RecuperarSenhaCidadao';
 import NovaSolicitacaoStep1 from './pages/NovaSolicitacaoStep1';
 import NovaSolicitacaoStep2 from './pages/NovaSolicitacaoStep2';
+import NovaSolicitacaoStep3 from './pages/NovaSolicitacaoStep3';
 import Privacidade from './pages/Privacidade';
 import NotFound from './pages/NotFound';
 
@@ -76,6 +77,7 @@ function AppContent() {
           <Route path="/cidadao/painel" element={<PainelCidadao />} />
           <Route path="/solicitacao/etapa-1" element={<NovaSolicitacaoStep1 />} />
           <Route path="/solicitacao/etapa-2" element={<NovaSolicitacaoStep2 />} />
+          <Route path="/solicitacao/etapa-3" element={<NovaSolicitacaoStep3 />} />
           <Route path="/solicitacao/nova" element={<NovaSolicitacaoStep1 />} />
           <Route path="/nova-solicitacao" element={<NovaSolicitacaoStep1 />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />

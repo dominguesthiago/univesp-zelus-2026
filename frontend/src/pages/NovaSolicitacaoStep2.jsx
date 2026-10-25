@@ -297,10 +297,13 @@ const NovaSolicitacaoStep2 = () => {
 
   const handleSelecionarSubcategoria = (subcategoria) => {
     // Persistência local do estado da solicitação
+    let dadosAtualizados = null;
     try {
       const rascunhoAnterior = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
-      const dadosAtualizados = {
+      dadosAtualizados = {
         ...rascunhoAnterior,
+        categoria: categoriaKey,
+        categoriaTitulo: location.state?.categoriaTitulo || (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
         subcategoriaId: subcategoria.id,
         subcategoriaTitulo: subcategoria.titulo,
         emConstrucao: Boolean(subcategoria.emConstrucao),
@@ -312,8 +315,16 @@ const NovaSolicitacaoStep2 = () => {
     }
 
     if (!subcategoria.emConstrucao) {
-      // Rota funcional ativa (Futura Etapa 3: Formulário / Localização)
-      console.log(`Subcategoria selecionada [${categoriaKey}]:`, subcategoria.titulo);
+      // Rota funcional ativa: Navega para a Etapa 3 (Captura de Foto e GPS)
+      navigate('/solicitacao/etapa-3', {
+        state: dadosAtualizados || {
+          ...location.state,
+          categoria: categoriaKey,
+          categoriaTitulo: location.state?.categoriaTitulo || (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
+          subcategoriaId: subcategoria.id,
+          subcategoriaTitulo: subcategoria.titulo,
+        },
+      });
     }
   };
 
