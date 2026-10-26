@@ -3,7 +3,7 @@
 **Documento:** Matriz de Qualidade, Governança de Testes e Cobertura de Componentes  
 **Módulo:** `frontend/src/tests/`  
 **Fase:** Fase 3 — Integração de Dados (Front-end <-> Back-end)  
-**Versão:** 1.2  
+**Versão:** 1.3  
 **Data:** 26 de outubro de 2026  
 **Responsabilidade:** Engenharia de Qualidade (QA) e Arquitetura de Software  
 **Status:** Vigente e Validado  
@@ -87,15 +87,40 @@ npm test -- --coverage --watchAll=false
   3. **CT-SEC.3 (Preservação de Deep Linking):** Confirma que o componente `<Navigate>` encapsula a rota de origem no objeto de estado (`state: { from: location }`), viabilizando o retorno dinâmico do munícipe após autenticação.
   4. **CT-SEC.4 (Reatividade e Deslogamento Dinâmico):** Comprova que a invalidação ou remoção do token resulta no bloqueio instantâneo do acesso a rotas privadas.
 
+### 4.5 Suíte 05: `NovaSolicitacaoStep1.test.js` (Categorias Dinâmicas, Skeletons e Resiliência)
+* **Arquivo Testado:** `frontend/src/pages/NovaSolicitacaoStep1.jsx`
+* **Módulo:** Fluxo de Nova Solicitação - Etapa 1 (Passo 3 da Integração Front-Back)
+* **Data de Homologação:** 26 de outubro de 2026
+* **Status:** ✅ 100% APROVADO (9/9 testes unitários)
+* **Cenários Cobertos:**
+  1. **CT-CAT.1 (Sucesso no Carregamento Dinâmico):** Valida o consumo de `listarCategorias()` (`GET /api/categorias`), atestando a renderização dos dados vindos da API com associação correta de ilustrações neobrutalistas e badges "EM CONSTRUÇÃO".
+  2. **CT-CAT.2 (Estados de Carregamento e Skeletons):** Valida a renderização de elementos Skeleton Neobrutalistas com atributos semânticos de acessibilidade (`role="status"`, `aria-label`) enquanto a promessa de rede permanece pendente.
+  3. **CT-CAT.3 (Tratamento de Falha e Retry):** Simula falhas na comunicação com a API, atesta a exibição do card de alerta com `role="alert"` e confirma o funcionamento do botão "TENTAR NOVAMENTE", restabelecendo o fluxo normal pós-recuperação.
+  4. **CT-CAT.4 (Persistência e Tráfego do UUID Real):** Confirma que o clique na categoria grava o UUID real do Supabase em `zelus_rascunho_solicitacao` no `localStorage` e repassa o objeto completo para a Etapa 2 via state de navegação.
+  5. **Semântica e Acessibilidade:** Validação de cabeçalho ZELUS institucional, ausência de estilos inline de cor, link de retorno ao Painel e integração com o botão "+ NOVA SOLICITAÇÃO 📱".
+
+### 4.6 Suíte 06: `NovaSolicitacaoStep2.test.js` (Subcategorias Dinâmicas e Propagação de UUIDs)
+* **Arquivo Testado:** `frontend/src/pages/NovaSolicitacaoStep2.jsx`
+* **Módulo:** Fluxo de Nova Solicitação - Etapa 2 (Passo 3 da Integração Front-Back)
+* **Data de Homologação:** 26 de outubro de 2026
+* **Status:** ✅ 100% APROVADO (8/8 testes unitários)
+* **Cenários Cobertos:**
+  1. **Renderização Dinâmica por Categoria:** Exibição das subcategorias específicas para "Asfalto" e "Bueiro / Boca-de-lobo" com layout neobrutalista mobile.
+  2. **Associação de UUIDs Reais:** Mapeamento de subcategorias do banco aos botões visuais, injetando o `id` real (`b1b2c3d4-0001-...` para Buraco, etc.).
+  3. **Persistência de `subcategoria_id`:** Ao clicar em subcategoria funcional, grava `subcategoria_id` no `localStorage` e navega para `/solicitacao/etapa-3`.
+  4. **Bloqueio de Subcategorias em Construção:** Salva o rascunho com flag `emConstrucao: true` e impede avanço prematuro para etapas posteriores.
+  5. **Fallback Resiliente:** Recuperação graciosa do rascunho anterior no storage em caso de atualização direta ou navegação sem state explícito.
+
 ---
 
 ## 5. Critérios de Aceite e Métricas de QA
 
-* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões.
+* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 113 testes).
 * **Acessibilidade Automatizada:** Preservação de landmarks semânticos e ausência de nós órfãos de acessibilidade.
 * **Conformidade Legal:** Isolamento rigoroso da chave `zelus_termo_aceito` na Web Storage API.
 * **Segurança e Camada de Rede:** Injeção transparente de credenciais via padrão RFC 6750 (`Bearer`), mantendo chaves sensíveis de produção fora do código do cliente.
 * **Blindagem de Fronteira:** Bloqueio síncrono e sem FOUC (*Flash of Unauthenticated Content*) para todas as rotas restritas do cidadão (`/cidadao/*` e `/solicitacao/*`).
+* **Integridade Relacional de Entidades:** Tráfego e persistência de identificadores universais únicos (UUIDs) do Supabase para foreign keys (`categoria_id`, `subcategoria_id`).
 
 ---
 
@@ -119,5 +144,16 @@ npm test -- --coverage --watchAll=false
   1. **Zero FOUC:** O componente filho não é montado no DOM virtual enquanto o token não for atestado.
   2. **Histórico Limpo:** Uso de `replace: true` impede que o usuário caia em loops no histórico de navegação ao tentar retornar pelo navegador.
   3. **Continuidade de Tarefa (UX):** Munícipes com links diretos não perdem seu fluxo de trabalho, sendo devolvidos à etapa pretendida imediatamente após autenticar.
+
+---
+
+## 8. Registro de Decisão Arquitetural (ADR) — Mapeamento Visual Desacoplado e Integridade Relacional de UUIDs
+
+* **Contexto:** A API REST (`GET /api/categorias`) retorna os registros normalizados do banco relacional com nomes textuais e UUIDs, porém sem metadados visuais de interface (ícones, vetores SVG neobrutalistas, ilustrações ricas). Sobrescrever cegamente o layout quebraria o design neobrutalista aprovado; por outro lado, manter dados mockados geraria erros de integridade referencial (`foreign key constraint`) na gravação de solicitações.
+* **Decisão:** Criou-se uma camada de resolução e mapeamento tolerante nos componentes `NovaSolicitacaoStep1.jsx` e `NovaSolicitacaoStep2.jsx`, na qual os nomes da base de dados são normalizados e enriquecidos com assets gráficos locais, ao mesmo tempo em que os UUIDs reais do PostgreSQL são incorporados e repassados no rascunho `zelus_rascunho_solicitacao` e nos estados de navegação SPA.
+* **Justificativa:**
+  1. **Integridade de Chaves Estrangeiras:** O backend recebe exatamente os UUIDs válidos cadastrados em `public.subcategorias(id)`.
+  2. **Preservação Visual 100% Neobrutalista:** Mantém-se o contraste, cores institucionais, SVGs e ilustrações sem dependência de campos binários no banco de dados.
+  3. **Resiliência de Estado:** O rascunho persistido permite recuperação do estado em caso de refresh ou perda transitória de rede.
 
 

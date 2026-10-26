@@ -271,6 +271,48 @@ export const CONFIG_CATEGORIAS = {
   },
 };
 
+// ==============================================================
+// Mapeamento e Associação de Subcategorias Reais (UUIDs)
+// ==============================================================
+const normalizarTexto = (texto) =>
+  (texto || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+export const associarSubcategoriasReais = (subcategoriasConfig, subcategoriasDb = []) => {
+  if (!Array.isArray(subcategoriasDb) || subcategoriasDb.length === 0) {
+    return subcategoriasConfig;
+  }
+
+  return subcategoriasConfig.map((subConfig) => {
+    const tituloConfig = normalizarTexto(subConfig.titulo);
+
+    // Tenta encontrar correspondência por similaridade de nome com o banco
+    const match = subcategoriasDb.find((sDb) => {
+      const nomeDb = normalizarTexto(sDb.nome || sDb.titulo);
+      if (!nomeDb) return false;
+      return (
+        tituloConfig.includes(nomeDb) ||
+        nomeDb.includes(tituloConfig) ||
+        (tituloConfig.includes('tampa') && nomeDb.includes('tampa')) ||
+        (tituloConfig.includes('buraco') && nomeDb.includes('buraco')) ||
+        (tituloConfig.includes('entupido') && nomeDb.includes('entupido'))
+      );
+    });
+
+    if (match && match.id) {
+      return {
+        ...subConfig,
+        id: match.id,
+        subcategoria_id: match.id,
+      };
+    }
+
+    return subConfig;
+  });
+};
+
 /**
  * Página: Nova Solicitação — Etapa 2 (Subcategorias Dinâmicas)
  * Renderização dinâmica baseada no estado de navegação (useLocation):
@@ -282,29 +324,53 @@ const NovaSolicitacaoStep2 = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Leitura do estado recebido via react-router-dom
-  const categoriaRecebida = location.state?.categoria;
+  // Recupera rascunho anterior para fallback seguro
+  const rascunhoLocal = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
+    } catch {
+      return {};
+    }
+  })();
+
+  // Leitura do estado recebido via react-router-dom com fallback para localStorage
+  const categoriaRecebida =
+    location.state?.categoria ||
+    rascunhoLocal?.categoria ||
+    location.state?.categoriaTitulo ||
+    rascunhoLocal?.categoriaTitulo;
 
   // Condicional de seleção da configuração da categoria com fallback para 'asfalto'
   let categoriaKey = 'asfalto';
-  if (categoriaRecebida === 'bueiro' || categoriaRecebida === 'bueiro-boca-de-lobo') {
+  if (
+    typeof categoriaRecebida === 'string' &&
+    (categoriaRecebida.toLowerCase().includes('bueiro') ||
+      categoriaRecebida.toLowerCase().includes('boca'))
+  ) {
     categoriaKey = 'bueiro';
   } else {
     categoriaKey = 'asfalto';
   }
 
   const { titulo, subcategorias } = CONFIG_CATEGORIAS[categoriaKey] || CONFIG_CATEGORIAS.asfalto;
+  const subcategoriasDb = location.state?.subcategorias || rascunhoLocal?.subcategorias || [];
+  const subcategoriasParaExibicao = associarSubcategoriasReais(subcategorias, subcategoriasDb);
 
   const handleSelecionarSubcategoria = (subcategoria) => {
-    // Persistência local do estado da solicitação
+    // Persistência local do estado da solicitação com o UUID real
     let dadosAtualizados = null;
     try {
       const rascunhoAnterior = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
       dadosAtualizados = {
         ...rascunhoAnterior,
         categoria: categoriaKey,
-        categoriaTitulo: location.state?.categoriaTitulo || (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
+        categoriaId: location.state?.categoriaId || rascunhoAnterior.categoriaId,
+        categoriaTitulo:
+          location.state?.categoriaTitulo ||
+          rascunhoAnterior.categoriaTitulo ||
+          (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
         subcategoriaId: subcategoria.id,
+        subcategoria_id: subcategoria.id,
         subcategoriaTitulo: subcategoria.titulo,
         emConstrucao: Boolean(subcategoria.emConstrucao),
         atualizadoEm: new Date().toISOString(),
@@ -320,8 +386,11 @@ const NovaSolicitacaoStep2 = () => {
         state: dadosAtualizados || {
           ...location.state,
           categoria: categoriaKey,
-          categoriaTitulo: location.state?.categoriaTitulo || (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
+          categoriaTitulo:
+            location.state?.categoriaTitulo ||
+            (categoriaKey === 'bueiro' ? 'Bueiro / Boca-de-lobo' : 'Asfalto / Rua'),
           subcategoriaId: subcategoria.id,
+          subcategoria_id: subcategoria.id,
           subcategoriaTitulo: subcategoria.titulo,
         },
       });
@@ -384,7 +453,7 @@ const NovaSolicitacaoStep2 = () => {
             role="group"
             aria-labelledby="etapa2-heading"
           >
-            {subcategorias.map((subcategoria) => {
+            {subcategoriasParaExibicao.map((subcategoria) => {
               const ImagemComp = subcategoria.imagemComponente;
 
               return (

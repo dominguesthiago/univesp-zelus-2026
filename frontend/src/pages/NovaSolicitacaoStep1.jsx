@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, AlertTriangle, RotateCw } from 'lucide-react';
+import { listarCategorias } from '../services/api';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import ilustracaoBuraco from '../assets/images/solicitacao-buraco.jpg';
 import ilustracaoBueiro from '../assets/images/solicitacao-bueiro.jpg';
@@ -117,32 +118,131 @@ export const CATEGORIAS = [
 
 export const CATEGORIAS_SOLICITACAO = CATEGORIAS;
 
+// Mapa de assets visuais neobrutalistas associados aos nomes do domínio
+const MAPA_VISUAL_CATEGORIAS = {
+  asfalto: {
+    imagem: ilustracaoBuraco,
+    alt: 'Ilustração de rua asfaltada com buraco, rachaduras e cones de trânsito',
+    chave: 'asfalto',
+  },
+  bueiro: {
+    imagem: ilustracaoBueiro,
+    alt: 'Ilustração de bueiro metálico com acúmulo de lixo e escoamento de água',
+    chave: 'bueiro',
+  },
+  iluminacao: {
+    imagemComponente: IconeIluminacao,
+    alt: 'Ícone de poste de iluminação pública com lâmpada acesa',
+    chave: 'iluminacao-publica',
+  },
+  lixo: {
+    imagem: ilustracaoEntulho,
+    alt: 'Ilustração de descarte irregular de entulho e resíduos na calçada',
+    chave: 'lixo-entulho',
+  },
+  sinalizacao: {
+    imagemComponente: IconeSinalizacao,
+    alt: 'Ícone de placa triangular de sinalização e advertência de trânsito',
+    chave: 'sinalizacao',
+  },
+};
+
+const resolverMetadadosVisuais = (cat) => {
+  const nomeNormalizado = (cat.nome || cat.titulo || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  if (nomeNormalizado.includes('asfalto') || nomeNormalizado.includes('rua')) {
+    return MAPA_VISUAL_CATEGORIAS.asfalto;
+  }
+  if (nomeNormalizado.includes('bueiro') || nomeNormalizado.includes('boca')) {
+    return MAPA_VISUAL_CATEGORIAS.bueiro;
+  }
+  if (nomeNormalizado.includes('ilumina')) {
+    return MAPA_VISUAL_CATEGORIAS.iluminacao;
+  }
+  if (nomeNormalizado.includes('lixo') || nomeNormalizado.includes('entulho')) {
+    return MAPA_VISUAL_CATEGORIAS.lixo;
+  }
+  if (nomeNormalizado.includes('sinaliza')) {
+    return MAPA_VISUAL_CATEGORIAS.sinalizacao;
+  }
+
+  return {
+    imagem: ilustracaoBuraco,
+    alt: `Ilustração da categoria ${cat.nome || cat.titulo}`,
+    chave: 'asfalto',
+  };
+};
+
 /**
- * Página: Nova Solicitação — Etapa 1 (Escolha de Categoria)
- * Arquitetura de 3 camadas com moldura mobile/smartphone:
- * 1. Header institucional azul com botão "< Voltar" SVG e respiro anti-colisão.
- * 2. Main com topo fixo ("Qual o tipo de problema..." / "Etapa 1 de 4") e scroll isolado exclusivamente nos botões de categoria.
- * 3. Footer institucional ancorado na base ("ZELUS • Acessível e inclusivo para todos").
+ * Página: Nova Solicitação — Etapa 1 (Escolha de Categoria Dinâmica)
+ * Integração com a API REST (GET /api/categorias) e preservação visual Neobrutalista.
  */
 const NovaSolicitacaoStep1 = () => {
   const navigate = useNavigate();
+  const [listaCategorias, setListaCategorias] = useState(CATEGORIAS);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
+
+  const carregarCategorias = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+    try {
+      const resposta = await listarCategorias();
+      if (resposta && Array.isArray(resposta.dados) && resposta.dados.length > 0) {
+        // Mapeia categorias do banco com os assets visuais e vincula UUIDs reais
+        const categoriasApi = resposta.dados.map((cat) => {
+          const visual = resolverMetadadosVisuais(cat);
+          return {
+            id: cat.id, // UUID real do Supabase
+            titulo: cat.nome,
+            subcategorias: cat.subcategorias || [],
+            imagem: visual.imagem,
+            imagemComponente: visual.imagemComponente,
+            alt: visual.alt,
+            chave: visual.chave,
+            emConstrucao: false,
+          };
+        });
+
+        // Mantém as categorias extras "em construção" para testes de scroll/overflow
+        const nomesApi = resposta.dados.map((c) => (c.nome || '').toLowerCase());
+        const categoriasExtras = CATEGORIAS.filter(
+          (c) => c.emConstrucao && !nomesApi.some((n) => c.titulo.toLowerCase().includes(n))
+        );
+
+        setListaCategorias([...categoriasApi, ...categoriasExtras]);
+      } else {
+        setListaCategorias(CATEGORIAS);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar categorias do backend:', err);
+      setErro('Não foi possível carregar as categorias. Verifique sua conexão e tente novamente.');
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarCategorias();
+  }, [carregarCategorias]);
 
   const handleSelecionarCategoria = (categoria) => {
-    // Define a chave da categoria para a Etapa 2 dinamicamente
-    let chaveCategoria = 'asfalto';
-    if (categoria.id === 'bueiro-boca-de-lobo' || categoria.id === 'bueiro') {
+    let chaveCategoria = categoria.chave || 'asfalto';
+    if (categoria.titulo && categoria.titulo.toLowerCase().includes('bueiro')) {
       chaveCategoria = 'bueiro';
-    } else if (categoria.id === 'asfalto-rua' || categoria.id === 'asfalto') {
+    } else if (categoria.titulo && categoria.titulo.toLowerCase().includes('asfalto')) {
       chaveCategoria = 'asfalto';
-    } else {
-      chaveCategoria = categoria.id;
     }
 
-    // Persistência local do estado da solicitação para as etapas subsequentes
+    // Persistência local do estado da solicitação com o UUID real da categoria
     const dadosAtuais = {
-      categoriaId: categoria.id,
+      categoriaId: categoria.id, // UUID real do Supabase
       categoria: chaveCategoria,
       categoriaTitulo: categoria.titulo,
+      subcategorias: categoria.subcategorias || [],
       emConstrucao: Boolean(categoria.emConstrucao),
       atualizadoEm: new Date().toISOString(),
     };
@@ -152,13 +252,9 @@ const NovaSolicitacaoStep1 = () => {
       console.warn('Não foi possível salvar rascunho da solicitação:', e);
     }
 
-    // Navega para a Etapa 2 passando o estado na navegação
+    // Navega para a Etapa 2 passando o estado na navegação com UUIDs
     navigate('/solicitacao/etapa-2', {
-      state: {
-        categoria: chaveCategoria,
-        categoriaTitulo: categoria.titulo,
-        emConstrucao: Boolean(categoria.emConstrucao),
-      },
+      state: dadosAtuais,
     });
   };
 
@@ -218,41 +314,89 @@ const NovaSolicitacaoStep1 = () => {
             role="group"
             aria-labelledby="etapa1-heading"
           >
-            {CATEGORIAS.map((categoria) => {
-              const ImagemComp = categoria.imagemComponente;
-
-              return (
-                <button
-                  key={categoria.id}
-                  type="button"
-                  className="categoria-card"
-                  onClick={() => handleSelecionarCategoria(categoria)}
-                  aria-label={`Selecionar categoria ${categoria.titulo}${
-                    categoria.emConstrucao ? ' (EM CONSTRUÇÃO)' : ''
-                  }`}
-                >
-                  <div className="categoria-card__icone-wrapper">
-                    {ImagemComp ? (
-                      <ImagemComp />
-                    ) : (
-                      <img
-                        src={categoria.imagem}
-                        alt={categoria.alt}
-                        className="categoria-card__imagem"
-                        width="90"
-                        height="90"
+            {carregando && (
+              <div
+                role="status"
+                aria-label="Carregando categorias disponíveis..."
+                className="nova-solicitacao-carregando"
+              >
+                <span className="sr-only">Carregando categorias...</span>
+                {[1, 2, 3].map((n) => (
+                  <div
+                    key={n}
+                    className="categoria-card categoria-card--skeleton"
+                    aria-hidden="true"
+                  >
+                    <div className="categoria-card__icone-wrapper">
+                      <div
+                        className="skeleton-box"
+                        style={{ width: '90px', height: '90px' }}
                       />
-                    )}
+                    </div>
+                    <div className="categoria-card__textos">
+                      <div
+                        className="skeleton-box"
+                        style={{ width: '150px', height: '24px' }}
+                      />
+                    </div>
                   </div>
-                  <div className="categoria-card__textos">
-                    <span className="categoria-card__titulo">{categoria.titulo}</span>
-                    {categoria.emConstrucao && (
-                      <span className="categoria-card__badge-construcao">EM CONSTRUÇÃO</span>
-                    )}
-                  </div>
+                ))}
+              </div>
+            )}
+
+            {!carregando && erro && (
+              <div role="alert" className="nova-solicitacao-erro">
+                <AlertTriangle size={32} color="#991b1b" aria-hidden="true" />
+                <p className="nova-solicitacao-erro__texto">{erro}</p>
+                <button
+                  type="button"
+                  className="nova-solicitacao-erro__btn-retry"
+                  onClick={carregarCategorias}
+                  aria-label="Tentar carregar as categorias novamente"
+                >
+                  <RotateCw size={16} aria-hidden="true" />
+                  <span>TENTAR NOVAMENTE</span>
                 </button>
-              );
-            })}
+              </div>
+            )}
+
+            {!carregando &&
+              !erro &&
+              listaCategorias.map((categoria) => {
+                const ImagemComp = categoria.imagemComponente;
+
+                return (
+                  <button
+                    key={categoria.id}
+                    type="button"
+                    className="categoria-card"
+                    onClick={() => handleSelecionarCategoria(categoria)}
+                    aria-label={`Selecionar categoria ${categoria.titulo}${
+                      categoria.emConstrucao ? ' (EM CONSTRUÇÃO)' : ''
+                    }`}
+                  >
+                    <div className="categoria-card__icone-wrapper">
+                      {ImagemComp ? (
+                        <ImagemComp />
+                      ) : (
+                        <img
+                          src={categoria.imagem}
+                          alt={categoria.alt}
+                          className="categoria-card__imagem"
+                          width="90"
+                          height="90"
+                        />
+                      )}
+                    </div>
+                    <div className="categoria-card__textos">
+                      <span className="categoria-card__titulo">{categoria.titulo}</span>
+                      {categoria.emConstrucao && (
+                        <span className="categoria-card__badge-construcao">EM CONSTRUÇÃO</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
           </div>
         </main>
 

@@ -4,6 +4,15 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import NovaSolicitacaoStep2, { CONFIG_CATEGORIAS } from '../pages/NovaSolicitacaoStep2';
 
+const mockSubcategoriasAsfalto = [
+  { id: 'b1b2c3d4-0001-4000-8000-000000000001', nome: 'Buraco' },
+];
+
+const mockSubcategoriasBueiro = [
+  { id: 'b1b2c3d4-0002-4000-8000-000000000002', nome: 'Entupido' },
+  { id: 'b1b2c3d4-0003-4000-8000-000000000003', nome: 'Tampa quebrada / sem tampa' },
+];
+
 const renderStep2 = (initialState = null) => {
   const entry = initialState
     ? { pathname: '/solicitacao/etapa-2', state: initialState }
@@ -14,12 +23,13 @@ const renderStep2 = (initialState = null) => {
       <Routes>
         <Route path="/solicitacao/etapa-2" element={<NovaSolicitacaoStep2 />} />
         <Route path="/solicitacao/etapa-1" element={<div>Etapa 1 - Categorias</div>} />
+        <Route path="/solicitacao/etapa-3" element={<div>Etapa 3 - Foto e Localização</div>} />
       </Routes>
     </MemoryRouter>
   );
 };
 
-describe('Nova Solicitação - Etapa 2: Subcategorias (NovaSolicitacaoStep2.jsx)', () => {
+describe('Nova Solicitação - Etapa 2: Subcategorias Dinâmicas (NovaSolicitacaoStep2.jsx)', () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -37,7 +47,11 @@ describe('Nova Solicitação - Etapa 2: Subcategorias (NovaSolicitacaoStep2.jsx)
   });
 
   test('deve renderizar o cenário de "Asfalto / Rua" com título, 1 botão funcional e 3 mocks em construção', () => {
-    renderStep2({ categoria: 'asfalto' });
+    renderStep2({
+      categoria: 'asfalto',
+      categoriaId: 'a1b2c3d4-0001-4000-8000-000000000001',
+      subcategorias: mockSubcategoriasAsfalto,
+    });
 
     const titulo = screen.getByRole('heading', {
       level: 1,
@@ -63,7 +77,11 @@ describe('Nova Solicitação - Etapa 2: Subcategorias (NovaSolicitacaoStep2.jsx)
   });
 
   test('deve renderizar o cenário de "Bueiro / Boca-de-lobo" com título, 2 botões funcionais e 3 mocks em construção', () => {
-    renderStep2({ categoria: 'bueiro' });
+    renderStep2({
+      categoria: 'bueiro',
+      categoriaId: 'a1b2c3d4-0002-4000-8000-000000000002',
+      subcategorias: mockSubcategoriasBueiro,
+    });
 
     const titulo = screen.getByRole('heading', {
       level: 1,
@@ -113,13 +131,21 @@ describe('Nova Solicitação - Etapa 2: Subcategorias (NovaSolicitacaoStep2.jsx)
     });
   });
 
-  test('ao clicar em uma subcategoria, deve persistir os dados no localStorage com as informações atualizadas', () => {
+  test('ao clicar em uma subcategoria mapeada com a API, deve persistir o subcategoria_id real (UUID) e navegar para a Etapa 3', () => {
     localStorage.setItem(
       'zelus_rascunho_solicitacao',
-      JSON.stringify({ categoriaId: 'asfalto-rua', categoriaTitulo: 'Asfalto / Rua' })
+      JSON.stringify({
+        categoriaId: 'a1b2c3d4-0001-4000-8000-000000000001',
+        categoriaTitulo: 'Asfalto',
+        subcategorias: mockSubcategoriasAsfalto,
+      })
     );
 
-    renderStep2({ categoria: 'asfalto' });
+    renderStep2({
+      categoria: 'asfalto',
+      categoriaId: 'a1b2c3d4-0001-4000-8000-000000000001',
+      subcategorias: mockSubcategoriasAsfalto,
+    });
 
     const botaoBuraco = screen.getByRole('button', {
       name: /Selecionar subcategoria Buraco na via/i,
@@ -127,10 +153,47 @@ describe('Nova Solicitação - Etapa 2: Subcategorias (NovaSolicitacaoStep2.jsx)
     fireEvent.click(botaoBuraco);
 
     const rascunhoSalvo = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
-    expect(rascunhoSalvo.subcategoriaId).toBe('buraco-na-via');
+    expect(rascunhoSalvo.subcategoria_id).toBe('b1b2c3d4-0001-4000-8000-000000000001');
+    expect(rascunhoSalvo.subcategoriaId).toBe('b1b2c3d4-0001-4000-8000-000000000001');
     expect(rascunhoSalvo.subcategoriaTitulo).toBe('Buraco na via');
     expect(rascunhoSalvo.emConstrucao).toBe(false);
     expect(rascunhoSalvo.atualizadoEm).toBeDefined();
-    expect(rascunhoSalvo.categoriaTitulo).toBe('Asfalto / Rua');
+
+    // Valida navegação para a Etapa 3
+    expect(screen.getByText('Etapa 3 - Foto e Localização')).toBeInTheDocument();
+  });
+
+  test('ao clicar em subcategoria funcional de Bueiro, deve gravar o UUID real e avançar para Etapa 3', () => {
+    renderStep2({
+      categoria: 'bueiro',
+      categoriaId: 'a1b2c3d4-0002-4000-8000-000000000002',
+      subcategorias: mockSubcategoriasBueiro,
+    });
+
+    const botaoEntupido = screen.getByRole('button', {
+      name: /Selecionar subcategoria Entupido \/ Transbordando/i,
+    });
+    fireEvent.click(botaoEntupido);
+
+    const rascunhoSalvo = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
+    expect(rascunhoSalvo.subcategoria_id).toBe('b1b2c3d4-0002-4000-8000-000000000002');
+    expect(rascunhoSalvo.subcategoriaId).toBe('b1b2c3d4-0002-4000-8000-000000000002');
+    expect(screen.getByText('Etapa 3 - Foto e Localização')).toBeInTheDocument();
+  });
+
+  test('ao clicar em subcategoria "EM CONSTRUÇÃO", deve salvar rascunho mas NÃO deve navegar para a Etapa 3', () => {
+    renderStep2({
+      categoria: 'asfalto',
+      subcategorias: mockSubcategoriasAsfalto,
+    });
+
+    const botaoRecapeamento = screen.getByRole('button', {
+      name: /Selecionar subcategoria Recapeamento \(EM CONSTRUÇÃO\)/i,
+    });
+    fireEvent.click(botaoRecapeamento);
+
+    const rascunhoSalvo = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
+    expect(rascunhoSalvo.emConstrucao).toBe(true);
+    expect(screen.queryByText('Etapa 3 - Foto e Localização')).not.toBeInTheDocument();
   });
 });

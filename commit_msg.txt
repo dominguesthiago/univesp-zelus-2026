@@ -1,9 +1,11 @@
-feat(frontend): implementa PrivateRoute e deep linking pos-login
+feat(frontend): integra Etapas 1 e 2 com categorias reais da API
 
-- Criacao do componente de seguranca PrivateRoute.jsx com verificacao de zelus_token
-- Interceptacao declarativa de rotas restritas e redirecionamento seguro para /login/cidadao
-- Atualizacao de LoginCidadao.jsx para consumo de state.from e suporte a Deep Linking
-- Blindagem no App.js de todas as rotas do Painel do Cidadao e do fluxo /solicitacao/*
-- Criacao da suite PrivateRoute.test.js com 4 cenarios unitarios aprovados (CT-SEC.1 a 4)
-- Atualizacao do registro oficial de testes em docs/documentacao/frontend/registro-testes-frontend.md
-- Registro de governanca de IA em docs/prompts-ia/frontend/33-passo-2-protecao-rotas.md
+- Refatora NovaSolicitacaoStep1.jsx para consumir listarCategorias() (GET /api/categorias)
+- Implementa estados visuais de loading com Skeletons neobrutalistas e acessibilidade (role="status")
+- Implementa tratamento de erro de rede com container neobrutalista (role="alert") e botao de Retry
+- Cria mapa de metadados visuais para acoplar ilustracoes e SVGs aos nomes do banco
+- Refatora NovaSolicitacaoStep2.jsx para consumir subcategorias reais e injetar UUIDs correspondentes
+- Salva subcategoria_id real (UUID) e persiste rascunho seguro no localStorage
+- Atualiza suites de testes unitarios NovaSolicitacaoStep1.test.js e NovaSolicitacaoStep2.test.js (17/17 testes aprovados)
+- Atualiza matriz de governanca para versao 1.3 em docs/documentacao/frontend/registro-testes-frontend.md
+- Registra rastreabilidade de IA em docs/prompts-ia/frontend/34-passo-3-categorias-reais.md
