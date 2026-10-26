@@ -1,11 +1,9 @@
-feat(frontend): tela final de sucesso e encerramento do fluxo
+chore(frontend): configura env e interceptor JWT na camada de api
 
-- Criacao dos componentes NovaSolicitacaoSucesso.jsx e NovaSolicitacaoSucesso.scss
-- Cabecalho institucional seguro com remocao do botao voltar para fechar transacao
-- Hero comemorativo com badge neobrutalista de checklist e confetes decorativos
-- Card do protocolo em amarelo com ticket tracejado interno e botao de copia para clipboard
-- Integracao da geracao de protocolo e persistencia de historico na Etapa 4
-- Botao VOLTAR AO INICIO em azul institucional com limpeza de rascunho no localStorage
-- Inclusao da rota /solicitacao/sucesso em App.js
-- Criacao da suite completa de testes NovaSolicitacaoSucesso.test.js (100% aprovada, 101/101 testes)
-- Registro de governanca de IA em docs/prompts-ia/frontend/31-nova-solicitacao-sucesso.md
+- Criacao do arquivo frontend/.env com REACT_APP_API_URL apontando para o backend local
+- Refatoracao de request() em api.js com interceptor nativo para injecao automatica do token JWT
+- Tratamento amigavel de falha de conexao de rede com status 0
+- Adicao dos contratos listarCategorias, criarSolicitacao e listarMinhasSolicitacoes em api.js
+- Criacao da suite de testes unitarios api.test.js com 6 cenarios aprovados (CT-API.1 a CT-API.6)
+- Atualizacao do registro oficial de testes em docs/documentacao/frontend/registro-testes-frontend.md
+- Registro de governanca de IA em docs/prompts-ia/frontend/32-passo-1-infra-api.md

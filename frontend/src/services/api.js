@@ -19,12 +19,19 @@ export async function request(endpoint, options = {}) {
   const baseUrl = getBaseUrl();
   const url = `${baseUrl}${endpoint}`;
 
+  // Resgate automático e transparente do token JWT de autenticação
+  const token =
+    typeof window !== 'undefined' && window.localStorage
+      ? localStorage.getItem('zelus_token')
+      : null;
+
   const config = {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
-    ...options,
   };
 
   try {
@@ -48,8 +55,9 @@ export async function request(endpoint, options = {}) {
       throw error;
     }
     const networkError = new Error(
-      error.message ||
-        'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
+      !error.message || error.message === 'Failed to fetch' || error.message.includes('fetch')
+        ? 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
+        : error.message
     );
     networkError.status = 0;
     networkError.data = null;
@@ -106,13 +114,62 @@ export async function redefinirSenhaCidadao(dados) {
   });
 }
 
+/**
+ * Lista todas as categorias e suas respectivas subcategorias cadastradas no ZELUS.
+ * GET /api/categorias
+ * @returns {Promise<{sucesso: boolean, dados: Array<{id: string, nome: string, subcategorias: Array<{id: string, nome: string}>}>}>}
+ */
+export async function listarCategorias() {
+  return request('/api/categorias', {
+    method: 'GET',
+  });
+}
+
+/**
+ * Cria uma nova solicitação de zeladoria urbana com validação geoespacial.
+ * POST /api/solicitacoes
+ * @param {Object} dados
+ * @param {string} dados.subcategoria_id - UUID da subcategoria vinculada
+ * @param {number} dados.latitude - Coordenada GPS decimal
+ * @param {number} dados.longitude - Coordenada GPS decimal
+ * @param {string} dados.descricao - Relato detalhado do problema
+ * @param {string} dados.rua - Logradouro da ocorrência
+ * @param {string} dados.bairro - Bairro da ocorrência
+ * @param {string} dados.cidade - Cidade da ocorrência
+ * @param {string} [dados.numero] - Número ou lote (opcional)
+ * @param {string} [dados.ponto_referencia] - Ponto de referência (opcional)
+ * @param {string} [dados.foto_url] - URL da imagem capturada (opcional)
+ * @returns {Promise<{sucesso: boolean, mensagem: string, protocolo: string, dados: Object}>}
+ */
+export async function criarSolicitacao(dados) {
+  return request('/api/solicitacoes', {
+    method: 'POST',
+    body: JSON.stringify(dados),
+  });
+}
+
+/**
+ * Recupera o histórico de solicitações abertas exclusivamente pelo cidadão logado.
+ * GET /api/solicitacoes/minhas
+ * @returns {Promise<{sucesso: boolean, mensagem: string, dados: Array<Object>}>}
+ */
+export async function listarMinhasSolicitacoes() {
+  return request('/api/solicitacoes/minhas', {
+    method: 'GET',
+  });
+}
+
 const api = {
   request,
   registrarCidadao,
   loginCidadao,
   redefinirSenhaCidadao,
+  listarCategorias,
+  criarSolicitacao,
+  listarMinhasSolicitacoes,
 };
 
 export default api;
+
 
 
