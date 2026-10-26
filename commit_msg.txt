@@ -1,12 +1,11 @@
-feat(frontend): tela de confirmacao de local e geocodificacao etapa 4
+feat(frontend): tela final de sucesso e encerramento do fluxo
 
-- Criacao dos componentes NovaSolicitacaoStep4.jsx e NovaSolicitacaoStep4.scss
-- Integracao assincrona com API de geocodificacao reversa (Nominatim/OpenStreetMap)
-- Preenchimento automatico de logradouro, bairro e cidade com campo numero obrigatoriamente vazio
-- Resiliencia com placeholders explicitos e inputs controlados para digitacao manual em falha de GPS
-- Renderizacao neobrutalista da miniatura da foto capturada na Etapa 3
-- Ajuste fino ergonomico de margens mobile eliminando rolagem vertical indesejada
-- Dialogo de confirmacao com limpeza de rascunho no cancelamento de solicitacao
-- Inclusao da rota /solicitacao/etapa-4 em App.js e navegacao de retorno para Etapa 3
-- Criacao da suite de testes automatizados NovaSolicitacaoStep4.test.js (100% aprovada, 96/96 testes no frontend)
-- Registro de governanca de IA em docs/prompts-ia/frontend/30-nova-solicitacao-etapa4.md
+- Criacao dos componentes NovaSolicitacaoSucesso.jsx e NovaSolicitacaoSucesso.scss
+- Cabecalho institucional seguro com remocao do botao voltar para fechar transacao
+- Hero comemorativo com badge neobrutalista de checklist e confetes decorativos
+- Card do protocolo em amarelo com ticket tracejado interno e botao de copia para clipboard
+- Integracao da geracao de protocolo e persistencia de historico na Etapa 4
+- Botao VOLTAR AO INICIO em azul institucional com limpeza de rascunho no localStorage
+- Inclusao da rota /solicitacao/sucesso em App.js
+- Criacao da suite completa de testes NovaSolicitacaoSucesso.test.js (100% aprovada, 101/101 testes)
+- Registro de governanca de IA em docs/prompts-ia/frontend/31-nova-solicitacao-sucesso.md

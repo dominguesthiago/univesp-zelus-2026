@@ -18,6 +18,7 @@ const renderStep4 = (initialState = null) => {
       <Routes>
         <Route path="/solicitacao/etapa-4" element={<NovaSolicitacaoStep4 />} />
         <Route path="/solicitacao/etapa-3" element={<MockEtapa3 />} />
+        <Route path="/solicitacao/sucesso" element={<div data-testid="sucesso-screen">Tela de Sucesso</div>} />
         <Route path="/cidadao/painel" element={<MockPainel />} />
       </Routes>
     </MemoryRouter>

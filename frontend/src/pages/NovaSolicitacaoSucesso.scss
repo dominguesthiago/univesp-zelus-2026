@@ -1,0 +1,369 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// Estilos da Página: NovaSolicitacaoSucesso.scss (Conclusão do Chamado)
+// ==============================================================
+// Design Neobrutalista ZELUS:
+// - Header sem botão de voltar, marca institucional perfeitamente centralizada
+// - Badge comemorativo com checklist e confetes coloridos
+// - Card do protocolo em amarelo Prefeitura com borda sólida e ticket interno tracejado
+// - Botão VOLTAR AO INÍCIO em azul institucional escuro (#1a3458)
+// - Rodapé padronizado ancorado na base
+// ==============================================================
+
+// -- Regra Estrita para Mobile (max-width: 767px) --
+@media (max-width: 767px) {
+  .nova-solicitacao-wrapper--sucesso {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .nova-solicitacao-card-mobile--sucesso {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
+// -- Cabeçalho Sucesso: Sem Botão Voltar e Marca Centralizada --
+.nova-solicitacao-header--sucesso {
+  justify-content: center !important;
+
+  .nova-solicitacao-header__brand--centered {
+    padding: 0 !important;
+    margin: 0 auto;
+  }
+}
+
+// -- Contêiner Principal da Tela de Sucesso --
+.sucesso-main-container {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+  }
+}
+
+// -- Hero de Sucesso (Badge + Título + Mensagem) --
+.sucesso-hero-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+// -- Badge Comemorativo com Confetes --
+.sucesso-icone-badge {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.sucesso-svg-badge {
+  filter: drop-shadow(4px 4px 0 #1a1a24);
+  transition: transform vars.$transition-fast;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+}
+
+// Confetes Decorativos (Cápsulas Coloridas com Rotação)
+.sucesso-confete {
+  position: absolute;
+  border-radius: 999px;
+  border: 1.5px solid #1a1a24;
+  pointer-events: none;
+
+  &--top-left {
+    top: 6px;
+    left: 10px;
+    width: 6px;
+    height: 12px;
+    background-color: #f87171; // Vermelho coral
+    transform: rotate(-35deg);
+  }
+
+  &--top-right {
+    top: 8px;
+    right: 12px;
+    width: 12px;
+    height: 6px;
+    background-color: #fbd362; // Amarelo
+    transform: rotate(25deg);
+  }
+
+  &--mid-left {
+    top: 48px;
+    left: -4px;
+    width: 10px;
+    height: 10px;
+    background-color: #38bdf8; // Azul claro
+    border-radius: 50%;
+  }
+
+  &--mid-right {
+    top: 46px;
+    right: -2px;
+    width: 6px;
+    height: 12px;
+    background-color: #f43f5e; // Rosa
+    transform: rotate(45deg);
+  }
+
+  &--bottom-left {
+    bottom: 8px;
+    left: 14px;
+    width: 12px;
+    height: 6px;
+    background-color: #38bdf8; // Azul
+    transform: rotate(40deg);
+  }
+
+  &--bottom-right {
+    bottom: 10px;
+    right: 14px;
+    width: 8px;
+    height: 8px;
+    background-color: #fbd362; // Amarelo
+    transform: rotate(15deg);
+  }
+}
+
+// -- Título e Subtítulo --
+.sucesso-titulo {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #1a1a24;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  margin: 0 0 6px 0;
+}
+
+.sucesso-subtitulo {
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1.4;
+  margin: 0;
+  max-width: 290px;
+}
+
+// -- Card Amarelo Neobrutalista do Protocolo --
+.sucesso-protocolo-card {
+  width: 100%;
+  max-width: 320px;
+  background-color: #fde047; // Amarelo vibrante do mockup
+  border: vars.$border-cartoon-lg; // 3.5px solid #1a1a24
+  border-radius: 18px;
+  box-shadow: vars.$shadow-cartoon-lg; // 6px 6px 0 #1a1a24
+  padding: 16px 14px 14px;
+  margin: 12px 0 8px;
+  text-align: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.sucesso-protocolo-rotulo {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #1a1a24;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 10px 0;
+}
+
+// -- Ticket Interno Tracejado --
+.sucesso-protocolo-ticket {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #fffbeb;
+  border: 2.5px dashed #1a1a24;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-sizing: border-box;
+}
+
+.sucesso-protocolo-numero {
+  font-family: vars.$font-family-mono;
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #1a1a24;
+  letter-spacing: 1px;
+}
+
+// -- Botão Copiar --
+.sucesso-btn-copiar {
+  background: none;
+  border: 2px solid transparent;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a24;
+  transition: transform vars.$transition-fast, background-color vars.$transition-fast,
+    color vars.$transition-fast;
+
+  &:hover {
+    background-color: rgba(26, 26, 36, 0.08);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1a1a24;
+    outline-offset: 2px;
+  }
+
+  &--copiado {
+    color: #15803d;
+    background-color: #dcfce7;
+  }
+}
+
+.sucesso-icon-copy {
+  stroke-width: 2.4px;
+}
+
+.sucesso-icon-check {
+  stroke-width: 2.6px;
+}
+
+// -- Badge Feedback Copiado --
+.sucesso-copiado-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #166534;
+  background-color: #dcfce7;
+  border: 1.5px solid #16a34a;
+  border-radius: 6px;
+  padding: 2px 10px;
+  animation: sucesso-fade-in 0.2s ease;
+}
+
+@keyframes sucesso-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// -- Texto Informativo de Histórico --
+.sucesso-info-historico {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #4b5568;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 295px;
+  margin: 6px 0 14px 0;
+  flex-shrink: 0;
+}
+
+// -- Bloco de Ações da Base --
+.sucesso-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+// -- Botão Azul Escuro ZELUS (VOLTAR AO INÍCIO 🏠) --
+.sucesso-btn-inicio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 13px vars.$spacing-md;
+  background-color: #1a3458; // Azul escuro institucional
+  color: #ffffff;
+  border: vars.$border-cartoon-lg; // 3.5px solid #1a1a24
+  border-radius: vars.$border-radius-cartoon-lg; // 28px
+  font-size: clamp(1.05rem, 4.3vw, 1.22rem);
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  box-shadow: vars.$shadow-cartoon-lg; // 6px 6px 0 #1a1a24
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast,
+    background-color vars.$transition-fast;
+
+  &:hover {
+    background-color: #122742;
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 vars.$color-text-primary;
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 vars.$color-text-primary;
+  }
+
+  &:focus-visible {
+    outline: 3px solid vars.$color-accent;
+    outline-offset: 3px;
+  }
+}
+
+.sucesso-btn-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}

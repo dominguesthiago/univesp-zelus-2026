@@ -143,6 +143,11 @@ const NovaSolicitacaoStep4 = () => {
 
   // Clique no botão "CONFIRMAR": Loga os dados finais no console e atualiza o rascunho
   const handleConfirmar = () => {
+    // 1. Gera protocolo visual provisório (ex: #1543-2026)
+    const numeroAleatorio = Math.floor(1000 + Math.random() * 9000);
+    const anoAtual = new Date().getFullYear();
+    const protocoloGerado = `#${numeroAleatorio}-${anoAtual}`;
+
     const dadosFinais = {
       ...dadosIniciais,
       rua: endereco.rua,
@@ -155,17 +160,26 @@ const NovaSolicitacaoStep4 = () => {
         bairro: endereco.bairro,
         cidade: endereco.cidade,
       },
+      protocolo: protocoloGerado,
       confirmadoEm: new Date().toISOString(),
     };
 
     console.log('[ZELUS Etapa 4] Dados finais da solicitação confirmados:', dadosFinais);
 
-    // Salva o rascunho completo no localStorage
+    // 2. Salva no histórico de chamados e atualiza rascunho no localStorage
     try {
+      const historicoAnterior = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
+      const novoHistorico = [dadosFinais, ...historicoAnterior];
+      localStorage.setItem('zelus_historico_chamados', JSON.stringify(novoHistorico));
       localStorage.setItem('zelus_rascunho_solicitacao', JSON.stringify(dadosFinais));
     } catch (e) {
-      console.warn('Erro ao salvar rascunho com endereço confirmado no localStorage:', e);
+      console.warn('Erro ao salvar no histórico de chamados do localStorage:', e);
     }
+
+    // 3. Redireciona para a Tela de Sucesso (Etapa 5 / Conclusão)
+    navigate('/solicitacao/sucesso', {
+      state: dadosFinais,
+    });
   };
 
   // Clique no botão/link "Cancelar solicitação" com confirmação explícita

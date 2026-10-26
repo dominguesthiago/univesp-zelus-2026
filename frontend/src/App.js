@@ -12,6 +12,7 @@ import NovaSolicitacaoStep1 from './pages/NovaSolicitacaoStep1';
 import NovaSolicitacaoStep2 from './pages/NovaSolicitacaoStep2';
 import NovaSolicitacaoStep3 from './pages/NovaSolicitacaoStep3';
 import NovaSolicitacaoStep4 from './pages/NovaSolicitacaoStep4';
+import NovaSolicitacaoSucesso from './pages/NovaSolicitacaoSucesso';
 import Privacidade from './pages/Privacidade';
 import NotFound from './pages/NotFound';
 
@@ -80,6 +81,7 @@ function AppContent() {
           <Route path="/solicitacao/etapa-2" element={<NovaSolicitacaoStep2 />} />
           <Route path="/solicitacao/etapa-3" element={<NovaSolicitacaoStep3 />} />
           <Route path="/solicitacao/etapa-4" element={<NovaSolicitacaoStep4 />} />
+          <Route path="/solicitacao/sucesso" element={<NovaSolicitacaoSucesso />} />
           <Route path="/solicitacao/nova" element={<NovaSolicitacaoStep1 />} />
           <Route path="/nova-solicitacao" element={<NovaSolicitacaoStep1 />} />
           <Route path="/politica-privacidade" element={<Privacidade />} />
