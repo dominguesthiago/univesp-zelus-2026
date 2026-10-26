@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AlertTriangle, RotateCw, Inbox } from 'lucide-react';
+import { listarMinhasSolicitacoes } from '../services/api';
 import ilustracaoBuraco from '../assets/images/solicitacao-buraco.jpg';
 import ilustracaoBueiro from '../assets/images/solicitacao-bueiro.jpg';
 import ilustracaoEntulho from '../assets/images/solicitacao-entulho.jpg';
@@ -13,26 +15,20 @@ const CLASSE_TELA_TRAVADA = 'painel-cidadao-ativo';
 
 /**
  * Painel do Cidadão (PainelCidadao.jsx)
- * Dashboard colaborativo: boas-vindas, botão de nova solicitação e
- * lista rolável (scroll isolado) de "Minhas Solicitações Recentes".
- * O Header e o Footer institucionais são renderizados globalmente pelo App.js.
+ * Dashboard colaborativo com consumo da API REST (GET /api/solicitacoes/minhas):
+ * - Boas-vindas personalizadas resgatando dados do cidadão autenticado.
+ * - Botão "+ NOVA SOLICITAÇÃO 📱" para início do fluxo transacional.
+ * - Lista dinâmica com estados de carga (Skeletons), resiliência (Retry) e Empty State.
+ * - Preservação da "Regra de Ouro" de isolamento estrito de rolagem.
  */
 const PainelCidadao = () => {
   const navigate = useNavigate();
   const [cidadao, setCidadao] = useState(null);
+  const [solicitacoes, setSolicitacoes] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
 
-  // Mock de dados (simulação até a integração com a API de solicitações)
-  const solicitacoes = [
-    { id: 1, tipo: 'Buraco na Rua / Asfalto', protocolo: '#3842', data: '10/11/2026', status: 'Pendente', imagem: ilustracaoBuraco },
-    { id: 2, tipo: 'Bueiro / Boca-de-lobo', protocolo: '#1542', data: '08/11/2026', status: 'Concluído', imagem: ilustracaoBueiro },
-    { id: 3, tipo: 'Descarte Irregular de Entulho', protocolo: '#3407', data: '25/10/2026', status: 'Pendente', imagem: ilustracaoEntulho },
-    { id: 4, tipo: 'Lâmpada Queimada na Praça', protocolo: '#4102', data: '20/10/2026', status: 'Pendente', imagem: ilustracaoBuraco },
-    { id: 5, tipo: 'Poda de Árvore', protocolo: '#4189', data: '18/10/2026', status: 'Concluído', imagem: ilustracaoBueiro },
-    { id: 6, tipo: 'Sinalização Apagada', protocolo: '#4255', data: '15/10/2026', status: 'Em Análise', imagem: ilustracaoBuraco },
-    { id: 7, tipo: 'Entulho na Calçada', protocolo: '#4310', data: '12/10/2026', status: 'Pendente', imagem: ilustracaoEntulho },
-    { id: 8, tipo: 'Vazamento de Água', protocolo: '#4401', data: '10/10/2026', status: 'Em Análise', imagem: ilustracaoBueiro },
-  ];
-
+  // Busca do perfil do cidadão salvo no localStorage
   useEffect(() => {
     const dadosSalvos = localStorage.getItem('zelus_cidadao');
     if (dadosSalvos) {
@@ -54,16 +50,79 @@ const PainelCidadao = () => {
     };
   }, []);
 
+  // Busca as solicitações reais do cidadão autenticado
+  const carregarSolicitacoes = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+
+    try {
+      const resposta = await listarMinhasSolicitacoes();
+      if (resposta && Array.isArray(resposta.dados)) {
+        setSolicitacoes(resposta.dados);
+      } else {
+        setSolicitacoes([]);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar solicitações do cidadão:', err);
+      setErro('Não foi possível carregar suas solicitações. Verifique sua conexão e tente novamente.');
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarSolicitacoes();
+  }, [carregarSolicitacoes]);
+
   const primeiroNome = cidadao?.nome_completo
     ? cidadao.nome_completo.split(' ')[0]
     : 'Cidadão';
 
-  const classeBadge = (status) =>
-    status === 'Concluído' ? 'badge badge--concluido' : 'badge badge--pendente';
+  // Resolvedor de imagem com fallback inteligente
+  const obterImagemSolicitacao = (item) => {
+    if (item.foto_url) {
+      return item.foto_url;
+    }
+    const texto = (item.subcategorias?.nome || item.descricao || '').toLowerCase();
+    if (texto.includes('bueiro') || texto.includes('boca')) {
+      return ilustracaoBueiro;
+    }
+    if (texto.includes('lixo') || texto.includes('entulho')) {
+      return ilustracaoEntulho;
+    }
+    return ilustracaoBuraco;
+  };
+
+  // Mapeamento semântico de status e ícones
+  const formatarStatus = (status) => {
+    switch (status) {
+      case 'Concluído':
+        return { classe: 'badge badge--concluido', icone: '✓' };
+      case 'Em Andamento':
+        return { classe: 'badge badge--andamento', icone: '⚙️' };
+      case 'Descartada':
+        return { classe: 'badge badge--descartada', icone: '✕' };
+      case 'Pendente':
+      default:
+        return { classe: 'badge badge--pendente', icone: '⏳' };
+    }
+  };
+
+  // Formatação de data em pt-BR
+  const formatarData = (dataIso) => {
+    if (!dataIso) return '';
+    try {
+      const data = new Date(dataIso);
+      if (isNaN(data.getTime())) return dataIso;
+      return data.toLocaleDateString('pt-BR');
+    } catch {
+      return dataIso;
+    }
+  };
 
   return (
     <main id="conteudo-principal" className="painel-cidadao" tabIndex={-1}>
-      {/* Área fixa: boas-vindas + botão principal (o "Sair" fica no Header global) */}
+      {/* Área fixa: boas-vindas + botão principal */}
       <div className="painel-cidadao__topo">
         <section className="painel-cidadao__boas-vindas" aria-labelledby="painel-titulo">
           <h1 id="painel-titulo" className="painel-cidadao__titulo">
@@ -92,35 +151,119 @@ const PainelCidadao = () => {
           Minhas Solicitações Recentes
         </h2>
 
-        <ul className="painel-cidadao__lista" data-testid="lista-solicitacoes">
-          {solicitacoes.map((item) => (
-            <li key={item.id} className="solicitacao-card">
-              <div className="solicitacao-card__icone">
-                <img
-                  src={item.imagem}
-                  alt=""
-                  aria-hidden="true"
-                  className="solicitacao-card__imagem"
-                  width="72"
-                  height="72"
-                />
-              </div>
-              <div className="solicitacao-card__info">
-                <div className="solicitacao-card__topo">
-                  <h3 className="solicitacao-card__tipo">{item.tipo}</h3>
-                  <span className={classeBadge(item.status)}>
-                    {item.status}{' '}
-                    <span aria-hidden="true">{item.status === 'Concluído' ? '✓' : '⏳'}</span>
-                  </span>
+        {/* 1. Estado de Carregamento (Skeletons) */}
+        {carregando && (
+          <div
+            role="status"
+            aria-label="Carregando suas solicitações..."
+            className="painel-cidadao__lista painel-cidadao__lista--loading"
+          >
+            <span className="sr-only">Carregando suas solicitações...</span>
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="solicitacao-card solicitacao-card--skeleton" aria-hidden="true">
+                <div className="solicitacao-card__icone">
+                  <div className="skeleton-box" style={{ width: '72px', height: '72px' }} />
                 </div>
-                <p className="solicitacao-card__meta">
-                  Protocolo: <strong>{item.protocolo}</strong>
-                </p>
-                <p className="solicitacao-card__meta">Data: {item.data}</p>
+                <div className="solicitacao-card__info" style={{ gap: '8px' }}>
+                  <div className="skeleton-box" style={{ width: '60%', height: '18px' }} />
+                  <div className="skeleton-box" style={{ width: '40%', height: '14px' }} />
+                  <div className="skeleton-box" style={{ width: '30%', height: '14px' }} />
+                </div>
               </div>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
+
+        {/* 2. Estado de Erro com Retry */}
+        {!carregando && erro && (
+          <div role="alert" className="painel-erro">
+            <AlertTriangle size={32} color="#991b1b" aria-hidden="true" />
+            <p className="painel-erro__texto">{erro}</p>
+            <button
+              type="button"
+              className="painel-erro__btn-retry"
+              onClick={carregarSolicitacoes}
+              aria-label="Tentar carregar solicitações novamente"
+            >
+              <RotateCw size={16} aria-hidden="true" />
+              <span>TENTAR NOVAMENTE</span>
+            </button>
+          </div>
+        )}
+
+        {/* 3. Estado de Lista Vazia (Empty State) */}
+        {!carregando && !erro && solicitacoes.length === 0 && (
+          <div
+            className="painel-empty-state"
+            role="region"
+            aria-label="Nenhuma solicitação registrada"
+          >
+            <Inbox size={42} className="painel-empty-state__icone" aria-hidden="true" />
+            <h3 className="painel-empty-state__titulo">Nenhuma solicitação encontrada</h3>
+            <p className="painel-empty-state__texto">
+              Você ainda não registrou nenhum chamado de zeladoria urbana. Quando abrir uma solicitação,
+              ela aparecerá aqui para você acompanhar o andamento da equipe da prefeitura.
+            </p>
+            <button
+              type="button"
+              className="painel-empty-state__cta"
+              onClick={() => navigate('/solicitacao/etapa-1')}
+              aria-label="Criar minha primeira solicitação de zeladoria"
+            >
+              + CRIAR MINHA PRIMEIRA SOLICITAÇÃO 📱
+            </button>
+          </div>
+        )}
+
+        {/* 4. Lista Dinâmica de Solicitações Reais */}
+        {!carregando && !erro && solicitacoes.length > 0 && (
+          <ul className="painel-cidadao__lista" data-testid="lista-solicitacoes">
+            {solicitacoes.map((item) => {
+              const { classe: statusClasse, icone: statusIcone } = formatarStatus(item.status);
+              const imagemSrc = obterImagemSolicitacao(item);
+              const tipoTitulo = item.subcategorias?.nome || item.descricao || 'Solicitação';
+              const dataFormatada = formatarData(item.created_at || item.data);
+              const enderecoLinha = item.rua
+                ? `${item.rua}${item.numero ? `, ${item.numero}` : ''}${item.bairro ? ` - ${item.bairro}` : ''}`
+                : null;
+
+              return (
+                <li key={item.id} className="solicitacao-card">
+                  <div className="solicitacao-card__icone">
+                    <img
+                      src={imagemSrc}
+                      alt=""
+                      aria-hidden="true"
+                      className="solicitacao-card__imagem"
+                      width="72"
+                      height="72"
+                    />
+                  </div>
+                  <div className="solicitacao-card__info">
+                    <div className="solicitacao-card__topo">
+                      <h3 className="solicitacao-card__tipo">{tipoTitulo}</h3>
+                      <span className={statusClasse}>
+                        {item.status || 'Pendente'}{' '}
+                        <span aria-hidden="true">{statusIcone}</span>
+                      </span>
+                    </div>
+                    <p className="solicitacao-card__meta">
+                      Protocolo: <strong>{item.protocolo}</strong>
+                    </p>
+                    {enderecoLinha && (
+                      <p className="solicitacao-card__meta">
+                        {enderecoLinha}
+                      </p>
+                    )}
+                    {dataFormatada && (
+                      <p className="solicitacao-card__meta">Data: {dataFormatada}</p>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
     </main>
   );

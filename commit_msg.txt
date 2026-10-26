@@ -1,10 +1,11 @@
-feat(frontend): implementa POST real da Etapa 4 e trativa de erro Haversine
+feat(frontend): integra Painel do Cidadao com API real e Empty State
 
-- Vincula NovaSolicitacaoStep4.jsx com criarSolicitacao() (POST /api/solicitacoes)
-- Sanitiza e envia payload transacional com coordenadas, UUID real e foto Base64
-- Implementa protecao anti-double submit com feedback de spinner neobrutalista
-- Intercepta erro HTTP 409 do filtro espacial Haversine (< 10m) com alerta acessivel
-- Limpa rascunho temporario e trafega protocolo oficial do servidor para a Etapa 5
-- Atualiza suite de testes unitarios NovaSolicitacaoStep4.test.js (11/11 testes aprovados)
-- Atualiza matriz de governanca para versao 1.4 em docs/documentacao/frontend/registro-testes-frontend.md
-- Registra rastreabilidade de IA em docs/prompts-ia/frontend/35-passo-4-envio-solicitacao.md
+- Conecta o Painel do Cidadão ao endpoint autenticado GET /api/solicitacoes/minhas via api.js
+- Implementa Skeletons Neobrutalistas com pulse e acessibilidade (role="status") para loading
+- Adiciona tratamento resiliente de falhas de conexão com alerta acessível (role="alert") e botão funcional de retry
+- Cria Empty State com ilustração, mensagem motivacional e CTA direcionando para a Etapa 1
+- Implementa fallback inteligente de imagens temáticas para chamados sem foto anexada
+- Adiciona suporte aos novos badges de status neobrutalistas (Em Andamento e Descartada)
+- Atualiza PainelCidadao.test.js cobrindo cenários CT-PNL.1 a CT-PNL.5 com 7/7 testes aprovados
+- Gera registro de governança docs/prompts-ia/frontend/36-passo-5-painel-dinamico.md
+- Atualiza docs/documentacao/frontend/registro-testes-frontend.md para Versão 1.5 com homologação da Suíte 08 e ADR 10

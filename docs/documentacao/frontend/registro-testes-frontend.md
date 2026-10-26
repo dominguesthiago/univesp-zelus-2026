@@ -3,7 +3,7 @@
 **Documento:** Matriz de Qualidade, Governança de Testes e Cobertura de Componentes  
 **Módulo:** `frontend/src/tests/`  
 **Fase:** Fase 3 — Integração de Dados (Front-end <-> Back-end)  
-**Versão:** 1.4  
+**Versão:** 1.5  
 **Data:** 26 de outubro de 2026  
 **Responsabilidade:** Engenharia de Qualidade (QA) e Arquitetura de Software  
 **Status:** Vigente e Validado  
@@ -124,17 +124,31 @@ npm test -- --coverage --watchAll=false
   5. **CT-ENV.5 (Cancelamento de Solicitação):** Valida que o cancelamento via `window.confirm` descarta o rascunho no storage e redireciona para o Painel do Cidadão sem despachar requisições para a API.
   6. **Acessibilidade e Usabilidade:** Confirma miniatura de foto, busca reversa de CEP/Nominatim e foco em campos controlados.
 
+### 4.8 Suíte 08: `PainelCidadao.test.js` (Painel Dinâmico, Skeletons e Empty State)
+* **Arquivo Testado:** `frontend/src/pages/PainelCidadao.jsx`
+* **Módulo:** Painel Principal do Cidadão (Passo 5 da Integração Front-Back)
+* **Data de Homologação:** 26 de outubro de 2026
+* **Status:** ✅ 100% APROVADO (7/7 testes unitários)
+* **Cenários Cobertos:**
+  1. **CT-PNL.1 (Lista Dinâmica da API):** Valida a busca e renderização de dados reais retornados por `GET /api/solicitacoes/minhas`, testando protocolos oficiais, badges neobrutalistas com estilos dedicados (`badge--pendente`, `badge--concluido`, `badge--andamento`, `badge--descartada`), endereços formatados e miniaturas com fallback inteligente.
+  2. **CT-PNL.2 (Skeletons Neobrutalistas):** Valida a renderização de 3 cartões neobrutalistas com borda preta de 3px, sombra dura e animação de pulso `@keyframes pulse-skeleton-painel`, atestando acessibilidade semântica com `role="status"` e `aria-label="Carregando suas solicitações..."`.
+  3. **CT-PNL.3 (Empty State Acessível):** Valida que, ao receber um array vazio da API (`dados: []`), o componente renderiza uma região semântica (`role="region"` com `aria-label="Nenhuma solicitação registrada"`), ilustração de prancheta vazia, texto motivador e botão de chamada para ação `"+ CRIAR MINHA PRIMEIRA SOLICITAÇÃO 📱"` navegando para a Etapa 1.
+  4. **CT-PNL.4 (Tratamento de Falhas e Retry):** Valida a exibição de alerta resiliente com `role="alert"` e `aria-live="assertive"` em instabilidades de rede, e confirma a reexecução bem-sucedida da busca através do botão interativo `"TENTAR NOVAMENTE"`.
+  5. **CT-PNL.5 (Saudação e Navegação do Cidadão):** Valida a saudação personalizada com o primeiro nome extraído de `localStorage.getItem('zelus_cidadao')` e fallback gracioso para `"Cidadão"`, além de atestar o clique no botão principal de nova solicitação.
+  6. **Regra de Ouro (Trava de Rolagem):** Valida a adição da classe `painel-cidadao-ativo` em `document.body` e `document.documentElement` ao montar e sua remoção compulsória no desmonte do componente.
+
 ---
 
 ## 5. Critérios de Aceite e Métricas de QA
 
-* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 115 testes).
+* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 116 testes).
 * **Acessibilidade Automatizada:** Preservação de landmarks semânticos e ausência de nós órfãos de acessibilidade.
 * **Conformidade Legal:** Isolamento rigoroso da chave `zelus_termo_aceito` na Web Storage API.
 * **Segurança e Camada de Rede:** Injeção transparente de credenciais via padrão RFC 6750 (`Bearer`), mantendo chaves sensíveis de produção fora do código do cliente.
 * **Blindagem de Fronteira:** Bloqueio síncrono e sem FOUC (*Flash of Unauthenticated Content*) para todas as rotas restritas do cidadão (`/cidadao/*` e `/solicitacao/*`).
 * **Integridade Relacional de Entidades:** Tráfego e persistência de identificadores universais únicos (UUIDs) do Supabase para foreign keys (`categoria_id`, `subcategoria_id`).
 * **Robustez Transacional:** Blindagem anti-duplo clique e tratamento gracioso de restrições geodésicas de negócio (filtro espacial 10 metros).
+* **Listagem Reativa & Resiliência de Conexão:** Skeletons neobrutalistas para mascaramento de latência, tolerância a falhas de rede com ação de retry sem recarregar a SPA e onboarding convidativo com Empty State.
 
 ---
 
@@ -180,5 +194,18 @@ npm test -- --coverage --watchAll=false
   1. **Idempotência no Cliente:** O estado de loading bloqueia novas submissões enquanto a primeira promessa estiver em trânsito.
   2. **Clareza ao Munícipe:** O erro 409 não é mascarado como falha de sistema; em vez disso, orienta o munícipe que aquele mesmo problema físico já foi registrado por outro cidadão no mesmo local geográfico.
   3. **Conclusão Transacional Segura:** A exclusão do rascunho ocorre estritamente após o retorno de sucesso com HTTP 201 e persistência no banco.
+
+---
+
+## 10. Registro de Decisão Arquitetural (ADR) — Painel Reativo com Empty State e Resiliência de Conexão
+
+* **Contexto:** A tela principal do munícipe continha uma lista estática de 8 solicitações mockadas, que não refletiam os chamados recém-criados no banco de dados Supabase e não ofereciam tratamento para munícipes recém-cadastrados (base vazia) ou situações de perda de sinal 4G/5G.
+* **Decisão:** Refatorou-se o [PainelCidadao.jsx](file:///c:/Users/dfeni/univesp-zelus-2026/frontend/src/pages/PainelCidadao.jsx) para buscar dinamicamente os chamados via `listarMinhasSolicitacoes()`, implementando uma máquina de estados visual neobrutalista: Skeletons pulsantes (`carregando`), alerta acessível com retry (`erro`), Empty State motivacional com CTA para `/solicitacao/etapa-1` (`solicitacoes.length === 0`) e grid populado com fallback temático para fotos ausentes.
+* **Justificativa:**
+  1. **Experiência Sem FOUC (*Flash of Unauthenticated Content* ou tela branca):** Os skeletons preservam o layout e altura da página durante a requisição assíncrona.
+  2. **Tolerância a Falhas Móveis:** Redes móveis municipais sujeitas a instabilidade não travam a tela; o usuário pode retentar a conexão com um único clique sem reiniciar a aplicação.
+  3. **Onboarding Positivo (Empty State):** Munícipes novos são imediatamente encorajados a emitir seu primeiro chamado de zeladoria através do botão de ação direta.
+  4. **Fallback Inteligente de Assets:** Garante que chamados registrados sem anexo de foto permaneçam visualmente consistentes com a identidade neobrutalista da plataforma.
+
 
 
