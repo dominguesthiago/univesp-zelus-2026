@@ -3,7 +3,7 @@
 **Documento:** Matriz de Qualidade, Governança de Testes e Cobertura de Componentes  
 **Módulo:** `frontend/src/tests/`  
 **Fase:** Fase 3 — Integração de Dados (Front-end <-> Back-end)  
-**Versão:** 1.1  
+**Versão:** 1.2  
 **Data:** 26 de outubro de 2026  
 **Responsabilidade:** Engenharia de Qualidade (QA) e Arquitetura de Software  
 **Status:** Vigente e Validado  
@@ -76,6 +76,17 @@ npm test -- --coverage --watchAll=false
   5. **CT-API.5 (Tratamento Amigável de Falha de Rede):** Simula a queda do servidor/conexão e atesta a conversão do erro cru (`Failed to fetch`) em um erro com status `0` e mensagem amigável em português para o cidadão.
   6. **CT-API.6 (Contratos e Verbos dos Novos Métodos):** Valida que `listarCategorias()` despacha `GET /api/categorias`, `listarMinhasSolicitacoes()` despacha `GET /api/solicitacoes/minhas` e `criarSolicitacao(dados)` despacha `POST /api/solicitacoes` com corpo serializado em JSON.
 
+### 4.4 Suíte 04: `PrivateRoute.test.js` (Blindagem de Rotas e Redirecionamento Seguro)
+* **Arquivo Testado:** `frontend/src/components/PrivateRoute.jsx`
+* **Módulo:** Camada de Segurança e Roteamento SPA (Passo 2 da Integração Front-Back)
+* **Data de Homologação:** 26 de outubro de 2026
+* **Status:** ✅ 100% APROVADO (4/4 testes unitários)
+* **Cenários Cobertos:**
+  1. **CT-SEC.1 (Acesso Autorizado):** Valida que a presença do `zelus_token` no `localStorage` resulta na montagem e renderização imediata do componente filho protegido (`children`).
+  2. **CT-SEC.2 (Acesso Anônimo Barrado):** Garante que usuários sem o token JWT no storage são estritamente impedidos de visualizar o conteúdo privado e sofrem redirecionamento compulsório para `/login/cidadao`.
+  3. **CT-SEC.3 (Preservação de Deep Linking):** Confirma que o componente `<Navigate>` encapsula a rota de origem no objeto de estado (`state: { from: location }`), viabilizando o retorno dinâmico do munícipe após autenticação.
+  4. **CT-SEC.4 (Reatividade e Deslogamento Dinâmico):** Comprova que a invalidação ou remoção do token resulta no bloqueio instantâneo do acesso a rotas privadas.
+
 ---
 
 ## 5. Critérios de Aceite e Métricas de QA
@@ -84,6 +95,7 @@ npm test -- --coverage --watchAll=false
 * **Acessibilidade Automatizada:** Preservação de landmarks semânticos e ausência de nós órfãos de acessibilidade.
 * **Conformidade Legal:** Isolamento rigoroso da chave `zelus_termo_aceito` na Web Storage API.
 * **Segurança e Camada de Rede:** Injeção transparente de credenciais via padrão RFC 6750 (`Bearer`), mantendo chaves sensíveis de produção fora do código do cliente.
+* **Blindagem de Fronteira:** Bloqueio síncrono e sem FOUC (*Flash of Unauthenticated Content*) para todas as rotas restritas do cidadão (`/cidadao/*` e `/solicitacao/*`).
 
 ---
 
@@ -96,4 +108,16 @@ npm test -- --coverage --watchAll=false
   2. **Zero Dependências:** Mantém o bundle leve e performático ao dispensar bibliotecas externas pesadas (como Axios), utilizando a Fetch API nativa do navegador.
   3. **Segurança e Blindagem:** Previne o envio de tokens nulos ou strings indefinidas nas rotas públicas.
 * **Consequências Positivas:** Todas as telas presentes e futuras do sistema ZELUS comunicam-se de forma autenticada com a API automaticamente ao invocar qualquer método exportado por `api.js`.
+
+---
+
+## 7. Registro de Decisão Arquitetural (ADR) — Guarda de Rotas Declarativo e Deep Linking
+
+* **Contexto:** Os fluxos de acompanhamento de chamados e de abertura de nova solicitação municipal carecem de identidade garantida do cidadão para registro no banco de dados. Usuários anônimos navegando diretamente por URL poderiam acessar etapas avançadas e sofrer erros transacionais no momento da submissão.
+* **Decisão:** Criação do componente `PrivateRoute.jsx` atuando como guardião declarativo no `App.js` e aprimoramento da página `LoginCidadao.jsx` para priorizar `location.state?.from?.pathname` no redirecionamento pós-login.
+* **Justificativa:**
+  1. **Zero FOUC:** O componente filho não é montado no DOM virtual enquanto o token não for atestado.
+  2. **Histórico Limpo:** Uso de `replace: true` impede que o usuário caia em loops no histórico de navegação ao tentar retornar pelo navegador.
+  3. **Continuidade de Tarefa (UX):** Munícipes com links diretos não perdem seu fluxo de trabalho, sendo devolvidos à etapa pretendida imediatamente após autenticar.
+
 

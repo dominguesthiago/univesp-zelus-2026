@@ -1,9 +1,9 @@
-chore(frontend): configura env e interceptor JWT na camada de api
+feat(frontend): implementa PrivateRoute e deep linking pos-login
 
-- Criacao do arquivo frontend/.env com REACT_APP_API_URL apontando para o backend local
-- Refatoracao de request() em api.js com interceptor nativo para injecao automatica do token JWT
-- Tratamento amigavel de falha de conexao de rede com status 0
-- Adicao dos contratos listarCategorias, criarSolicitacao e listarMinhasSolicitacoes em api.js
-- Criacao da suite de testes unitarios api.test.js com 6 cenarios aprovados (CT-API.1 a CT-API.6)
+- Criacao do componente de seguranca PrivateRoute.jsx com verificacao de zelus_token
+- Interceptacao declarativa de rotas restritas e redirecionamento seguro para /login/cidadao
+- Atualizacao de LoginCidadao.jsx para consumo de state.from e suporte a Deep Linking
+- Blindagem no App.js de todas as rotas do Painel do Cidadao e do fluxo /solicitacao/*
+- Criacao da suite PrivateRoute.test.js com 4 cenarios unitarios aprovados (CT-SEC.1 a 4)
 - Atualizacao do registro oficial de testes em docs/documentacao/frontend/registro-testes-frontend.md
-- Registro de governanca de IA em docs/prompts-ia/frontend/32-passo-1-infra-api.md
+- Registro de governanca de IA em docs/prompts-ia/frontend/33-passo-2-protecao-rotas.md

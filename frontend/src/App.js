@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
+import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import LoginCidadao from './pages/LoginCidadao';
 import CadastroCidadao from './pages/CadastroCidadao';
@@ -46,7 +47,14 @@ function AppContent() {
             <div className="painel-card-mobile" role="region" aria-label="Painel do Cidadão">
               <Header mostrarSair={true} />
               <Routes>
-                <Route path="/cidadao/painel" element={<PainelCidadao />} />
+                <Route
+                  path="/cidadao/painel"
+                  element={
+                    <PrivateRoute>
+                      <PainelCidadao />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
               <Footer />
             </div>
@@ -71,19 +79,80 @@ function AppContent() {
       {/* Área onde as páginas das rotas são renderizadas (cada página possui seu landmark <main>) */}
       <div className={`app-main ${isAuthRoute ? 'app-main--auth' : ''}`}>
         <Routes>
+          {/* Rotas Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login/cidadao" element={<LoginCidadao />} />
           <Route path="/cadastro/cidadao" element={<CadastroCidadao />} />
           <Route path="/recuperar-senha" element={<RecuperarSenhaCidadao />} />
           <Route path="/recuperar-senha/cidadao" element={<RecuperarSenhaCidadao />} />
-          <Route path="/cidadao/painel" element={<PainelCidadao />} />
-          <Route path="/solicitacao/etapa-1" element={<NovaSolicitacaoStep1 />} />
-          <Route path="/solicitacao/etapa-2" element={<NovaSolicitacaoStep2 />} />
-          <Route path="/solicitacao/etapa-3" element={<NovaSolicitacaoStep3 />} />
-          <Route path="/solicitacao/etapa-4" element={<NovaSolicitacaoStep4 />} />
-          <Route path="/solicitacao/sucesso" element={<NovaSolicitacaoSucesso />} />
-          <Route path="/solicitacao/nova" element={<NovaSolicitacaoStep1 />} />
-          <Route path="/nova-solicitacao" element={<NovaSolicitacaoStep1 />} />
+
+          {/* Rotas Privadas do Cidadão (Blindadas com PrivateRoute) */}
+          <Route
+            path="/cidadao/painel"
+            element={
+              <PrivateRoute>
+                <PainelCidadao />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/etapa-1"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep1 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/etapa-2"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep2 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/etapa-3"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep3 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/etapa-4"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep4 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/sucesso"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoSucesso />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/solicitacao/nova"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep1 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/nova-solicitacao"
+            element={
+              <PrivateRoute>
+                <NovaSolicitacaoStep1 />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Rotas Públicas Institucionais */}
           <Route path="/politica-privacidade" element={<Privacidade />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

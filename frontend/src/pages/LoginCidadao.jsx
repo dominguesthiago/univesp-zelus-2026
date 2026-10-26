@@ -115,7 +115,8 @@ const LoginCidadao = () => {
 
       setMensagemErro('');
       setErroApi('');
-      navigate('/cidadao/painel');
+      const rotaDestino = location.state?.from?.pathname || '/cidadao/painel';
+      navigate(rotaDestino);
     } catch (erro) {
       const msg = erro?.message || 'Erro ao realizar login. Verifique suas credenciais.';
       setErroApi(msg);
