@@ -189,11 +189,6 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolic
     // Valida limpeza do rascunho pós-sucesso
     expect(localStorage.getItem('zelus_rascunho_solicitacao')).toBeNull();
 
-    // Valida persistência no histórico de chamados
-    const historico = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
-    expect(historico.length).toBe(1);
-    expect(historico[0].protocolo).toBe('ZELUS-20261026-X8Y9');
-
     // Valida transição para a tela de sucesso
     const telaSucesso = await screen.findByTestId('sucesso-screen');
     expect(telaSucesso).toBeInTheDocument();

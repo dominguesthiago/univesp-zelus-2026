@@ -1,11 +1,8 @@
-feat(frontend): integra Painel do Cidadao com API real e Empty State
+refactor(architecture): documenta backend no Render PaaS e higieniza mocks de chamados
 
-- Conecta o Painel do Cidadão ao endpoint autenticado GET /api/solicitacoes/minhas via api.js
-- Implementa Skeletons Neobrutalistas com pulse e acessibilidade (role="status") para loading
-- Adiciona tratamento resiliente de falhas de conexão com alerta acessível (role="alert") e botão funcional de retry
-- Cria Empty State com ilustração, mensagem motivacional e CTA direcionando para a Etapa 1
-- Implementa fallback inteligente de imagens temáticas para chamados sem foto anexada
-- Adiciona suporte aos novos badges de status neobrutalistas (Em Andamento e Descartada)
-- Atualiza PainelCidadao.test.js cobrindo cenários CT-PNL.1 a CT-PNL.5 com 7/7 testes aprovados
-- Gera registro de governança docs/prompts-ia/frontend/36-passo-5-painel-dinamico.md
-- Atualiza docs/documentacao/frontend/registro-testes-frontend.md para Versão 1.5 com homologação da Suíte 08 e ADR 10
+- Atualiza LEIA-ME-ARQUITETURA.md com a inclusao do Render como plataforma PaaS do backend Node.js
+- Detalha justificativas arquiteturais de isolamento criptografico, HTTPS nativo e desacoplamento
+- Atualiza diagrama de topologia e fluxo de comunicacao (Vercel -> Render -> Supabase)
+- Adiciona secao de referencias bibliograficas e tecnologicas formais
+- Remove persistencia de mock residual zelus_historico_chamados em NovaSolicitacaoStep4.jsx
+- Ajusta assercoes de testes em NovaSolicitacaoStep4.test.js preservando 100% de aprovacao

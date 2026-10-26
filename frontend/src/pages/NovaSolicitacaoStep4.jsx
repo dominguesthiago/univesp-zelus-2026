@@ -200,13 +200,11 @@ const NovaSolicitacaoStep4 = () => {
           criadoEm: resposta.dados?.created_at || new Date().toISOString(),
         };
 
-        // Salva no histórico de chamados e limpa o rascunho temporário
+        // Limpa o rascunho temporário após submissão bem-sucedida
         try {
-          const historicoAnterior = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
-          localStorage.setItem('zelus_historico_chamados', JSON.stringify([dadosFinais, ...historicoAnterior]));
           localStorage.removeItem('zelus_rascunho_solicitacao');
         } catch (e) {
-          console.warn('Erro ao atualizar localStorage pós-criação:', e);
+          console.warn('Erro ao limpar rascunho temporário pós-criação:', e);
         }
 
         // Redireciona para a Tela de Sucesso com o protocolo oficial
