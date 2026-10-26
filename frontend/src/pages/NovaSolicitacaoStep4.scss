@@ -1,0 +1,347 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// Estilos da Página: NovaSolicitacaoStep4.scss (Confirme o local)
+// ==============================================================
+// Segue rigorosamente a identidade neobrutalista das Etapas 1, 2 e 3:
+// - Borda de 2.5px a 3.5px sólida (#1a1a24)
+// - Sombra sólida cartoon sem blur
+// - Botão CONFIRMAR verde-menta (#aaebd3) com tipografia grafite (#1a1a24)
+// - 4 campos controlados com prefixo em negrito e ícone de lápis
+// - Miniatura da foto em proporção 1:1 com moldura cartoon
+// ==============================================================
+
+// -- Regra Estrita para Mobile (max-width: 767px) --
+@media (max-width: 767px) {
+  .nova-solicitacao-wrapper--step4 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .nova-solicitacao-card-mobile--step4 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
+// -- Contêiner Principal da Etapa 4 --
+.step4-main-container {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 18px 8px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  // Barra de rolagem estilizada e discreta se necessário
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+  }
+}
+
+// -- Topo Fixo com Título e Subtítulo --
+.nova-solicitacao-topo {
+  flex-shrink: 0;
+  text-align: center;
+  margin: 0 0 6px 0;
+
+  .nova-solicitacao-titulo {
+    font-size: 1.26rem;
+    font-weight: 800;
+    color: #1a1a24;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+
+  .nova-solicitacao-etapa {
+    font-size: 0.90rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-top: 4px;
+    margin-bottom: 0;
+    letter-spacing: -0.1px;
+  }
+}
+
+// -- Miniatura da Foto Capturada (Thumbnail) --
+.step4-thumbnail-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.step4-thumbnail-img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: vars.$border-cartoon; // 3px solid #1a1a24
+  box-shadow: vars.$shadow-cartoon; // 4px 4px 0 #1a1a24
+  background-color: #f4f6f9;
+  display: block;
+}
+
+.step4-thumbnail-placeholder {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 12px;
+  border: vars.$border-cartoon;
+  box-shadow: vars.$shadow-cartoon;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  .step4-thumbnail-placeholder-icon {
+    stroke-width: 2.2px;
+    color: #475569;
+  }
+}
+
+// -- Feedback Discreto de Busca de Endereço --
+.step4-status-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f1f5f9;
+  border: 1.5px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: #334155;
+  animation: step4-fade-in 0.3s ease;
+}
+
+.step4-status-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(51, 65, 85, 0.25);
+  border-top-color: #334155;
+  border-radius: 50%;
+  animation: step4-spin 0.65s linear infinite;
+}
+
+@keyframes step4-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes step4-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// -- Formulário dos 4 Campos --
+.step4-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  width: 100%;
+}
+
+// -- Grupo Neobrutalista de Input (Rua, Número, Bairro, Cidade) --
+.step4-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 2.5px solid #1a1a24;
+  border-radius: 10px;
+  box-shadow: 3.5px 3.5px 0 #1a1a24;
+  padding: 6px 12px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast,
+    border-color vars.$transition-fast;
+  cursor: text;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    box-shadow: 4.5px 4.5px 0 #1a1a24;
+  }
+
+  &:focus-within {
+    border-color: #1a1a24;
+    box-shadow: 5px 5px 0 #1a1a24;
+    transform: translate(-1px, -1px);
+
+    .step4-input-icon {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+}
+
+.step4-input-label {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  gap: 8px;
+  cursor: text;
+}
+
+.step4-input-prefix {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1a24;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -0.2px;
+}
+
+.step4-input-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: vars.$font-family-base;
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: #1a1a24;
+  padding: 4px 0;
+
+  &::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    font-style: italic;
+  }
+}
+
+.step4-input-icon {
+  color: #1a1a24;
+  flex-shrink: 0;
+  margin-left: 8px;
+  stroke-width: 2.3px;
+  opacity: 0.85;
+  transition: opacity vars.$transition-fast, transform vars.$transition-fast;
+}
+
+// -- Ações da Base: Botão CONFIRMAR e Link Cancelar --
+.step4-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+// -- Botão Verde-Menta Padronizado ZELUS --
+.step4-btn-confirmar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 5px 0;
+  padding: 13px vars.$spacing-md;
+  background-color: vars.$color-secondary; // #aaebd3
+  color: vars.$color-text-primary; // #1a1a24
+  border: vars.$border-cartoon-lg; // 3.5px solid #1a1a24
+  border-radius: vars.$border-radius-cartoon-lg; // 28px
+  font-size: clamp(1.10rem, 4.5vw, 1.28rem);
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  box-shadow: vars.$shadow-cartoon-lg; // 6px 6px 0 #1a1a24
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast,
+    background-color vars.$transition-fast;
+
+  &:hover {
+    background-color: vars.$color-secondary-hover; // #92e0c3
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 vars.$color-text-primary;
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 vars.$color-text-primary;
+  }
+
+  &:focus-visible {
+    outline: 3px solid vars.$color-focus-ring;
+    outline-offset: 3px;
+  }
+}
+
+// -- Link Cancelar --
+.step4-btn-cancelar {
+  background: none;
+  border: none;
+  color: #c62828; // Vermelho acessível
+  font-family: vars.$font-family-base;
+  font-size: 0.94rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 4px 10px;
+  margin: 0;
+  transition: color vars.$transition-fast, transform vars.$transition-fast;
+
+  &:hover {
+    color: #991b1b;
+    transform: scale(1.02);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #c62828;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}

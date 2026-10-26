@@ -1,12 +1,12 @@
-feat(frontend): tela de captura de foto e gps etapa 3
+feat(frontend): tela de confirmacao de local e geocodificacao etapa 4
 
-- Criacao dos componentes NovaSolicitacaoStep3.jsx e NovaSolicitacaoStep3.scss
-- Integracao da camera HTML5 nativa com navigator.mediaDevices.getUserMedia (facingMode: environment)
-- Visor fotografico neobrutalista quadrado com overlay de viewfinder (REC, bateria e reticulo de foco)
-- Fallback fotografico inteligente com input accept="image/*" e capture="environment" acionado pelo botao principal
-- Captura dupla simultanea de foto (JPEG Base64 via canvas) e coordenadas GPS de alta precisao
-- Refatoracao visual alinhando cabecalho as Etapas 1 e 2 e botao no padrao verde-menta da Home
-- Maximizacao do visor via Flexbox eliminando margens fantasmas e ancorando botao abaixo do visor
-- Integracao da rota /solicitacao/etapa-3 em App.js e navegacao em NovaSolicitacaoStep2.jsx
-- Criacao da suite completa de testes unitarios NovaSolicitacaoStep3.test.js (100% de aprovacao)
-- Registro de governanca de IA em docs/prompts-ia/frontend/29-nova-solicitacao-etapa3.md
+- Criacao dos componentes NovaSolicitacaoStep4.jsx e NovaSolicitacaoStep4.scss
+- Integracao assincrona com API de geocodificacao reversa (Nominatim/OpenStreetMap)
+- Preenchimento automatico de logradouro, bairro e cidade com campo numero obrigatoriamente vazio
+- Resiliencia com placeholders explicitos e inputs controlados para digitacao manual em falha de GPS
+- Renderizacao neobrutalista da miniatura da foto capturada na Etapa 3
+- Ajuste fino ergonomico de margens mobile eliminando rolagem vertical indesejada
+- Dialogo de confirmacao com limpeza de rascunho no cancelamento de solicitacao
+- Inclusao da rota /solicitacao/etapa-4 em App.js e navegacao de retorno para Etapa 3
+- Criacao da suite de testes automatizados NovaSolicitacaoStep4.test.js (100% aprovada, 96/96 testes no frontend)
+- Registro de governanca de IA em docs/prompts-ia/frontend/30-nova-solicitacao-etapa4.md
