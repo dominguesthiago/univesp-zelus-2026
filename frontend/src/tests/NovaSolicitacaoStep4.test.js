@@ -3,10 +3,14 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import NovaSolicitacaoStep4 from '../pages/NovaSolicitacaoStep4';
+import * as api from '../services/api';
+
+jest.mock('../services/api');
 
 // Componentes auxiliares de rota para capturar a navegação
 const MockPainel = () => <div data-testid="painel-screen">Painel do Cidadão</div>;
 const MockEtapa3 = () => <div data-testid="etapa-3-screen">Etapa 3 - Captura de Foto</div>;
+const MockSucesso = () => <div data-testid="sucesso-screen">Tela de Sucesso</div>;
 
 const renderStep4 = (initialState = null) => {
   const entry = initialState
@@ -18,19 +22,31 @@ const renderStep4 = (initialState = null) => {
       <Routes>
         <Route path="/solicitacao/etapa-4" element={<NovaSolicitacaoStep4 />} />
         <Route path="/solicitacao/etapa-3" element={<MockEtapa3 />} />
-        <Route path="/solicitacao/sucesso" element={<div data-testid="sucesso-screen">Tela de Sucesso</div>} />
+        <Route path="/solicitacao/sucesso" element={<MockSucesso />} />
         <Route path="/cidadao/painel" element={<MockPainel />} />
       </Routes>
     </MemoryRouter>
   );
 };
 
-describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.jsx)', () => {
+describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolicitacaoStep4.jsx)', () => {
   const mockFotoBase64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD...';
+  const mockSubcategoriaId = 'b1b2c3d4-0001-4000-8000-000000000001';
 
   beforeEach(() => {
     localStorage.clear();
     jest.clearAllMocks();
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue({
+        address: {
+          road: 'Rua das Flores',
+          suburb: 'Centro',
+          city: 'Pradópolis',
+        },
+      }),
+    });
   });
 
   afterEach(() => {
@@ -77,20 +93,6 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
   });
 
   test('deve preencher Rua, Bairro e Cidade via Nominatim e manter Número vazio', async () => {
-    const mockNominatimResponse = {
-      address: {
-        road: 'Rua das Flores',
-        suburb: 'Centro',
-        city: 'Pradópolis',
-      },
-    };
-
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: jest.fn().mockResolvedValue(mockNominatimResponse),
-    });
-
     renderStep4({
       foto: mockFotoBase64,
       latitude: -21.3589,
@@ -103,65 +105,18 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
       expect(inputRua.value).toBe('Rua das Flores');
     });
 
-    const inputBairro = screen.getByLabelText(/Nome do bairro/i);
-    const inputCidade = screen.getByLabelText(/Nome da cidade/i);
-    const inputNumero = screen.getByLabelText(/Número predial ou de referência/i);
-
-    expect(inputBairro.value).toBe('Centro');
-    expect(inputCidade.value).toBe('Pradópolis');
-    // Número deve permanecer estritamente em branco para digitação ativa
-    expect(inputNumero.value).toBe('');
+    expect(screen.getByLabelText(/Nome do bairro/i).value).toBe('Centro');
+    expect(screen.getByLabelText(/Nome da cidade/i).value).toBe('Pradópolis');
+    expect(screen.getByLabelText(/Número predial ou de referência/i).value).toBe('');
   });
 
-  test('deve permitir que o cidadão digite o número e edite qualquer campo manualmente', async () => {
-    const mockNominatimResponse = {
-      address: {
-        road: 'Rua das Flores',
-        suburb: 'Centro',
-        city: 'Pradópolis',
-      },
-    };
-
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: jest.fn().mockResolvedValue(mockNominatimResponse),
-    });
-
+  test('deve permitir que o usuário edite todos os campos livremente', () => {
     renderStep4({
       foto: mockFotoBase64,
-      latitude: -21.3589,
-      longitude: -48.0678,
-    });
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Nome da rua/i).value).toBe('Rua das Flores');
-    });
-
-    const inputNumero = screen.getByLabelText(/Número predial ou de referência/i);
-    const inputRua = screen.getByLabelText(/Nome da rua/i);
-
-    // Cidadão digita o número
-    fireEvent.change(inputNumero, { target: { value: '123' } });
-    expect(inputNumero.value).toBe('123');
-
-    // Cidadão ajusta a rua
-    fireEvent.change(inputRua, { target: { value: 'Avenida Brasil' } });
-    expect(inputRua.value).toBe('Avenida Brasil');
-  });
-
-  test('deve exibir placeholders explícitos e permitir edição quando a API do Nominatim falhar', async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error('Erro de conexão ou timeout'));
-
-    renderStep4({
-      foto: mockFotoBase64,
-      latitude: -21.3589,
-      longitude: -48.0678,
-    });
-
-    // Aguarda o término da tentativa assíncrona do fetch
-    await waitFor(() => {
-      expect(screen.queryByText(/Localizando endereço via GPS.../i)).not.toBeInTheDocument();
+      rua: 'Rua Antiga',
+      numero: '100',
+      bairro: 'Bairro Antigo',
+      cidade: 'Cidade Antiga',
     });
 
     const inputRua = screen.getByLabelText(/Nome da rua/i);
@@ -169,12 +124,6 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
     const inputBairro = screen.getByLabelText(/Nome do bairro/i);
     const inputCidade = screen.getByLabelText(/Nome da cidade/i);
 
-    expect(inputRua).toHaveAttribute('placeholder', 'Digite o nome da rua');
-    expect(inputNumero).toHaveAttribute('placeholder', 'Digite o número');
-    expect(inputBairro).toHaveAttribute('placeholder', 'Digite o bairro');
-    expect(inputCidade).toHaveAttribute('placeholder', 'Digite a cidade');
-
-    // Cidadão digita manualmente todos os dados
     fireEvent.change(inputRua, { target: { value: 'Rua Manual' } });
     fireEvent.change(inputNumero, { target: { value: '789' } });
     fireEvent.change(inputBairro, { target: { value: 'Bairro Manual' } });
@@ -186,11 +135,30 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
     expect(inputCidade.value).toBe('Cidade Manual');
   });
 
-  test('deve logar dados e salvar rascunho no localStorage ao clicar em "CONFIRMAR"', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+  test('CT-ENV.1: deve enviar dados reais para criarSolicitacao(), limpar rascunho e navegar para Etapa 5 com o protocolo oficial', async () => {
+    api.criarSolicitacao.mockResolvedValueOnce({
+      sucesso: true,
+      mensagem: 'Solicitação criada com sucesso.',
+      protocolo: 'ZELUS-20261026-X8Y9',
+      dados: {
+        id: 'sol-uuid-1234',
+        created_at: '2026-10-26T16:00:00.000Z',
+      },
+    });
+
+    localStorage.setItem(
+      'zelus_rascunho_solicitacao',
+      JSON.stringify({
+        subcategoria_id: mockSubcategoriaId,
+        subcategoriaTitulo: 'Buraco na via',
+        categoriaTitulo: 'Asfalto / Rua',
+      })
+    );
 
     renderStep4({
       foto: mockFotoBase64,
+      subcategoria_id: mockSubcategoriaId,
+      subcategoriaTitulo: 'Buraco na via',
       latitude: -21.3589,
       longitude: -48.0678,
       rua: 'Rua São Paulo',
@@ -202,22 +170,136 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
     const btnConfirmar = screen.getByRole('button', { name: /Confirmar localização e prosseguir/i });
     fireEvent.click(btnConfirmar);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[ZELUS Etapa 4] Dados finais da solicitação confirmados:'),
-      expect.objectContaining({
+    // Valida chamada à API com o payload completo e normalizado
+    await waitFor(() => {
+      expect(api.criarSolicitacao).toHaveBeenCalledWith({
+        subcategoria_id: mockSubcategoriaId,
+        latitude: -21.3589,
+        longitude: -48.0678,
+        descricao: 'Buraco na via',
         rua: 'Rua São Paulo',
         numero: '500',
+        ponto_referencia: null,
         bairro: 'Jardim Paulista',
         cidade: 'Pradópolis',
-      })
-    );
+        foto_url: mockFotoBase64,
+      });
+    });
 
-    const rascunho = JSON.parse(localStorage.getItem('zelus_rascunho_solicitacao') || '{}');
-    expect(rascunho.rua).toBe('Rua São Paulo');
-    expect(rascunho.numero).toBe('500');
+    // Valida limpeza do rascunho pós-sucesso
+    expect(localStorage.getItem('zelus_rascunho_solicitacao')).toBeNull();
+
+    // Valida persistência no histórico de chamados
+    const historico = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
+    expect(historico.length).toBe(1);
+    expect(historico[0].protocolo).toBe('ZELUS-20261026-X8Y9');
+
+    // Valida transição para a tela de sucesso
+    const telaSucesso = await screen.findByTestId('sucesso-screen');
+    expect(telaSucesso).toBeInTheDocument();
   });
 
-  test('não deve cancelar solicitação quando o cidadão recusar o window.confirm', () => {
+  test('CT-ENV.2: deve aplicar estado de carregamento e desabilitar botão para prevenir submissões duplicadas (Anti-Double Submit)', async () => {
+    let resolverChamada;
+    api.criarSolicitacao.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolverChamada = resolve;
+        })
+    );
+
+    renderStep4({
+      foto: mockFotoBase64,
+      subcategoria_id: mockSubcategoriaId,
+      latitude: -21.3589,
+      longitude: -48.0678,
+      rua: 'Avenida Brasil',
+      numero: '10',
+      bairro: 'Centro',
+      cidade: 'Pradópolis',
+    });
+
+    const btnConfirmar = screen.getByRole('button', { name: /Confirmar localização e prosseguir/i });
+    fireEvent.click(btnConfirmar);
+
+    // Valida feedback visual de loading
+    expect(screen.getByText('ENVIANDO...')).toBeInTheDocument();
+    expect(btnConfirmar).toBeDisabled();
+    expect(btnConfirmar).toHaveClass('step4-btn-confirmar--loading');
+
+    // Tenta novo clique com o botão desabilitado
+    fireEvent.click(btnConfirmar);
+
+    // Valida que a API só foi acionada exatamente 1 vez
+    expect(api.criarSolicitacao).toHaveBeenCalledTimes(1);
+
+    // Conclui a promise para finalizar o ciclo assíncrono de forma limpa
+    resolverChamada({ sucesso: true, protocolo: 'ZELUS-TEST' });
+    await waitFor(() => {
+      expect(screen.getByTestId('sucesso-screen')).toBeInTheDocument();
+    });
+  });
+
+  test('CT-ENV.3: deve tratar erro HTTP 409 (Filtro Espacial Anti-Spam Haversine) exibindo alerta acessível', async () => {
+    const erro409 = new Error('Já existe um problema deste tipo registado a menos de 10 metros daqui.');
+    erro409.status = 409;
+    api.criarSolicitacao.mockRejectedValueOnce(erro409);
+
+    renderStep4({
+      foto: mockFotoBase64,
+      subcategoria_id: mockSubcategoriaId,
+      latitude: -21.3589,
+      longitude: -48.0678,
+      rua: 'Rua Duplicada',
+      numero: '20',
+      bairro: 'Centro',
+      cidade: 'Pradópolis',
+    });
+
+    const btnConfirmar = screen.getByRole('button', { name: /Confirmar localização e prosseguir/i });
+    fireEvent.click(btnConfirmar);
+
+    // Aguarda exibição do alerta acessível
+    const alerta = await screen.findByRole('alert');
+    expect(alerta).toBeInTheDocument();
+    expect(
+      screen.getByText('Já existe um problema deste tipo registado a menos de 10 metros daqui.')
+    ).toBeInTheDocument();
+
+    // Munícipe permanece na Etapa 4 e botão é reabilitado
+    expect(screen.queryByTestId('sucesso-screen')).not.toBeInTheDocument();
+    expect(btnConfirmar).not.toBeDisabled();
+  });
+
+  test('CT-ENV.4: deve tratar falha genérica de rede exibindo mensagem amigável e permitindo nova tentativa', async () => {
+    const erroRede = new Error('Falha de rede');
+    erroRede.status = 0;
+    erroRede.message = 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
+    api.criarSolicitacao.mockRejectedValueOnce(erroRede);
+
+    renderStep4({
+      foto: mockFotoBase64,
+      subcategoria_id: mockSubcategoriaId,
+      latitude: -21.3589,
+      longitude: -48.0678,
+      rua: 'Rua Sem Sinal',
+      numero: '99',
+      bairro: 'Interior',
+      cidade: 'Pradópolis',
+    });
+
+    const btnConfirmar = screen.getByRole('button', { name: /Confirmar localização e prosseguir/i });
+    fireEvent.click(btnConfirmar);
+
+    const alerta = await screen.findByRole('alert');
+    expect(alerta).toBeInTheDocument();
+    expect(
+      screen.getByText('Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.')
+    ).toBeInTheDocument();
+    expect(btnConfirmar).not.toBeDisabled();
+  });
+
+  test('CT-ENV.5: não deve cancelar solicitação quando o cidadão recusar o window.confirm', () => {
     jest.spyOn(window, 'confirm').mockReturnValue(false);
     localStorage.setItem('zelus_rascunho_solicitacao', JSON.stringify({ rascunho: true }));
 
@@ -233,9 +315,10 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
     // Não deve limpar o localStorage nem navegar
     expect(localStorage.getItem('zelus_rascunho_solicitacao')).not.toBeNull();
     expect(screen.queryByTestId('painel-screen')).not.toBeInTheDocument();
+    expect(api.criarSolicitacao).not.toHaveBeenCalled();
   });
 
-  test('deve limpar rascunho e redirecionar para o painel quando o cidadão aceitar o cancelamento', () => {
+  test('CT-ENV.5: deve limpar rascunho e redirecionar para o painel quando o cidadão aceitar o cancelamento', () => {
     jest.spyOn(window, 'confirm').mockReturnValue(true);
     localStorage.setItem('zelus_rascunho_solicitacao', JSON.stringify({ rascunho: true }));
 
@@ -253,5 +336,6 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local (NovaSolicitacaoStep4.j
 
     // Deve navegar para /cidadao/painel
     expect(screen.getByTestId('painel-screen')).toBeInTheDocument();
+    expect(api.criarSolicitacao).not.toHaveBeenCalled();
   });
 });

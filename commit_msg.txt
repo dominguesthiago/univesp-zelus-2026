@@ -1,11 +1,10 @@
-feat(frontend): integra Etapas 1 e 2 com categorias reais da API
+feat(frontend): implementa POST real da Etapa 4 e trativa de erro Haversine
 
-- Refatora NovaSolicitacaoStep1.jsx para consumir listarCategorias() (GET /api/categorias)
-- Implementa estados visuais de loading com Skeletons neobrutalistas e acessibilidade (role="status")
-- Implementa tratamento de erro de rede com container neobrutalista (role="alert") e botao de Retry
-- Cria mapa de metadados visuais para acoplar ilustracoes e SVGs aos nomes do banco
-- Refatora NovaSolicitacaoStep2.jsx para consumir subcategorias reais e injetar UUIDs correspondentes
-- Salva subcategoria_id real (UUID) e persiste rascunho seguro no localStorage
-- Atualiza suites de testes unitarios NovaSolicitacaoStep1.test.js e NovaSolicitacaoStep2.test.js (17/17 testes aprovados)
-- Atualiza matriz de governanca para versao 1.3 em docs/documentacao/frontend/registro-testes-frontend.md
-- Registra rastreabilidade de IA em docs/prompts-ia/frontend/34-passo-3-categorias-reais.md
+- Vincula NovaSolicitacaoStep4.jsx com criarSolicitacao() (POST /api/solicitacoes)
+- Sanitiza e envia payload transacional com coordenadas, UUID real e foto Base64
+- Implementa protecao anti-double submit com feedback de spinner neobrutalista
+- Intercepta erro HTTP 409 do filtro espacial Haversine (< 10m) com alerta acessivel
+- Limpa rascunho temporario e trafega protocolo oficial do servidor para a Etapa 5
+- Atualiza suite de testes unitarios NovaSolicitacaoStep4.test.js (11/11 testes aprovados)
+- Atualiza matriz de governanca para versao 1.4 em docs/documentacao/frontend/registro-testes-frontend.md
+- Registra rastreabilidade de IA em docs/prompts-ia/frontend/35-passo-4-envio-solicitacao.md

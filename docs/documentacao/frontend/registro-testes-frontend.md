@@ -3,7 +3,7 @@
 **Documento:** Matriz de Qualidade, Governança de Testes e Cobertura de Componentes  
 **Módulo:** `frontend/src/tests/`  
 **Fase:** Fase 3 — Integração de Dados (Front-end <-> Back-end)  
-**Versão:** 1.3  
+**Versão:** 1.4  
 **Data:** 26 de outubro de 2026  
 **Responsabilidade:** Engenharia de Qualidade (QA) e Arquitetura de Software  
 **Status:** Vigente e Validado  
@@ -111,16 +111,30 @@ npm test -- --coverage --watchAll=false
   4. **Bloqueio de Subcategorias em Construção:** Salva o rascunho com flag `emConstrucao: true` e impede avanço prematuro para etapas posteriores.
   5. **Fallback Resiliente:** Recuperação graciosa do rascunho anterior no storage em caso de atualização direta ou navegação sem state explícito.
 
+### 4.7 Suíte 07: `NovaSolicitacaoStep4.test.js` (Revisão de Local, Envio Transacional e Protocolo Real)
+* **Arquivo Testado:** `frontend/src/pages/NovaSolicitacaoStep4.jsx`
+* **Módulo:** Fluxo de Nova Solicitação - Etapa 4 (Passo 4 da Integração Front-Back)
+* **Data de Homologação:** 26 de outubro de 2026
+* **Status:** ✅ 100% APROVADO (11/11 testes unitários)
+* **Cenários Cobertos:**
+  1. **CT-ENV.1 (Envio com Sucesso e Protocolo Oficial):** Valida a montagem do payload transacional com coordenadas geodésicas numéricas, UUID da subcategoria, foto Base64 e endereço, confirmando chamada a `criarSolicitacao()`, limpeza do rascunho e navegação para a Etapa 5 com o protocolo emitido pelo servidor.
+  2. **CT-ENV.2 (Anti-Double Submit):** Valida a desabilitação imediata dos botões, inclusão da classe de loading, alternância textual para "ENVIANDO..." e garantia de que cliques adicionais não disparam chamadas duplicadas à API.
+  3. **CT-ENV.3 (Tratamento de Erro HTTP 409 Anti-Spam Haversine):** Valida a interceptação do erro de proximidade espacial (< 10 metros), atestando a renderização de alerta acessível com `role="alert"` e a manutenção do munícipe na Etapa 4 para ajustes.
+  4. **CT-ENV.4 (Tratamento de Falha de Conexão):** Valida a conversão de falha de rede em mensagem amigável em português e reabilitação dos botões para nova tentativa.
+  5. **CT-ENV.5 (Cancelamento de Solicitação):** Valida que o cancelamento via `window.confirm` descarta o rascunho no storage e redireciona para o Painel do Cidadão sem despachar requisições para a API.
+  6. **Acessibilidade e Usabilidade:** Confirma miniatura de foto, busca reversa de CEP/Nominatim e foco em campos controlados.
+
 ---
 
 ## 5. Critérios de Aceite e Métricas de QA
 
-* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 113 testes).
+* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 115 testes).
 * **Acessibilidade Automatizada:** Preservação de landmarks semânticos e ausência de nós órfãos de acessibilidade.
 * **Conformidade Legal:** Isolamento rigoroso da chave `zelus_termo_aceito` na Web Storage API.
 * **Segurança e Camada de Rede:** Injeção transparente de credenciais via padrão RFC 6750 (`Bearer`), mantendo chaves sensíveis de produção fora do código do cliente.
 * **Blindagem de Fronteira:** Bloqueio síncrono e sem FOUC (*Flash of Unauthenticated Content*) para todas as rotas restritas do cidadão (`/cidadao/*` e `/solicitacao/*`).
 * **Integridade Relacional de Entidades:** Tráfego e persistência de identificadores universais únicos (UUIDs) do Supabase para foreign keys (`categoria_id`, `subcategoria_id`).
+* **Robustez Transacional:** Blindagem anti-duplo clique e tratamento gracioso de restrições geodésicas de negócio (filtro espacial 10 metros).
 
 ---
 
@@ -155,5 +169,16 @@ npm test -- --coverage --watchAll=false
   1. **Integridade de Chaves Estrangeiras:** O backend recebe exatamente os UUIDs válidos cadastrados em `public.subcategorias(id)`.
   2. **Preservação Visual 100% Neobrutalista:** Mantém-se o contraste, cores institucionais, SVGs e ilustrações sem dependência de campos binários no banco de dados.
   3. **Resiliência de Estado:** O rascunho persistido permite recuperação do estado em caso de refresh ou perda transitória de rede.
+
+---
+
+## 9. Registro de Decisão Arquitetural (ADR) — Envio Transacional e Tratamento de Exceções de Domínio (Anti-Spam Haversine)
+
+* **Contexto:** A criação de chamados submete dados espaciais e arquivos fotográficos que, se mal controlados pelo cliente, podem gerar chamados fantasmas duplicados ou falhas silenciosas decorrentes de validações geodésicas de retaguarda (como a regra municipal anti-duplicidade em raio de 10 metros).
+* **Decisão:** A Etapa 4 centralizou a construção de um payload sanitizado e tipado para `POST /api/solicitacoes`, implementou bloqueio visual anti-duplo clique (`enviando`), interceptação explícita de erros HTTP 409 (Haversine) com alertas acessíveis, e transição para a tela de conclusão com o protocolo oficial emitido pelo banco.
+* **Justificativa:**
+  1. **Idempotência no Cliente:** O estado de loading bloqueia novas submissões enquanto a primeira promessa estiver em trânsito.
+  2. **Clareza ao Munícipe:** O erro 409 não é mascarado como falha de sistema; em vez disso, orienta o munícipe que aquele mesmo problema físico já foi registrado por outro cidadão no mesmo local geográfico.
+  3. **Conclusão Transacional Segura:** A exclusão do rascunho ocorre estritamente após o retorno de sucesso com HTTP 201 e persistência no banco.
 
 

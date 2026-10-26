@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Pencil, Camera } from 'lucide-react';
+import { ChevronLeft, Pencil, Camera, AlertTriangle } from 'lucide-react';
+import { criarSolicitacao } from '../services/api';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import './NovaSolicitacaoStep4.scss';
 
@@ -15,7 +16,10 @@ import './NovaSolicitacaoStep4.scss';
  *   preenchendo automaticamente Rua, Bairro e Cidade.
  * - Campo Número: Mantido obrigatoriamente vazio para digitação ativa do munícipe.
  * - Todos os 4 campos são inputs controlados (editáveis livremente).
- * - Botão "CONFIRMAR" no verde-menta padronizado e link "Cancelar" acessível.
+ * - Integração Transacional: Submissão real para POST /api/solicitacoes via criarSolicitacao().
+ * - Gestão de Estado: Anti-double-submit com estado enviando, feedback de spinner,
+ *   tratamento de erro 409 (Filtro Espacial Haversine) e limpeza do rascunho pós-sucesso.
+ * - Sucesso: Transição para a Etapa 5 repassando o protocolo oficial emitido pelo backend.
  */
 const NovaSolicitacaoStep4 = () => {
   const navigate = useNavigate();
@@ -44,6 +48,8 @@ const NovaSolicitacaoStep4 = () => {
 
   const [carregandoEndereco, setCarregandoEndereco] = useState(false);
   const [fotoPreview] = useState(dadosIniciais.foto || null);
+  const [enviando, setEnviando] = useState(false);
+  const [erroEnvio, setErroEnvio] = useState(null);
 
   // Efeito para buscar o endereço reverso via Nominatim caso haja latitude e longitude
   useEffect(() => {
@@ -139,51 +145,96 @@ const NovaSolicitacaoStep4 = () => {
       ...prev,
       [campo]: valor,
     }));
+    // Limpa mensagem de erro ao editar campos
+    if (erroEnvio) {
+      setErroEnvio(null);
+    }
   };
 
-  // Clique no botão "CONFIRMAR": Loga os dados finais no console e atualiza o rascunho
-  const handleConfirmar = () => {
-    // 1. Gera protocolo visual provisório (ex: #1543-2026)
-    const numeroAleatorio = Math.floor(1000 + Math.random() * 9000);
-    const anoAtual = new Date().getFullYear();
-    const protocoloGerado = `#${numeroAleatorio}-${anoAtual}`;
+  // Clique no botão "CONFIRMAR": Envia a solicitação real para o backend
+  const handleConfirmar = async () => {
+    if (enviando) return;
 
-    const dadosFinais = {
-      ...dadosIniciais,
-      rua: endereco.rua,
-      numero: endereco.numero,
-      bairro: endereco.bairro,
-      cidade: endereco.cidade,
-      enderecoConfirmado: {
-        rua: endereco.rua,
-        numero: endereco.numero,
-        bairro: endereco.bairro,
-        cidade: endereco.cidade,
-      },
-      protocolo: protocoloGerado,
-      confirmadoEm: new Date().toISOString(),
-    };
-
-    console.log('[ZELUS Etapa 4] Dados finais da solicitação confirmados:', dadosFinais);
-
-    // 2. Salva no histórico de chamados e atualiza rascunho no localStorage
-    try {
-      const historicoAnterior = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
-      const novoHistorico = [dadosFinais, ...historicoAnterior];
-      localStorage.setItem('zelus_historico_chamados', JSON.stringify(novoHistorico));
-      localStorage.setItem('zelus_rascunho_solicitacao', JSON.stringify(dadosFinais));
-    } catch (e) {
-      console.warn('Erro ao salvar no histórico de chamados do localStorage:', e);
+    // Validação mínima dos campos obrigatórios no frontend
+    if (!endereco.rua.trim() || !endereco.bairro.trim() || !endereco.cidade.trim()) {
+      setErroEnvio('Por favor, preencha os campos obrigatórios (Rua, Bairro e Cidade).');
+      return;
     }
 
-    // 3. Redireciona para a Tela de Sucesso (Etapa 5 / Conclusão)
-    navigate('/solicitacao/sucesso', {
-      state: dadosFinais,
-    });
+    setEnviando(true);
+    setErroEnvio(null);
+
+    // Monta o payload conforme contrato com backend POST /api/solicitacoes
+    const subcategoriaId = dadosIniciais.subcategoria_id || dadosIniciais.subcategoriaId;
+    const lat = Number(dadosIniciais.latitude || dadosIniciais.coordenadas?.latitude || 0);
+    const lon = Number(dadosIniciais.longitude || dadosIniciais.coordenadas?.longitude || 0);
+    const descricao = (
+      dadosIniciais.subcategoriaTitulo ||
+      dadosIniciais.categoriaTitulo ||
+      'Solicitação de Zeladoria Urbana'
+    ).trim();
+
+    const payloadEnvio = {
+      subcategoria_id: subcategoriaId,
+      latitude: lat,
+      longitude: lon,
+      descricao: descricao,
+      rua: endereco.rua.trim(),
+      numero: endereco.numero ? endereco.numero.trim() : 'S/N',
+      ponto_referencia: endereco.ponto_referencia ? endereco.ponto_referencia.trim() : null,
+      bairro: endereco.bairro.trim(),
+      cidade: endereco.cidade.trim(),
+      foto_url: dadosIniciais.foto || null,
+    };
+
+    try {
+      const resposta = await criarSolicitacao(payloadEnvio);
+
+      if (resposta && resposta.sucesso) {
+        const protocoloServidor = resposta.protocolo;
+        const dadosFinais = {
+          ...dadosIniciais,
+          ...payloadEnvio,
+          protocolo: protocoloServidor,
+          id: resposta.dados?.id,
+          criadoEm: resposta.dados?.created_at || new Date().toISOString(),
+        };
+
+        // Salva no histórico de chamados e limpa o rascunho temporário
+        try {
+          const historicoAnterior = JSON.parse(localStorage.getItem('zelus_historico_chamados') || '[]');
+          localStorage.setItem('zelus_historico_chamados', JSON.stringify([dadosFinais, ...historicoAnterior]));
+          localStorage.removeItem('zelus_rascunho_solicitacao');
+        } catch (e) {
+          console.warn('Erro ao atualizar localStorage pós-criação:', e);
+        }
+
+        // Redireciona para a Tela de Sucesso com o protocolo oficial
+        navigate('/solicitacao/sucesso', {
+          state: dadosFinais,
+        });
+      } else {
+        setErroEnvio(resposta?.mensagem || 'Não foi possível registrar a solicitação. Tente novamente.');
+      }
+    } catch (err) {
+      console.error('Erro ao submeter solicitação:', err);
+      // Tratamento específico de status HTTP do backend
+      if (err.status === 409) {
+        setErroEnvio(err.message || 'Já existe um problema deste tipo registado a menos de 10 metros daqui.');
+      } else if (err.status === 400) {
+        setErroEnvio(err.message || 'Dados incompletos. Faltam parâmetros obrigatórios.');
+      } else {
+        setErroEnvio(err.message || 'Falha na comunicação com o servidor. Verifique sua conexão e tente novamente.');
+      }
+    } finally {
+      setEnviando(false);
+    }
   };
 
   // Clique no botão/link "Cancelar solicitação" com confirmação explícita
   const handleCancelar = () => {
+    if (enviando) return;
+
     const confirmou = window.confirm(
       'Tem certeza que deseja cancelar esta solicitação? Todos os dados serão perdidos.'
     );
@@ -287,6 +338,7 @@ const NovaSolicitacaoStep4 = () => {
                   onChange={(e) => handleInputChange('rua', e.target.value)}
                   placeholder="Digite o nome da rua"
                   aria-label="Nome da rua"
+                  disabled={enviando}
                 />
               </label>
               <Pencil size={18} className="step4-input-icon" aria-hidden="true" />
@@ -304,6 +356,7 @@ const NovaSolicitacaoStep4 = () => {
                   onChange={(e) => handleInputChange('numero', e.target.value)}
                   placeholder="Digite o número"
                   aria-label="Número predial ou de referência"
+                  disabled={enviando}
                 />
               </label>
               <Pencil size={18} className="step4-input-icon" aria-hidden="true" />
@@ -321,6 +374,7 @@ const NovaSolicitacaoStep4 = () => {
                   onChange={(e) => handleInputChange('bairro', e.target.value)}
                   placeholder="Digite o bairro"
                   aria-label="Nome do bairro"
+                  disabled={enviando}
                 />
               </label>
               <Pencil size={18} className="step4-input-icon" aria-hidden="true" />
@@ -338,26 +392,43 @@ const NovaSolicitacaoStep4 = () => {
                   onChange={(e) => handleInputChange('cidade', e.target.value)}
                   placeholder="Digite a cidade"
                   aria-label="Nome da cidade"
+                  disabled={enviando}
                 />
               </label>
               <Pencil size={18} className="step4-input-icon" aria-hidden="true" />
             </div>
 
-            {/* Ações: Botão CONFIRMAR e Link Cancelar solicitação */}
+            {/* Ações: Feedback de Erro + Botão CONFIRMAR e Link Cancelar */}
             <div className="step4-actions">
+              {erroEnvio && (
+                <div role="alert" className="step4-erro" aria-live="assertive">
+                  <AlertTriangle size={20} className="step4-erro__icone" aria-hidden="true" />
+                  <p className="step4-erro__texto">{erroEnvio}</p>
+                </div>
+              )}
+
               <button
                 type="button"
-                className="step4-btn-confirmar"
+                className={`step4-btn-confirmar ${enviando ? 'step4-btn-confirmar--loading' : ''}`}
                 onClick={handleConfirmar}
-                aria-label="Confirmar localização e prosseguir"
+                disabled={enviando}
+                aria-label={enviando ? 'Enviando solicitação ao servidor...' : 'Confirmar localização e prosseguir'}
               >
-                CONFIRMAR
+                {enviando ? (
+                  <>
+                    <span className="step4-btn-spinner" aria-hidden="true" />
+                    <span>ENVIANDO...</span>
+                  </>
+                ) : (
+                  'CONFIRMAR'
+                )}
               </button>
 
               <button
                 type="button"
                 className="step4-btn-cancelar"
                 onClick={handleCancelar}
+                disabled={enviando}
                 aria-label="Cancelar solicitação e voltar ao painel"
               >
                 Cancelar solicitação
