@@ -4,8 +4,10 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import NovaSolicitacaoStep4 from '../pages/NovaSolicitacaoStep4';
 import * as api from '../services/api';
+import * as storageService from '../services/supabaseStorage';
 
 jest.mock('../services/api');
+jest.mock('../services/supabaseStorage');
 
 // Componentes auxiliares de rota para capturar a navegação
 const MockPainel = () => <div data-testid="painel-screen">Painel do Cidadão</div>;
@@ -31,11 +33,16 @@ const renderStep4 = (initialState = null) => {
 
 describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolicitacaoStep4.jsx)', () => {
   const mockFotoBase64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD...';
+  const mockFotoPublicUrl = 'https://supabase.co/storage/v1/object/public/solicitacoes-fotos/foto-teste.jpg';
   const mockSubcategoriaId = 'b1b2c3d4-0001-4000-8000-000000000001';
 
   beforeEach(() => {
     localStorage.clear();
     jest.clearAllMocks();
+    storageService.uploadFotoSolicitacao.mockImplementation((foto) => {
+      if (typeof foto === 'string' && foto.startsWith('http')) return Promise.resolve(foto);
+      return Promise.resolve(mockFotoPublicUrl);
+    });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -182,7 +189,7 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolic
         ponto_referencia: null,
         bairro: 'Jardim Paulista',
         cidade: 'Pradópolis',
-        foto_url: mockFotoBase64,
+        foto_url: mockFotoPublicUrl,
       });
     });
 
@@ -226,7 +233,9 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolic
     fireEvent.click(btnConfirmar);
 
     // Valida que a API só foi acionada exatamente 1 vez
-    expect(api.criarSolicitacao).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(api.criarSolicitacao).toHaveBeenCalledTimes(1);
+    });
 
     // Conclui a promise para finalizar o ciclo assíncrono de forma limpa
     resolverChamada({ sucesso: true, protocolo: 'ZELUS-TEST' });
@@ -332,5 +341,32 @@ describe('Nova Solicitação - Etapa 4: Confirme o Local & Envio Real (NovaSolic
     // Deve navegar para /cidadao/painel
     expect(screen.getByTestId('painel-screen')).toBeInTheDocument();
     expect(api.criarSolicitacao).not.toHaveBeenCalled();
+  });
+
+  test('CT-ENV.6: deve tratar erro no upload da foto para o Supabase Storage sem enviar a solicitação', async () => {
+    storageService.uploadFotoSolicitacao.mockRejectedValueOnce(
+      new Error('Erro de permissão no bucket Supabase Storage')
+    );
+
+    renderStep4({
+      foto: mockFotoBase64,
+      subcategoria_id: mockSubcategoriaId,
+      latitude: -21.3589,
+      longitude: -48.0678,
+      rua: 'Rua do Teste',
+      bairro: 'Centro',
+      cidade: 'Pradópolis',
+    });
+
+    const btnConfirmar = screen.getByRole('button', { name: /Confirmar localização e prosseguir/i });
+    fireEvent.click(btnConfirmar);
+
+    const alerta = await screen.findByRole('alert');
+    expect(alerta).toBeInTheDocument();
+    expect(
+      screen.getByText('Erro de permissão no bucket Supabase Storage')
+    ).toBeInTheDocument();
+    expect(api.criarSolicitacao).not.toHaveBeenCalled();
+    expect(btnConfirmar).not.toBeDisabled();
   });
 });

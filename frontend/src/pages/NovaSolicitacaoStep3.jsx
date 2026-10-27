@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Camera, AlertCircle } from 'lucide-react';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
+import { otimizarImagemArquivo } from '../services/supabaseStorage';
 import './NovaSolicitacaoStep3.scss';
 
 /**
@@ -256,13 +257,19 @@ const NovaSolicitacaoStep3 = () => {
       setIsCapturando(true);
       setStatusTexto('Processando foto...');
 
-      // 1. Converte o arquivo para Base64
-      const fotoBase64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(e);
-        reader.readAsDataURL(file);
-      });
+      // 1. Converte e comprime o arquivo para Base64 otimizado (evita estouro de cota e memória)
+      let fotoBase64;
+      try {
+        fotoBase64 = await otimizarImagemArquivo(file, 1280, 0.8);
+      } catch (errOpt) {
+        console.warn('Falha na otimização da imagem, utilizando conversão direta:', errOpt);
+        fotoBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) => reject(e);
+          reader.readAsDataURL(file);
+        });
+      }
 
       // 2. Captura obrigatória da geolocalização do usuário via GPS
       setStatusTexto('Obtendo localização GPS...');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Pencil, Camera, AlertTriangle } from 'lucide-react';
 import { criarSolicitacao } from '../services/api';
+import { uploadFotoSolicitacao } from '../services/supabaseStorage';
 import logoZelusIcon from '../assets/images/logo-zelus-icon.png';
 import './NovaSolicitacaoStep4.scss';
 
@@ -164,7 +165,23 @@ const NovaSolicitacaoStep4 = () => {
     setEnviando(true);
     setErroEnvio(null);
 
-    // Monta o payload conforme contrato com backend POST /api/solicitacoes
+    // 1. Upload da foto para o Supabase Storage (se houver foto capturada)
+    let urlFotoPublica = null;
+    if (dadosIniciais.foto) {
+      try {
+        urlFotoPublica = await uploadFotoSolicitacao(dadosIniciais.foto);
+      } catch (uploadErr) {
+        console.error('Erro no upload da foto para o Supabase Storage:', uploadErr);
+        setErroEnvio(
+          uploadErr.message ||
+            'Não foi possível enviar a foto para o armazenamento. Verifique sua conexão e tente novamente.'
+        );
+        setEnviando(false);
+        return;
+      }
+    }
+
+    // 2. Monta o payload conforme contrato com backend POST /api/solicitacoes
     const subcategoriaId = dadosIniciais.subcategoria_id || dadosIniciais.subcategoriaId;
     const lat = Number(dadosIniciais.latitude || dadosIniciais.coordenadas?.latitude || 0);
     const lon = Number(dadosIniciais.longitude || dadosIniciais.coordenadas?.longitude || 0);
@@ -184,7 +201,7 @@ const NovaSolicitacaoStep4 = () => {
       ponto_referencia: endereco.ponto_referencia ? endereco.ponto_referencia.trim() : null,
       bairro: endereco.bairro.trim(),
       cidade: endereco.cidade.trim(),
-      foto_url: dadosIniciais.foto || null,
+      foto_url: urlFotoPublica,
     };
 
     try {

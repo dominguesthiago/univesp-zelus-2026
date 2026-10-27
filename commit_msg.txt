@@ -1,8 +1,9 @@
-refactor(architecture): documenta backend no Render PaaS e higieniza mocks de chamados
+fix(storage): migra upload de fotos para Supabase Storage e resolve Erro 500 no PostgreSQL
 
-- Atualiza LEIA-ME-ARQUITETURA.md com a inclusao do Render como plataforma PaaS do backend Node.js
-- Detalha justificativas arquiteturais de isolamento criptografico, HTTPS nativo e desacoplamento
-- Atualiza diagrama de topologia e fluxo de comunicacao (Vercel -> Render -> Supabase)
-- Adiciona secao de referencias bibliograficas e tecnologicas formais
-- Remove persistencia de mock residual zelus_historico_chamados em NovaSolicitacaoStep4.jsx
-- Ajusta assercoes de testes em NovaSolicitacaoStep4.test.js preservando 100% de aprovacao
+- Substitui o envio de fotos em Base64 no JSON por upload binario direto ao Supabase Storage (bucket solicitacoes-fotos)
+- Implementa servico supabaseStorage com compressao e redimensionamento client-side via Canvas HTML5 (max 1280px, 80% JPEG)
+- Otimiza captura nativa em NovaSolicitacaoStep3 reduzindo peso de imagens mobile de ~10MB para ~200KB sem estouro de localStorage
+- Refatora NovaSolicitacaoStep4 para efetuar pre-upload assincrono e despachar apenas a URL publica no campo foto_url VARCHAR(512)
+- Elimina erro SQLSTATE 22001 (value too long for type character varying(512)) e alivia processamento de payload no Express
+- Atualiza suites de teste NovaSolicitacaoStep3.test.js e NovaSolicitacaoStep4.test.js cobrindo sucesso e falha de upload com 100% de aprovacao
+- Atualiza documentacao arquitetural LEIA-ME-ARQUITETURA.md e registra governanca de prompts em 37-upload-storage-resolucao-erro-500.md
