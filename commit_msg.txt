@@ -1,9 +1,7 @@
-fix(storage): migra upload de fotos para Supabase Storage e resolve Erro 500 no PostgreSQL
+docs(backlog): cria especificacao de melhorias e roadmap de evolucao
 
-- Substitui o envio de fotos em Base64 no JSON por upload binario direto ao Supabase Storage (bucket solicitacoes-fotos)
-- Implementa servico supabaseStorage com compressao e redimensionamento client-side via Canvas HTML5 (max 1280px, 80% JPEG)
-- Otimiza captura nativa em NovaSolicitacaoStep3 reduzindo peso de imagens mobile de ~10MB para ~200KB sem estouro de localStorage
-- Refatora NovaSolicitacaoStep4 para efetuar pre-upload assincrono e despachar apenas a URL publica no campo foto_url VARCHAR(512)
-- Elimina erro SQLSTATE 22001 (value too long for type character varying(512)) e alivia processamento de payload no Express
-- Atualiza suites de teste NovaSolicitacaoStep3.test.js e NovaSolicitacaoStep4.test.js cobrindo sucesso e falha de upload com 100% de aprovacao
-- Atualiza documentacao arquitetural LEIA-ME-ARQUITETURA.md e registra governanca de prompts em 37-upload-storage-resolucao-erro-500.md
+- Adiciona documento BACKLOG-MELHORIAS.md estruturando demandas para sprints futuras
+- Detalha menu de contexto do cidadao com acao de cancelamento (soft-delete de solicitacoes)
+- Especifica fluxo de exclusao de conta e direito ao esquecimento com anonimizacao LGPD
+- Planeja substituicao de textos provisorios da Politica de Privacidade e Cookies
+- Consolida matriz de priorizacao e criterios de aceite com diretrizes de acessibilidade
