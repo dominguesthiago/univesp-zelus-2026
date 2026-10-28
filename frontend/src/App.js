@@ -9,6 +9,10 @@ import LoginCidadao from './pages/LoginCidadao';
 import CadastroCidadao from './pages/CadastroCidadao';
 import PainelCidadao from './pages/PainelCidadao';
 import RecuperarSenhaCidadao from './pages/RecuperarSenhaCidadao';
+import LoginPrefeitura from './pages/LoginPrefeitura';
+import CadastroPrefeitura from './pages/CadastroPrefeitura';
+import RecuperarSenhaPrefeitura from './pages/RecuperarSenhaPrefeitura';
+import AdminDeviceGuard from './components/AdminDeviceGuard';
 import NovaSolicitacaoStep1 from './pages/NovaSolicitacaoStep1';
 import NovaSolicitacaoStep2 from './pages/NovaSolicitacaoStep2';
 import NovaSolicitacaoStep3 from './pages/NovaSolicitacaoStep3';
@@ -20,17 +24,28 @@ import NotFound from './pages/NotFound';
 /**
  * Componente Interno de Conteúdo e Layout
  * Controla a convivência harmônica de cabeçalhos:
- * - Rotas institucionais exibem o Header e Footer globais.
- * - Rotas de autenticação e fluxo mobile (/login/..., /cadastro/..., /recuperar-senha/..., /solicitacao/...) usam seu cabeçalho próprio dedicado.
+ * - Rotas institucionais e rotas da Prefeitura exibem o Header e Footer globais padronizados.
+ * - Rotas de autenticação móvel do Cidadão (/login/cidadao, /cadastro/cidadao, etc.) usam o cabeçalho dedicado do simulador mobile.
  */
 function AppContent() {
   const location = useLocation();
-  const isAuthRoute =
-    location.pathname.startsWith('/login') ||
-    location.pathname.startsWith('/cadastro') ||
-    location.pathname.startsWith('/recuperar-senha') ||
+
+  // Rotas da Prefeitura (Back-office Desktop) que utilizam Header e Footer globais
+  const isPrefeituraRoute =
+    location.pathname.startsWith('/login/prefeitura') ||
+    location.pathname.startsWith('/cadastro/prefeitura') ||
+    location.pathname.startsWith('/esqueci-senha/prefeitura') ||
+    location.pathname.startsWith('/recuperar-senha/prefeitura');
+
+  // Rotas móveis do Cidadão (possuem cabeçalho próprio dentro do smartphone)
+  const isCidadaoAuthRoute =
+    location.pathname.startsWith('/login/cidadao') ||
+    location.pathname.startsWith('/cadastro/cidadao') ||
+    location.pathname.startsWith('/recuperar-senha/cidadao') ||
+    location.pathname === '/recuperar-senha' ||
     location.pathname.startsWith('/solicitacao') ||
     location.pathname.startsWith('/nova-solicitacao');
+
   const isHomeRoute = location.pathname === '/';
   const isPainelRoute = location.pathname.startsWith('/cidadao/painel');
 
@@ -67,17 +82,26 @@ function AppContent() {
   }
 
   return (
-    <div className={`app-layout ${isAuthRoute ? 'app-layout--auth' : ''} ${isHomeRoute ? 'app-layout--home' : ''}`}>
+    <div
+      className={`app-layout ${isCidadaoAuthRoute ? 'app-layout--auth' : ''} ${
+        isHomeRoute ? 'app-layout--home' : ''
+      } ${isPrefeituraRoute ? 'app-layout--prefeitura' : ''}`}
+    >
       {/* Skip Link para navegação por teclado (WCAG 2.4.1 / eMAG) */}
       <a href="#conteudo-principal" className="skip-link">
         Pular para o conteúdo principal
       </a>
 
-      {/* Cabeçalho global (omitido em telas de login/cadastro com cabeçalho próprio) */}
-      {!isAuthRoute && <Header mostrarSair={isPainelRoute} />}
+      {/* Cabeçalho global (exibido em rotas institucionais e na Prefeitura) */}
+      {!isCidadaoAuthRoute && <Header mostrarSair={isPainelRoute} />}
 
-      {/* Área onde as páginas das rotas são renderizadas (cada página possui seu landmark <main>) */}
-      <div className={`app-main ${isAuthRoute ? 'app-main--auth' : ''}`}>
+      {/* Área onde as páginas das rotas são renderizadas */}
+      <div
+        className={`app-main ${isCidadaoAuthRoute ? 'app-main--auth' : ''} ${
+          isPrefeituraRoute ? 'app-main--prefeitura' : ''
+        }`}
+      >
+
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/" element={<Home />} />
@@ -85,6 +109,41 @@ function AppContent() {
           <Route path="/cadastro/cidadao" element={<CadastroCidadao />} />
           <Route path="/recuperar-senha" element={<RecuperarSenhaCidadao />} />
           <Route path="/recuperar-senha/cidadao" element={<RecuperarSenhaCidadao />} />
+
+          {/* Rotas Públicas da Prefeitura (Uso exclusivo Desktop via AdminDeviceGuard) */}
+          <Route
+            path="/login/prefeitura"
+            element={
+              <AdminDeviceGuard>
+                <LoginPrefeitura />
+              </AdminDeviceGuard>
+            }
+          />
+          <Route
+            path="/cadastro/prefeitura"
+            element={
+              <AdminDeviceGuard>
+                <CadastroPrefeitura />
+              </AdminDeviceGuard>
+            }
+          />
+          <Route
+            path="/esqueci-senha/prefeitura"
+            element={
+              <AdminDeviceGuard>
+                <RecuperarSenhaPrefeitura />
+              </AdminDeviceGuard>
+            }
+          />
+          <Route
+            path="/recuperar-senha/prefeitura"
+            element={
+              <AdminDeviceGuard>
+                <RecuperarSenhaPrefeitura />
+              </AdminDeviceGuard>
+            }
+          />
+
 
           {/* Rotas Privadas do Cidadão (Blindadas com PrivateRoute) */}
           <Route
@@ -158,8 +217,8 @@ function AppContent() {
         </Routes>
       </div>
 
-      {/* Rodapé global nas páginas auxiliares (Home e Login possuem seu próprio footer semântico) */}
-      {!isAuthRoute && !isHomeRoute && <Footer />}
+      {/* Rodapé global nas páginas institucionais e em todas as rotas da Prefeitura */}
+      {!isCidadaoAuthRoute && !isHomeRoute && <Footer />}
 
       {/* Pop-up global de privacidade e cookies */}
       <CookieBanner />

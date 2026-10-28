@@ -1,0 +1,180 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// AdminDeviceGuard.scss — Estilos Neobrutalistas da Guarda de Dispositivo
+// Paleta Amarela da Prefeitura e Bloqueio de Mobile/Tablet (< 1024px)
+// ==============================================================
+
+.admin-device-guard {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  // -- Fallback de Bloqueio --
+  &__fallback {
+    display: none;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: vars.$spacing-md;
+    background-color: vars.$color-bg-ice;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+
+    @media (max-width: 1023px) {
+      display: flex !important;
+    }
+
+    &.is-visible {
+      display: flex;
+    }
+  }
+
+  // Card Neobrutalista Centralizado
+  &__card {
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    border: 3.5px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-cartoon;
+    box-shadow: 8px 8px 0 vars.$color-text-primary;
+    padding: vars.$spacing-lg vars.$spacing-md;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: vars.$spacing-xxs;
+    background-color: vars.$color-accent;
+    color: vars.$color-text-primary;
+    font-weight: vars.$font-weight-bold;
+    font-size: vars.$font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border: 2px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-full;
+    box-shadow: 2px 2px 0 vars.$color-text-primary;
+    margin-bottom: vars.$spacing-md;
+  }
+
+  &__icon-wrapper {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: vars.$color-accent-light;
+    border: 3px solid vars.$color-text-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: vars.$spacing-sm;
+    box-shadow: 4px 4px 0 vars.$color-text-primary;
+  }
+
+  &__icon {
+    color: vars.$color-text-primary;
+  }
+
+  &__title {
+    font-size: vars.$font-size-2xl;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    margin: 0 0 vars.$spacing-xs 0;
+    line-height: vars.$line-height-tight;
+  }
+
+  &__message {
+    font-size: vars.$font-size-md;
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-text-primary;
+    background-color: vars.$color-accent-light;
+    border: 2px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-md;
+    padding: vars.$spacing-sm;
+    margin: 0 0 vars.$spacing-sm 0;
+    line-height: vars.$line-height-normal;
+  }
+
+  &__hint {
+    font-size: vars.$font-size-sm;
+    color: vars.$color-text-secondary;
+    line-height: vars.$line-height-normal;
+    margin: 0 0 vars.$spacing-lg 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-sm;
+    width: 100%;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: vars.$spacing-xs;
+    padding: 12px 16px;
+    font-size: vars.$font-size-sm;
+    font-weight: vars.$font-weight-bold;
+    text-decoration: none;
+    border: 2.5px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-md;
+    transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+    cursor: pointer;
+
+    &:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 vars.$color-text-primary;
+    }
+
+    &--citizen {
+      background-color: vars.$color-secondary;
+      color: vars.$color-text-primary;
+      box-shadow: 4px 4px 0 vars.$color-text-primary;
+
+      &:hover {
+        background-color: vars.$color-secondary-hover;
+        transform: translate(-1px, -1px);
+        box-shadow: 5px 5px 0 vars.$color-text-primary;
+      }
+    }
+
+    &--home {
+      background-color: #ffffff;
+      color: vars.$color-text-primary;
+      box-shadow: 3px 3px 0 vars.$color-text-primary;
+
+      &:hover {
+        background-color: vars.$color-bg-ice;
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0 vars.$color-text-primary;
+      }
+    }
+  }
+
+  // -- Conteúdo Desktop --
+  &__content {
+    display: block;
+    width: 100%;
+    min-height: 100%;
+
+    @media (max-width: 1023px) {
+      display: none !important;
+    }
+
+    &:not(.is-visible) {
+      @media (min-width: 1024px) {
+        display: block !important;
+      }
+    }
+  }
+}

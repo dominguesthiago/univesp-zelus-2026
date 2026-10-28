@@ -19,8 +19,9 @@ const Home = () => {
   };
 
   const handleAcessoPrefeitura = () => {
-    console.log('ActionCard clicado: acesso Prefeitura');
+    navigate('/login/prefeitura');
   };
+
 
   return (
     <main className="home container" id="conteudo-principal">

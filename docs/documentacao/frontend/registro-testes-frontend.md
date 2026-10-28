@@ -137,11 +137,48 @@ npm test -- --coverage --watchAll=false
   5. **CT-PNL.5 (Saudação e Navegação do Cidadão):** Valida a saudação personalizada com o primeiro nome extraído de `localStorage.getItem('zelus_cidadao')` e fallback gracioso para `"Cidadão"`, além de atestar o clique no botão principal de nova solicitação.
   6. **Regra de Ouro (Trava de Rolagem):** Valida a adição da classe `painel-cidadao-ativo` em `document.body` e `document.documentElement` ao montar e sua remoção compulsória no desmonte do componente.
 
+### 4.9 Suíte 09: `AdminDeviceGuard.test.js` (Guarda de Dispositivo Desktop)
+* **Arquivo Testado:** `frontend/src/components/AdminDeviceGuard.jsx`
+* **Módulo:** Camada de Proteção de Dispositivo do Back-office
+* **Status:** ✅ 100% APROVADO (4/4 testes unitários)
+* **Cenários Cobertos:**
+  1. **Permissão em Desktop (>= 1024px):** Renderiza o conteúdo administrativo normalmente em telas largas.
+  2. **Bloqueio em Mobile/Tablet (< 1024px):** Intercepta e renderiza tela de advertência neobrutalista explicando a restrição de dispositivo.
+  3. **Acessibilidade do Alerta:** Valida landmarks acessíveis e botões de retorno ao portal do munícipe.
+
+### 4.10 Suíte 10: `LoginPrefeitura.test.js` (Autenticação do Servidor Municipal)
+* **Arquivo Testado:** `frontend/src/pages/LoginPrefeitura.jsx`
+* **Módulo:** Fluxo de Login do Back-office
+* **Status:** ✅ 100% APROVADO (5/5 testes unitários)
+* **Cenários Cobertos:**
+  1. **Estrutura Neobrutalista de Duas Colunas:** Valida renderização da coluna de banner institucional à esquerda e coluna de formulário à direita.
+  2. **Ausência de Botões Redundantes:** Assegura a ausência de links ou botões de voltar na coluna de banner institucional.
+  3. **Validação e Envio de Credenciais:** Testa autenticação com CPF e senha institucional, tratamento de loading e alertas amigáveis em caso de falha.
+
+### 4.11 Suíte 11: `CadastroPrefeitura.test.js` (Novo Acesso com Chave Administrativa)
+* **Arquivo Testado:** `frontend/src/pages/CadastroPrefeitura.jsx`
+* **Módulo:** Fluxo de Cadastro de Servidor Municipal
+* **Status:** ✅ 100% APROVADO (6/6 testes unitários)
+* **Cenários Cobertos:**
+  1. **Estrutura de Duas Colunas e Grid:** Valida banner institucional amarelo e grid de campos (Nome, CPF, E-mail, Chave Administrativa, Senha, Confirmação).
+  2. **Alternância de Visibilidade da Chave Administrativa:** Testa a alternância dinâmica entre `password` e `text` acionada pelo botão com ícone de olho (`Eye`/`EyeOff`).
+  3. **Alternância de Visibilidade da Senha:** Testa o botão de visibilidade do campo de senha.
+  4. **Submissão Segura:** Valida preenchimento, validação de regras e envio transacional via `registrarFuncionario`.
+
+### 4.12 Suíte 12: `RecuperarSenhaPrefeitura.test.js` (Redefinição de Credenciais)
+* **Arquivo Testado:** `frontend/src/pages/RecuperarSenhaPrefeitura.jsx`
+* **Módulo:** Fluxo de Redefinição de Senha do Back-office
+* **Status:** ✅ 100% APROVADO (5/5 testes unitários)
+* **Cenários Cobertos:**
+  1. **Estrutura de Duas Colunas:** Confirma a divisão horizontal simétrica e ausência de botões de navegação redundantes.
+  2. **Validação de Chave Administrativa e Nova Senha:** Valida alternância de visibilidade e validação de requisitos de senha forte.
+  3. **Feedback Transacional:** Atesta alertas acessíveis de sucesso e falha.
+
 ---
 
 ## 5. Critérios de Aceite e Métricas de QA
 
-* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (15 suítes / 116 testes).
+* **Taxa de Sucesso:** 100% dos testes da suíte passando sem regressões (19 suítes / 142 testes).
 * **Acessibilidade Automatizada:** Preservação de landmarks semânticos e ausência de nós órfãos de acessibilidade.
 * **Conformidade Legal:** Isolamento rigoroso da chave `zelus_termo_aceito` na Web Storage API.
 * **Segurança e Camada de Rede:** Injeção transparente de credenciais via padrão RFC 6750 (`Bearer`), mantendo chaves sensíveis de produção fora do código do cliente.
@@ -207,5 +244,16 @@ npm test -- --coverage --watchAll=false
   3. **Onboarding Positivo (Empty State):** Munícipes novos são imediatamente encorajados a emitir seu primeiro chamado de zeladoria através do botão de ação direta.
   4. **Fallback Inteligente de Assets:** Garante que chamados registrados sem anexo de foto permaneçam visualmente consistentes com a identidade neobrutalista da plataforma.
 
+---
 
+## 11. Registro de Decisão Arquitetural (ADR) — Padronização de Layout Neobrutalista de Duas Colunas, Trava de Viewport 100vh e Chave Administrativa
 
+* **Contexto:** Inicialmente, as telas de autenticação da Prefeitura apresentavam disparidades visuais entre si: o Login havia sido refatorado em um cartão desktop de duas colunas com banner amarelo e formulário branco, enquanto Cadastro e Recuperação de Senha utilizavam layouts de coluna única verticalmente longos, gerando barras de rolagem indesejadas e links de retorno redundantes no interior dos cartões. Adicionalmente, a proteção de acesso ao perfil de servidor municipal exigia validação de chave administrativa na borda do sistema com controle interativo de visibilidade.
+* **Decisão:** Padronizou-se o design de todas as três páginas (`LoginPrefeitura`, `CadastroPrefeitura` e `RecuperarSenhaPrefeitura`) no padrão Neobrutalista simétrico de duas colunas:
+  1. **Coluna Esquerda (Banner Institucional Amarelo):** Título principal h1 e subtítulo perfeitamente centralizados, arte do servidor municipal e badge inferior de ambiente monitorado, sem botões redundantes.
+  2. **Coluna Direita (Formulário Administrativo):** Títulos e textos descritivos centralizados, campos de entrada com bordas sólidas pretas e botões de alternância de visibilidade (`Eye`/`EyeOff`) tanto para senhas quanto para a Chave Administrativa (`minWidth: 0`).
+  3. **Trava de Viewport 100vh (`100dvh`):** A estrutura de layout foi configurada com `overflow: hidden`, fixando o Header e Footer (`flex-shrink: 0 !important`) e mantendo o card administrativo perfeitamente centralizado no espaço útil sem provocar barras de rolagem globais.
+* **Justificativa:**
+  1. **Identidade Visual Coesa e Profissional:** Elimina discrepâncias entre as páginas do Back-office, garantindo uma experiência premium e uniforme.
+  2. **Zero FOUC e Zero Scrollbar:** Garante visualização estática em tela cheia nos monitores corporativos da administração pública.
+  3. **Segurança de Borda:** A Chave de Acesso Administrativa impede que indivíduos não autorizados realizem cadastros ou redefinições no perfil administrativo.

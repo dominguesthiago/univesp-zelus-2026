@@ -115,6 +115,57 @@ export async function redefinirSenhaCidadao(dados) {
 }
 
 /**
+ * Autentica um funcionário/servidor da Prefeitura no sistema ZELUS
+ * POST /api/auth/funcionario/login
+ * @param {Object} credenciais
+ * @param {string} credenciais.cpf - CPF com ou sem máscara
+ * @param {string} credenciais.senha
+ * @returns {Promise<{sucesso: boolean, mensagem: string, token: string, dados: any}>}
+ */
+export async function loginFuncionario(credenciais) {
+  return request('/api/auth/funcionario/login', {
+    method: 'POST',
+    body: JSON.stringify(credenciais),
+  });
+}
+
+/**
+ * Registra um novo funcionário/servidor da Prefeitura
+ * Exige a Chave de Acesso Administrativa
+ * POST /api/auth/funcionario/registro
+ * @param {Object} dados
+ * @param {string} dados.nome_completo
+ * @param {string} dados.cpf
+ * @param {string} dados.senha
+ * @param {string} dados.chave_acesso
+ * @param {string} [dados.email]
+ * @returns {Promise<{sucesso: boolean, mensagem: string, dados: any}>}
+ */
+export async function registrarFuncionario(dados) {
+  return request('/api/auth/funcionario/registro', {
+    method: 'POST',
+    body: JSON.stringify(dados),
+  });
+}
+
+/**
+ * Redefine a senha de acesso do funcionário/servidor da Prefeitura
+ * Exige a Chave de Acesso Administrativa
+ * PUT /api/auth/funcionario/nova-senha
+ * @param {Object} dados
+ * @param {string} dados.cpf
+ * @param {string} dados.nova_senha
+ * @param {string} dados.chave_acesso
+ * @returns {Promise<{sucesso: boolean, mensagem: string}>}
+ */
+export async function redefinirSenhaFuncionario(dados) {
+  return request('/api/auth/funcionario/nova-senha', {
+    method: 'PUT',
+    body: JSON.stringify(dados),
+  });
+}
+
+/**
  * Lista todas as categorias e suas respectivas subcategorias cadastradas no ZELUS.
  * GET /api/categorias
  * @returns {Promise<{sucesso: boolean, dados: Array<{id: string, nome: string, subcategorias: Array<{id: string, nome: string}>}>}>}
@@ -164,6 +215,9 @@ const api = {
   registrarCidadao,
   loginCidadao,
   redefinirSenhaCidadao,
+  loginFuncionario,
+  registrarFuncionario,
+  redefinirSenhaFuncionario,
   listarCategorias,
   criarSolicitacao,
   listarMinhasSolicitacoes,

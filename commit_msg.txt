@@ -1,7 +1,9 @@
-docs(backlog): cria especificacao de melhorias e roadmap de evolucao
+feat(prefeitura): padroniza autenticacao do back-office em duas colunas neobrutalistas e atualiza testes
 
-- Adiciona documento BACKLOG-MELHORIAS.md estruturando demandas para sprints futuras
-- Detalha menu de contexto do cidadao com acao de cancelamento (soft-delete de solicitacoes)
-- Especifica fluxo de exclusao de conta e direito ao esquecimento com anonimizacao LGPD
-- Planeja substituicao de textos provisorios da Politica de Privacidade e Cookies
-- Consolida matriz de priorizacao e criterios de aceite com diretrizes de acessibilidade
+- Padroniza telas de Login, Cadastro e Recuperação de Senha da Prefeitura no layout Neobrutalista de duas colunas (banner institucional amarelo e formulário branco)
+- Trava a viewport em 100vh sem rolagem vertical, fixando Header e Footer e centralizando os cartões
+- Remove botões redundantes de navegação interna nos cartões, otimizando o fluxo visual
+- Centraliza alinhamento tipográfico dos títulos e textos auxiliares de ambas as colunas
+- Adiciona botão com alternância de visibilidade (ícone de olho) no campo Chave Administrativa e minWidth: 0 nos inputs
+- Atualiza as suítes de testes unitários para a nova estrutura de grid, alternância de visibilidade e ausência de botões redundantes
+- Atualiza documentação técnica de governança, arquitetura e relatórios de testes (19 suítes e 142 testes aprovados)

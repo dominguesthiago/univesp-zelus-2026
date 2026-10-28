@@ -1,0 +1,293 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// LoginPrefeitura.scss — Estilos Neobrutalistas Desktop
+// Identidade Visual Amarela Oficial da Prefeitura ZELUS
+// ==============================================================
+
+.login-prefeitura-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: vars.$spacing-sm vars.$spacing-md;
+  box-sizing: border-box;
+}
+
+// Card Principal em Duas Colunas (Desktop Centralizado)
+.login-prefeitura-card {
+  width: 100%;
+  max-width: 880px;
+  background-color: #ffffff;
+  border: 3.5px solid vars.$color-text-primary;
+  border-radius: vars.$border-radius-cartoon-lg;
+  box-shadow: 8px 8px 0 vars.$color-text-primary;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: auto;
+
+  // -- Coluna Esquerda: Apresentação com Amarelo Institucional --
+  &__banner {
+    background-color: vars.$color-accent;
+    border-right: 3.5px solid vars.$color-text-primary;
+    padding: vars.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    gap: vars.$spacing-sm;
+  }
+
+  &__heading {
+    font-size: 1.55rem;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__subheading {
+    font-size: 0.85rem;
+    color: vars.$color-text-primary;
+    line-height: 1.4;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__art {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  &__art-img {
+    width: 100%;
+    max-width: 220px;
+    max-height: 120px;
+    object-fit: cover;
+    border: 2px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-md;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 0 vars.$color-text-primary;
+  }
+
+  &__security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1a1a24;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1.5px solid #1a1a24;
+    border-radius: 8px;
+    padding: 4px 8px;
+    align-self: center;
+  }
+
+  // -- Coluna Direita: Formulário --
+  &__form-col {
+    padding: vars.$spacing-md vars.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: #ffffff;
+  }
+}
+
+.login-prefeitura-form-header {
+  margin-bottom: vars.$spacing-sm;
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    margin: 0 0 2px 0;
+    line-height: vars.$line-height-tight;
+    text-align: center;
+  }
+
+  &__desc {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+
+// Alertas Neobrutalistas
+.admin-alert {
+  padding: 10px 14px;
+  border-radius: vars.$border-radius-md;
+  border: 2px solid vars.$color-text-primary;
+  font-size: vars.$font-size-sm;
+  font-weight: vars.$font-weight-medium;
+  margin-bottom: vars.$spacing-md;
+
+  &--error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    box-shadow: 3px 3px 0 #991b1b;
+  }
+
+  &--success {
+    background-color: #dcfce7;
+    color: #166534;
+    box-shadow: 3px 3px 0 #166534;
+  }
+}
+
+// Formulário e Campos
+.login-prefeitura-form {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-md;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    font-size: vars.$font-size-sm;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+  }
+
+  &__header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__link-inline {
+    font-size: vars.$font-size-xs;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-primary;
+    text-decoration: underline;
+
+    &:hover {
+      color: vars.$color-primary-hover;
+    }
+  }
+
+  &__hint {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+  }
+}
+
+// Input Box Neobrutalista
+.admin-input-box {
+  display: flex;
+  align-items: center;
+  border: 2.5px solid vars.$color-text-primary;
+  border-radius: vars.$border-radius-md;
+  background-color: #ffffff;
+  padding: 0 12px;
+  height: 48px;
+  box-shadow: 3px 3px 0 vars.$color-text-primary;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+
+  &:focus-within {
+    box-shadow: 4px 4px 0 vars.$color-text-primary;
+    border-color: vars.$color-text-primary;
+  }
+
+  .admin-input-icon {
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
+  &__input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: vars.$font-size-md;
+    font-family: inherit;
+    color: vars.$color-text-primary;
+    background: transparent;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  &__toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:focus-visible {
+      outline: 2px solid vars.$color-primary;
+      border-radius: vars.$border-radius-xs;
+    }
+  }
+}
+
+// Botão de Submissão Neobrutalista Amarelo
+.admin-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: vars.$spacing-xs;
+  background-color: vars.$color-accent;
+  color: vars.$color-text-primary;
+  font-size: vars.$font-size-md;
+  font-weight: vars.$font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 3px solid vars.$color-text-primary;
+  border-radius: vars.$border-radius-md;
+  height: 52px;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 vars.$color-text-primary;
+  margin-top: vars.$spacing-xs;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast, background-color vars.$transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: vars.$color-accent-hover;
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 vars.$color-text-primary;
+  }
+
+  &:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 vars.$color-text-primary;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.login-prefeitura-form-footer {
+  margin-top: vars.$spacing-lg;
+  text-align: center;
+  font-size: vars.$font-size-sm;
+  color: vars.$color-text-secondary;
+
+  .admin-link-highlight {
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    text-decoration: underline;
+
+    &:hover {
+      color: #000000;
+    }
+  }
+}

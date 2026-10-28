@@ -65,6 +65,20 @@ describe('Página Inicial (Home.jsx)', () => {
     expect(mockedNavigate).toHaveBeenCalledWith('/login/cidadao');
   });
 
+  test('deve navegar para a tela de login da prefeitura (/login/prefeitura) ao clicar no cartão Acesso Prefeitura', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
+
+    const btnPrefeitura = screen.getByRole('button', { name: /Acessar ACESSO PREFEITURA/i });
+    fireEvent.click(btnPrefeitura);
+
+    expect(mockedNavigate).toHaveBeenCalledWith('/login/prefeitura');
+  });
+
+
   test('deve renderizar o rodapé semântico da home com a tagline inclusiva', () => {
     render(
       <MemoryRouter>

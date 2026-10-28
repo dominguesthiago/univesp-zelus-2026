@@ -167,7 +167,7 @@ a {
   }
 }
 
-// -- Casca da aplicação: mantém o Rodapé na base e garante 100% de preenchimento --
+// -- Casca da aplicação: mantém o Rodapé na base e garante 100% de preenchimento (100vh) --
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -178,6 +178,22 @@ a {
   margin: 0;
   padding: 0;
   overflow: hidden; // Previne qualquer rolagem da casca externa
+
+  > .header {
+    flex-shrink: 0 !important;
+  }
+
+  > .footer {
+    flex-shrink: 0 !important;
+  }
+
+  &--prefeitura {
+    background-color: vars.$color-bg-ice;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
 
   &--auth,
   &--home {
@@ -218,6 +234,7 @@ a {
     > .header {
       width: 100%;
       max-width: 100vw;
+      flex-shrink: 0;
     }
 
     .app-main {
@@ -232,6 +249,7 @@ a {
     > .footer {
       width: 100%;
       max-width: 100vw;
+      flex-shrink: 0;
     }
   }
 }
@@ -247,6 +265,20 @@ a {
   padding: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+
+  // Modificador específico para telas da Prefeitura (centralização e zero scroll global)
+  &--prefeitura {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    background-color: vars.$color-bg-ice;
+  }
 
   &--auth {
     width: 100%;
@@ -266,6 +298,7 @@ a {
     outline: none;
   }
 }
+
 
 // --------------------------------------------------------------
 // 4. SUBTÍTULO INSTITUCIONAL UNIFICADO DOS CABEÇALHOS (BRANCO PURO)
@@ -350,7 +383,10 @@ a {
 .login-main-container,
 .cadastro-main-container,
 .recuperar-main-container,
-.nova-solicitacao-lista-categorias {
+.nova-solicitacao-lista-categorias,
+.login-prefeitura-container,
+.cadastro-prefeitura-container,
+.recuperar-prefeitura-container {
   scrollbar-width: none; // Firefox
   -ms-overflow-style: none; // Internet Explorer e Edge legado
 
@@ -358,5 +394,37 @@ a {
     display: none; // Chrome, Safari, Edge moderno e WebKit mobile
   }
 }
+
+// --------------------------------------------------------------
+// 7. BOTÃO VOLTAR INTEGRADO AOS CARTÕES DA PREFEITURA
+// --------------------------------------------------------------
+.admin-card-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: vars.$font-size-xs;
+  font-weight: vars.$font-weight-bold;
+  color: vars.$color-text-primary;
+  text-decoration: none;
+  background-color: #ffffff;
+  border: 2px solid vars.$color-text-primary;
+  border-radius: vars.$border-radius-full;
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0 vars.$color-text-primary;
+  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+
+  &:hover {
+    background-color: vars.$color-accent-light;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 vars.$color-text-primary;
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 vars.$color-text-primary;
+  }
+}
+
 
 

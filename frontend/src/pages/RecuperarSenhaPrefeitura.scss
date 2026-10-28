@@ -1,0 +1,162 @@
+@use '../styles/variables' as vars;
+
+// ==============================================================
+// RecuperarSenhaPrefeitura.scss — Estilos Neobrutalistas Desktop
+// Recuperação de Senha de Servidores com Paleta Amarela
+// ==============================================================
+
+.recuperar-prefeitura-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: vars.$spacing-sm vars.$spacing-md;
+  box-sizing: border-box;
+}
+
+// Card Principal em Duas Colunas (Desktop Centralizado)
+.recuperar-prefeitura-card {
+  width: 100%;
+  max-width: 880px;
+  background-color: #ffffff;
+  border: 3.5px solid vars.$color-text-primary;
+  border-radius: vars.$border-radius-cartoon-lg;
+  box-shadow: 8px 8px 0 vars.$color-text-primary;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: auto;
+
+  // -- Coluna Esquerda: Apresentação com Amarelo Institucional --
+  &__banner {
+    background-color: vars.$color-accent;
+    border-right: 3.5px solid vars.$color-text-primary;
+    padding: vars.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    gap: vars.$spacing-sm;
+  }
+
+  &__heading {
+    font-size: 1.55rem;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    line-height: 1.2;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__subheading {
+    font-size: 0.85rem;
+    color: vars.$color-text-primary;
+    line-height: 1.4;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__art {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  &__art-img {
+    width: 100%;
+    max-width: 220px;
+    max-height: 120px;
+    object-fit: cover;
+    border: 2px solid vars.$color-text-primary;
+    border-radius: vars.$border-radius-md;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 0 vars.$color-text-primary;
+  }
+
+  &__security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1a1a24;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1.5px solid #1a1a24;
+    border-radius: 8px;
+    padding: 4px 8px;
+    align-self: center;
+  }
+
+  // -- Coluna Direita: Formulário --
+  &__form-col {
+    padding: vars.$spacing-md vars.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: #ffffff;
+  }
+}
+
+.recuperar-prefeitura-form-header {
+  margin-bottom: vars.$spacing-xs;
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    margin: 0 0 2px 0;
+    line-height: vars.$line-height-tight;
+    text-align: center;
+  }
+
+  &__desc {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+.recuperar-prefeitura-form {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-xs;
+}
+
+.recuperar-prefeitura-form-footer {
+  margin-top: vars.$spacing-sm;
+  text-align: center;
+  font-size: vars.$font-size-xs;
+  color: vars.$color-text-secondary;
+
+  .admin-link-highlight {
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    text-decoration: underline;
+
+    &:hover {
+      color: #000000;
+    }
+  }
+}
+
+// Realce para o campo da Chave Administrativa
+.admin-field__label--highlight {
+  color: #78350f !important;
+}
+
+.admin-input-box--highlight {
+  border-color: #b45309;
+  background-color: #fffbeb;
+
+  &:focus-within {
+    border-color: vars.$color-text-primary;
+    box-shadow: 4px 4px 0 #b45309;
+  }
+}
+
