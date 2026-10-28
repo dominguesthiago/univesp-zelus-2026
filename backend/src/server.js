@@ -54,6 +54,11 @@ app.use('/api/auth/cidadao', authCidadaoRoutes);
 const authFuncionarioRoutes = require('./routes/authFuncionarioRoutes');
 app.use('/api/auth/funcionario', authFuncionarioRoutes);
 
+// -- Rotas de Autenticação (Painel da Prefeitura) --
+const prefeituraAuthRoutes = require('./routes/prefeituraAuth.routes');
+app.use('/api/prefeitura/auth', prefeituraAuthRoutes);
+app.use('/api/auth/prefeitura', prefeituraAuthRoutes);
+
 // -- Rotas de Solicitações --
 const solicitacaoRoutes = require('./routes/solicitacaoRoutes');
 app.use('/api/solicitacoes', solicitacaoRoutes);
