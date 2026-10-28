@@ -89,7 +89,7 @@ const RecuperarSenhaPrefeitura = () => {
     }
 
     if (!chaveAcesso || chaveAcesso.trim().length === 0) {
-      setMensagemErro('A Chave de Acesso Administrativa é obrigatória para validar a alteração.');
+      setMensagemErro('A Chave de Acesso Administrativa é obrigatória.');
       return;
     }
 

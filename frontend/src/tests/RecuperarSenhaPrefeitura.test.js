@@ -114,7 +114,7 @@ describe('Página RecuperarSenhaPrefeitura (/esqueci-senha/prefeitura)', () => {
     );
 
     expect(
-      await screen.findByText(/A Chave de Acesso Administrativa é obrigatória para validar a alteração\./i)
+      await screen.findByText(/A Chave de Acesso Administrativa é obrigatória\./i)
     ).toBeInTheDocument();
   });
 

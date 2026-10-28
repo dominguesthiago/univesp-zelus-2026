@@ -109,10 +109,10 @@ describe('Página LoginPrefeitura (/login/prefeitura)', () => {
   });
 
   test('deve realizar login com sucesso e navegar para o painel', async () => {
-    jest.spyOn(api, 'loginFuncionario').mockResolvedValueOnce({
+    jest.spyOn(api, 'loginPrefeitura').mockResolvedValueOnce({
       sucesso: true,
       token: 'jwt-admin-token-123',
-      dados: { id: 'func-1', nome_completo: 'Servidor Municipal' },
+      funcionario: { id: 'func-1', nome_completo: 'Servidor Municipal' },
     });
 
     render(
@@ -131,18 +131,19 @@ describe('Página LoginPrefeitura (/login/prefeitura)', () => {
     fireEvent.click(screen.getByRole('button', { name: /Acessar o painel da prefeitura/i }));
 
     await waitFor(() => {
-      expect(api.loginFuncionario).toHaveBeenCalledWith({
+      expect(api.loginPrefeitura).toHaveBeenCalledWith({
         cpf: '11122233344',
         senha: 'senhaForte123',
       });
       expect(localStorage.getItem('zelus_admin_token')).toBe('jwt-admin-token-123');
-      expect(mockedNavigate).toHaveBeenCalledWith('/prefeitura/painel');
+      expect(localStorage.getItem('zelus_token')).toBe('jwt-admin-token-123');
+      expect(mockedNavigate).toHaveBeenCalledWith('/painel');
     });
   });
 
   test('deve exibir erro da API caso as credenciais sejam recusadas', async () => {
-    jest.spyOn(api, 'loginFuncionario').mockRejectedValueOnce(
-      new Error('Credenciais de servidor inválidas.')
+    jest.spyOn(api, 'loginPrefeitura').mockRejectedValueOnce(
+      new Error('Credenciais inválidas. Verifique o CPF e a senha informados.')
     );
 
     render(
@@ -160,6 +161,29 @@ describe('Página LoginPrefeitura (/login/prefeitura)', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Acessar o painel da prefeitura/i }));
 
-    expect(await screen.findByText(/Credenciais de servidor inválidas\./i)).toBeInTheDocument();
+    expect(await screen.findByText(/Credenciais inválidas/i)).toBeInTheDocument();
+  });
+
+  test('deve exibir erro da API caso o usuário não seja servidor (403)', async () => {
+    jest.spyOn(api, 'loginPrefeitura').mockRejectedValueOnce(
+      new Error('Acesso negado. Este usuário não possui cadastro ativo como funcionário da prefeitura.')
+    );
+
+    render(
+      <MemoryRouter>
+        <LoginPrefeitura />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/CPF do Servidor/i), {
+      target: { value: '11122233344' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Senha$/i), {
+      target: { value: 'senhaForte123' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Acessar o painel da prefeitura/i }));
+
+    expect(await screen.findByText(/não possui cadastro ativo como funcionário/i)).toBeInTheDocument();
   });
 });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from 'lucide-react';
 import ilustracaoPrefeitura from '../assets/images/ilustracao-prefeitura.png';
-import { loginFuncionario } from '../services/api';
+import { loginPrefeitura, loginFuncionario } from '../services/api';
 import './LoginPrefeitura.scss';
 
 // Ícone personalizado de Identificação / CPF (estilo Neobrutalista)
@@ -102,7 +102,7 @@ const LoginPrefeitura = () => {
     setMensagemSucesso('');
 
     try {
-      const resposta = await loginFuncionario({
+      const resposta = await loginPrefeitura({
         cpf: apenasDigitosCpf,
         senha,
       });
@@ -111,14 +111,14 @@ const LoginPrefeitura = () => {
         localStorage.setItem('zelus_admin_token', resposta.token);
         localStorage.setItem('zelus_token', resposta.token);
       }
-      if (resposta?.dados) {
-        localStorage.setItem('zelus_funcionario', JSON.stringify(resposta.dados));
+      if (resposta?.funcionario || resposta?.dados) {
+        localStorage.setItem('zelus_funcionario', JSON.stringify(resposta.funcionario || resposta.dados));
       }
 
-      const rotaDestino = location.state?.from?.pathname || '/prefeitura/painel';
+      const rotaDestino = location.state?.from?.pathname || '/painel';
       navigate(rotaDestino);
     } catch (erro) {
-      const msg = erro?.message || 'Erro ao realizar login. Verifique suas credenciais de servidor.';
+      const msg = erro?.data?.error || erro?.data?.mensagem || erro?.message || 'Erro ao realizar login. Verifique suas credenciais de servidor.';
       setErroApi(msg);
     } finally {
       setCarregando(false);

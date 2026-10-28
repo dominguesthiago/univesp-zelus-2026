@@ -121,7 +121,7 @@ describe('Página CadastroPrefeitura (/cadastro/prefeitura)', () => {
   });
 
   test('deve realizar cadastro com sucesso e redirecionar para login', async () => {
-    jest.spyOn(api, 'registrarFuncionario').mockResolvedValueOnce({
+    jest.spyOn(api, 'cadastrarPrefeitura').mockResolvedValueOnce({
       sucesso: true,
       mensagem: 'Servidor cadastrado com sucesso!',
     });
@@ -150,11 +150,11 @@ describe('Página CadastroPrefeitura (/cadastro/prefeitura)', () => {
     );
 
     await waitFor(() => {
-      expect(api.registrarFuncionario).toHaveBeenCalledWith({
-        nome_completo: 'Mariana Costa',
+      expect(api.cadastrarPrefeitura).toHaveBeenCalledWith({
+        nomeCompleto: 'Mariana Costa',
         cpf: '98765432100',
         senha: 'minhaSenha123',
-        chave_acesso: 'ZELUS-ADM-2026',
+        chaveAdministrativa: 'ZELUS-ADM-2026',
       });
       expect(mockedNavigate).toHaveBeenCalledWith('/login/prefeitura', {
         state: expect.objectContaining({
@@ -165,8 +165,8 @@ describe('Página CadastroPrefeitura (/cadastro/prefeitura)', () => {
   });
 
   test('deve exibir erro caso a API recuse a Chave Administrativa', async () => {
-    jest.spyOn(api, 'registrarFuncionario').mockRejectedValueOnce(
-      new Error('Chave de Acesso Administrativa inválida. Acesso restrito a servidores autorizados.')
+    jest.spyOn(api, 'cadastrarPrefeitura').mockRejectedValueOnce(
+      new Error('Chave administrativa incorreta. Cadastro restrito a servidores autorizados.')
     );
 
     render(
@@ -193,7 +193,40 @@ describe('Página CadastroPrefeitura (/cadastro/prefeitura)', () => {
     );
 
     expect(
-      await screen.findByText(/Chave de Acesso Administrativa inválida/i)
+      await screen.findByText(/Chave administrativa incorreta/i)
+    ).toBeInTheDocument();
+  });
+
+  test('deve exibir erro caso o CPF já esteja cadastrado na API (409)', async () => {
+    jest.spyOn(api, 'cadastrarPrefeitura').mockRejectedValueOnce(
+      new Error('Este CPF já está cadastrado no sistema municipal.')
+    );
+
+    render(
+      <MemoryRouter>
+        <CadastroPrefeitura />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Nome Completo/i), {
+      target: { value: 'Mariana Costa' },
+    });
+    fireEvent.change(screen.getByLabelText(/CPF do Servidor/i), {
+      target: { value: '98765432100' },
+    });
+    fireEvent.change(screen.getByLabelText(/Senha \(mínimo 6 caracteres\)/i), {
+      target: { value: 'minhaSenha123' },
+    });
+    fireEvent.change(screen.getByLabelText(/Chave Administrativa/i), {
+      target: { value: 'ZELUS-ADM-2026' },
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /Concluir cadastro de servidor público/i })
+    );
+
+    expect(
+      await screen.findByText(/Este CPF já está cadastrado no sistema municipal/i)
     ).toBeInTheDocument();
   });
 });

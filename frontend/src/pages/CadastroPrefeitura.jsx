@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, User, Key, ArrowRight, ShieldCheck } from 'lucide-react';
 import ilustracaoPrefeitura from '../assets/images/ilustracao-prefeitura.png';
-import { registrarFuncionario } from '../services/api';
+import { cadastrarPrefeitura } from '../services/api';
 import './CadastroPrefeitura.scss';
 
 // Ícone personalizado de Identificação / CPF
@@ -58,6 +58,7 @@ const CadastroPrefeitura = () => {
   const [showAdminKey, setShowAdminKey] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
   const [erroApi, setErroApi] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
   const [carregando, setCarregando] = useState(false);
 
   // Máscara dinâmica de CPF (000.000.000-00)
@@ -73,6 +74,7 @@ const CadastroPrefeitura = () => {
     setCpf(formatarCPF(e.target.value));
     if (mensagemErro) setMensagemErro('');
     if (erroApi) setErroApi('');
+    if (mensagemSucesso) setMensagemSucesso('');
   };
 
   const handleSubmit = async (e) => {
@@ -103,23 +105,31 @@ const CadastroPrefeitura = () => {
     setCarregando(true);
     setMensagemErro('');
     setErroApi('');
+    setMensagemSucesso('');
 
     try {
-      await registrarFuncionario({
-        nome_completo: nomeFormatado,
+      const resposta = await cadastrarPrefeitura({
+        nomeCompleto: nomeFormatado,
         cpf: apenasDigitosCpf,
         senha,
-        chave_acesso: chaveAcesso.trim(),
+        chaveAdministrativa: chaveAcesso.trim(),
       });
 
-      // Redireciona com mensagem de boas-vindas para o Login
+      // Sucesso (201): Limpa formulário, exibe alerta verde e redireciona
+      const msgSucesso = resposta?.mensagem || resposta?.message || 'Servidor cadastrado com sucesso! Acesse sua conta com CPF e senha.';
+      setNome('');
+      setCpf('');
+      setSenha('');
+      setChaveAcesso('');
+      setMensagemSucesso(msgSucesso);
+
       navigate('/login/prefeitura', {
         state: {
-          mensagemSucesso: 'Servidor cadastrado com sucesso! Acesse sua conta com CPF e senha.',
+          mensagemSucesso: msgSucesso,
         },
       });
     } catch (erro) {
-      const msg = erro?.message || 'Erro ao realizar o cadastro. Verifique os dados informados.';
+      const msg = erro?.data?.error || erro?.data?.mensagem || erro?.message || 'Erro ao realizar o cadastro. Verifique os dados informados.';
       setErroApi(msg);
     } finally {
       setCarregando(false);
@@ -164,6 +174,12 @@ const CadastroPrefeitura = () => {
           </header>
 
           {/* Banners de Alerta */}
+          {mensagemSucesso && !erroApi && !mensagemErro && (
+            <div className="admin-alert admin-alert--success" role="status" aria-live="polite">
+              {mensagemSucesso}
+            </div>
+          )}
+
           {(erroApi || mensagemErro) && (
             <div className="admin-alert admin-alert--error" role="alert" aria-live="polite">
               {erroApi || mensagemErro}

@@ -40,6 +40,7 @@ export async function request(endpoint, options = {}) {
 
     if (!response.ok) {
       const mensagemErro =
+        data?.error ||
         data?.mensagem ||
         data?.message ||
         `Erro na requisição ao servidor (${response.status})`;
@@ -116,36 +117,43 @@ export async function redefinirSenhaCidadao(dados) {
 
 /**
  * Autentica um funcionário/servidor da Prefeitura no sistema ZELUS
- * POST /api/auth/funcionario/login
+ * POST /api/prefeitura/auth/login
  * @param {Object} credenciais
  * @param {string} credenciais.cpf - CPF com ou sem máscara
  * @param {string} credenciais.senha
- * @returns {Promise<{sucesso: boolean, mensagem: string, token: string, dados: any}>}
+ * @returns {Promise<{sucesso: boolean, mensagem: string, token: string, funcionario?: any, dados?: any}>}
  */
-export async function loginFuncionario(credenciais) {
-  return request('/api/auth/funcionario/login', {
+export async function loginPrefeitura(credenciais) {
+  return request('/api/prefeitura/auth/login', {
     method: 'POST',
     body: JSON.stringify(credenciais),
   });
 }
 
+export async function loginFuncionario(credenciais) {
+  return loginPrefeitura(credenciais);
+}
+
 /**
  * Registra um novo funcionário/servidor da Prefeitura
  * Exige a Chave de Acesso Administrativa
- * POST /api/auth/funcionario/registro
+ * POST /api/prefeitura/auth/cadastro
  * @param {Object} dados
- * @param {string} dados.nome_completo
+ * @param {string} dados.nomeCompleto
  * @param {string} dados.cpf
  * @param {string} dados.senha
- * @param {string} dados.chave_acesso
- * @param {string} [dados.email]
- * @returns {Promise<{sucesso: boolean, mensagem: string, dados: any}>}
+ * @param {string} dados.chaveAdministrativa
+ * @returns {Promise<{sucesso: boolean, mensagem: string, funcionario?: any, dados?: any}>}
  */
-export async function registrarFuncionario(dados) {
-  return request('/api/auth/funcionario/registro', {
+export async function cadastrarPrefeitura(dados) {
+  return request('/api/prefeitura/auth/cadastro', {
     method: 'POST',
     body: JSON.stringify(dados),
   });
+}
+
+export async function registrarFuncionario(dados) {
+  return cadastrarPrefeitura(dados);
 }
 
 /**
@@ -217,6 +225,8 @@ const api = {
   redefinirSenhaCidadao,
   loginFuncionario,
   registrarFuncionario,
+  loginPrefeitura,
+  cadastrarPrefeitura,
   redefinirSenhaFuncionario,
   listarCategorias,
   criarSolicitacao,
