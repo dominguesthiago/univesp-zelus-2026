@@ -325,4 +325,172 @@ describe('Suíte de Testes da API de Autenticação da Prefeitura', () => {
       assert.strictEqual(data.funcionario.nomeCompleto, 'Mariana Costa');
     });
   });
+
+  describe('Fluxo de Recuperação de Senha (POST /recuperar-senha)', () => {
+    it('1. Deve retornar 403 se a chaveAdministrativa for incorreta ou ausente', async () => {
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '12345678901',
+          novaSenha: 'NovaSenhaForte@2026',
+          chaveAdministrativa: 'CHAVE_ERRADA'
+        })
+      });
+
+      assert.strictEqual(res.status, 403);
+      const data = await res.json();
+      assert.match(data.error, /Chave administrativa incorreta/i);
+    });
+
+    it('2. Deve retornar 400 se campos obrigatórios estiverem ausentes', async () => {
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '12345678901',
+          chaveAdministrativa: 'CHAVE_SEGURA_TESTE_2026'
+        })
+      });
+
+      assert.strictEqual(res.status, 400);
+      const data = await res.json();
+      assert.match(data.error, /obrigatórios/i);
+    });
+
+    it('3. Deve retornar 400 se o CPF informado for inválido', async () => {
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '12345',
+          novaSenha: 'NovaSenhaForte@2026',
+          chaveAdministrativa: 'CHAVE_SEGURA_TESTE_2026'
+        })
+      });
+
+      assert.strictEqual(res.status, 400);
+      const data = await res.json();
+      assert.match(data.error, /CPF inválido/i);
+    });
+
+    it('4. Deve retornar 400 se a nova senha tiver menos de 6 caracteres', async () => {
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '123.456.789-01',
+          novaSenha: '123',
+          chaveAdministrativa: 'CHAVE_SEGURA_TESTE_2026'
+        })
+      });
+
+      assert.strictEqual(res.status, 400);
+      const data = await res.json();
+      assert.match(data.error, /no mínimo 6 caracteres/i);
+    });
+
+    it('5. Deve retornar 404 se o servidor não constar na tabela de funcionários', async () => {
+      const originalFrom = supabaseAdmin.from;
+      supabaseAdmin.from = (table) => {
+        if (table === 'funcionarios') {
+          return {
+            select: () => ({
+              eq: () => ({
+                maybeSingle: async () => ({ data: null, error: null })
+              })
+            })
+          };
+        }
+        return originalFrom.call(supabaseAdmin, table);
+      };
+
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '123.456.789-01',
+          novaSenha: 'NovaSenhaForte@2026',
+          chaveAdministrativa: 'CHAVE_SEGURA_TESTE_2026'
+        })
+      });
+
+      supabaseAdmin.from = originalFrom;
+
+      assert.strictEqual(res.status, 404);
+      const data = await res.json();
+      assert.match(data.error, /Servidor não localizado/i);
+    });
+
+    it('6. Deve redefinir a senha com sucesso (200) com dupla atualização (Supabase Auth e tabela funcionarios)', async () => {
+      const originalFrom = supabaseAdmin.from;
+      let updatedData = null;
+      let authUpdated = null;
+
+      // Mock da função do Supabase Auth Admin
+      if (!supabaseAdmin.auth) supabaseAdmin.auth = {};
+      if (!supabaseAdmin.auth.admin) supabaseAdmin.auth.admin = {};
+      const originalUpdateUserById = supabaseAdmin.auth.admin.updateUserById;
+      supabaseAdmin.auth.admin.updateUserById = async (id, params) => {
+        authUpdated = { id, params };
+        return { data: { id }, error: null };
+      };
+
+      supabaseAdmin.from = (table) => {
+        if (table === 'funcionarios') {
+          return {
+            select: () => ({
+              eq: () => ({
+                maybeSingle: async () => ({
+                  data: {
+                    id: 'uuid-servidor-recuperacao',
+                    nome_completo: 'Rodrigo Antunes',
+                    matricula_cpf: '12345678901',
+                    email: '12345678901@prefeitura.local'
+                  },
+                  error: null
+                })
+              })
+            }),
+            update: (fields) => {
+              updatedData = fields;
+              return {
+                eq: async () => ({ error: null })
+              };
+            }
+          };
+        }
+        return originalFrom.call(supabaseAdmin, table);
+      };
+
+      const res = await fetch(`${baseUrl}/recuperar-senha`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cpf: '123.456.789-01',
+          novaSenha: 'NovaSenhaSuperSegura@2026',
+          chaveAdministrativa: 'CHAVE_SEGURA_TESTE_2026'
+        })
+      });
+
+      supabaseAdmin.from = originalFrom;
+      supabaseAdmin.auth.admin.updateUserById = originalUpdateUserById;
+
+      assert.strictEqual(res.status, 200);
+      const data = await res.json();
+      assert.strictEqual(data.sucesso, true);
+      assert.match(data.mensagem, /sucesso/i);
+
+      // Verificação da Dupla Atualização:
+      // 1. Supabase Auth
+      assert.ok(authUpdated, 'Supabase Auth admin.updateUserById deve ter sido invocado');
+      assert.strictEqual(authUpdated.id, 'uuid-servidor-recuperacao');
+      assert.strictEqual(authUpdated.params.password, 'NovaSenhaSuperSegura@2026');
+
+      // 2. Tabela funcionarios com hash bcrypt
+      assert.ok(updatedData?.senha, 'Coluna senha deve ter sido atualizada');
+      const hashValido = await bcrypt.compare('NovaSenhaSuperSegura@2026', updatedData.senha);
+      assert.strictEqual(hashValido, true, 'Senha gravada deve ser o hash bcrypt correto da nova senha');
+    });
+  });
 });

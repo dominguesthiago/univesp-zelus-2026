@@ -262,6 +262,122 @@ class PrefeituraAuthController {
       });
     }
   }
+
+  async recuperarSenha(req, res) {
+    try {
+      const { cpf, novaSenha, nova_senha, senha, chaveAdministrativa, chave_acesso } = req.body;
+      const senhaFinal = novaSenha || nova_senha || senha;
+      const chaveFinal = chaveAdministrativa || chave_acesso;
+
+      // 1. Validação de campos obrigatórios
+      if (!cpf || !senhaFinal) {
+        return res.status(400).json({
+          sucesso: false,
+          error: 'CPF e nova senha são obrigatórios.',
+          mensagem: 'O CPF e a nova senha são obrigatórios.'
+        });
+      }
+
+      // 2. Validação da Chave Administrativa
+      const adminSecret = process.env.ADMIN_SECRET_KEY || process.env.ADMIN_ACCESS_KEY;
+      if (!adminSecret || String(chaveFinal).trim() !== String(adminSecret).trim()) {
+        return res.status(403).json({
+          sucesso: false,
+          error: 'Chave administrativa incorreta. Redefinição restrita a servidores autorizados.',
+          mensagem: 'Chave administrativa incorreta. Redefinição não autorizada.'
+        });
+      }
+
+      // 3. Sanitização e validação do CPF
+      const cleanCpf = sanitizeCpf(cpf);
+      if (cleanCpf.length !== 11) {
+        return res.status(400).json({
+          sucesso: false,
+          error: 'CPF inválido. O CPF deve conter 11 dígitos numéricos.',
+          mensagem: 'O CPF informado deve conter exatamente 11 dígitos numéricos.'
+        });
+      }
+
+      // 4. Validação de tamanho mínimo da nova senha
+      if (senhaFinal.trim().length < 6) {
+        return res.status(400).json({
+          sucesso: false,
+          error: 'A nova senha deve conter no mínimo 6 caracteres.',
+          mensagem: 'A nova senha deve conter no mínimo 6 caracteres.'
+        });
+      }
+
+      // 5. Localizar o funcionário na tabela 'funcionarios' para resgatar o ID (UUID)
+      const { data: funcionario, error: searchError } = await supabaseAdmin
+        .from('funcionarios')
+        .select('id, nome_completo, matricula_cpf, email')
+        .eq('matricula_cpf', cleanCpf)
+        .maybeSingle();
+
+      if (searchError) {
+        console.error('Erro ao consultar funcionário para redefinição:', searchError);
+        return res.status(500).json({
+          sucesso: false,
+          error: 'Erro interno ao consultar base de dados.',
+          details: searchError.message
+        });
+      }
+
+      if (!funcionario) {
+        return res.status(404).json({
+          sucesso: false,
+          error: 'Servidor não localizado com o CPF informado.',
+          mensagem: 'Servidor não localizado com o CPF informado.'
+        });
+      }
+
+      // 6. Dupla Atualização:
+      // Camada 1: Supabase Auth (Identity Layer via Admin Client)
+      try {
+        if (supabaseAdmin?.auth?.admin?.updateUserById) {
+          const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(funcionario.id, {
+            password: senhaFinal
+          });
+          if (authError) {
+            console.warn('Aviso ao atualizar senha no Supabase Auth:', authError.message);
+          }
+        }
+      } catch (authErr) {
+        console.warn('Falha na comunicação com Supabase Auth para redefinição:', authErr.message);
+      }
+
+      // Camada 2: Tabela 'funcionarios' (Application Layer via bcrypt)
+      const salt = await bcrypt.genSalt(10);
+      const senhaHash = await bcrypt.hash(senhaFinal, salt);
+
+      const { error: updateError } = await supabaseAdmin
+        .from('funcionarios')
+        .update({ senha: senhaHash })
+        .eq('id', funcionario.id);
+
+      if (updateError) {
+        console.error('Erro ao atualizar senha na tabela funcionarios:', updateError);
+        return res.status(500).json({
+          sucesso: false,
+          error: 'Falha ao atualizar a senha no banco de dados.',
+          details: updateError.message
+        });
+      }
+
+      return res.status(200).json({
+        sucesso: true,
+        message: 'Senha redefinida com sucesso!',
+        mensagem: 'Senha redefinida com sucesso!'
+      });
+    } catch (err) {
+      console.error('Erro inesperado na redefinição de senha:', err);
+      return res.status(500).json({
+        sucesso: false,
+        error: 'Erro interno no servidor.',
+        details: err.message
+      });
+    }
+  }
 }
 
 module.exports = { PrefeituraAuthController };

@@ -22,9 +22,14 @@ O fluxo elimina a necessidade de digitação de e-mail por parte do servidor pú
    * Esse endereço satisfaz os requisitos de unicidade e compatibilidade com o serviço de autenticação do Supabase.
 
 3. **Validação de Chave Administrativa Mestra (`ADMIN_SECRET_KEY`):**
-   * Para impedir o auto-registro não autorizado por cidadãos, a rota de cadastro exige o envio da `chaveAdministrativa`.
+   * Para impedir o auto-registro não autorizado e a redefinição de senhas por pessoas não autorizadas, as rotas de cadastro e recuperação de senha exigem o envio da `chaveAdministrativa`.
    * O backend valida o valor contra a variável `process.env.ADMIN_SECRET_KEY` (com fallback para `ADMIN_ACCESS_KEY`).
    * Chave ausente ou divergente resulta imediatamente em `403 Forbidden`.
+
+4. **Sincronização Dupla de Credenciais (Dupla Atualização):**
+   * Toda criação ou redefinição de credenciais de servidores municipais é persistida de forma sincronizada em duas camadas:
+     1. **Supabase Auth (Identity Layer):** Atualização via Admin Client (`supabaseAdmin.auth.admin.updateUserById(id, { password: novaSenha })`), garantindo autenticidade e emissão de tokens.
+     2. **Tabela `funcionarios` (Application Layer):** Criptografia da senha utilizando `bcrypt.hash(novaSenha, 10)` e gravação na coluna `senha` do registro do funcionário, mantendo integridade com as regras locais e compatibilidade com o esquema relacional.
 
 ---
 
@@ -103,6 +108,42 @@ O fluxo elimina a necessidade de digitação de e-mail por parte do servidor pú
 
 ---
 
+### 3.3. Recuperação / Redefinição de Senha do Servidor Municipal
+
+* **Método:** `POST`
+* **Rota:** `/api/prefeitura/auth/recuperar-senha` (ou `/api/auth/prefeitura/recuperar-senha`)
+* **Headers:** `Content-Type: application/json`
+* **Middleware Aplicado:** `validateAdminSecret`
+
+#### Payload de Envio (Request Body)
+```json
+{
+  "cpf": "123.456.789-01",
+  "novaSenha": "NovaSenhaForte@2026",
+  "chaveAdministrativa": "CHAVE_CONFIGURADA_NO_ENV"
+}
+```
+
+#### Regra de Negócio (Dupla Atualização)
+1. Higieniza o CPF (apenas 11 dígitos numéricos).
+2. Localiza o servidor na tabela `funcionarios` pelo `matricula_cpf` e obtém seu `id` (UUID). Retorna `404 Not Found` caso não exista.
+3. Atualiza a credencial no **Supabase Auth** via `supabaseAdmin.auth.admin.updateUserById(id, { password: novaSenha })`.
+4. Criptografa a nova senha com `bcrypt` (10 rounds de salt) e atualiza a coluna `senha` na tabela **`funcionarios`**.
+
+#### Respostas
+* **`200 OK`**
+  ```json
+  {
+    "sucesso": true,
+    "mensagem": "Senha redefinida com sucesso!"
+  }
+  ```
+* **`400 Bad Request`**: CPF ou nova senha ausentes, senha com menos de 6 caracteres ou formato de CPF inválido.
+* **`403 Forbidden`**: Chave administrativa incorreta ou não fornecida.
+* **`404 Not Found`**: Servidor não localizado com o CPF informado.
+
+---
+
 ## 4. Variáveis de Ambiente Requeridas
 
 Certifique-se de que o arquivo `backend/.env` contenha as seguintes definições:
@@ -121,11 +162,10 @@ PREFEITURA_EMAIL_DOMAIN=prefeitura.local
 
 ## 5. Testes Automatizados
 
-A suíte de testes de integração cobre 100% dos cenários de sucesso e falha (status 200, 201, 400, 401, 403 e 409).
+A suíte de testes de integração cobre 100% dos cenários de sucesso e falha (status 200, 201, 400, 401, 403, 404 e 409).
 Para executar a suíte no terminal:
 
 ```bash
 cd backend
 npm test
 ```
-

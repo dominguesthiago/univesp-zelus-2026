@@ -11,4 +11,9 @@ router.post('/cadastro', validateAdminSecret, (req, res) => prefeituraAuthContro
 // POST /api/prefeitura/auth/login
 router.post('/login', (req, res) => prefeituraAuthController.login(req, res));
 
+// POST /api/prefeitura/auth/recuperar-senha (protegido por validateAdminSecret)
+router.post('/recuperar-senha', validateAdminSecret, (req, res) => prefeituraAuthController.recuperarSenha(req, res));
+router.post('/esqueci-senha', validateAdminSecret, (req, res) => prefeituraAuthController.recuperarSenha(req, res));
+router.put('/nova-senha', validateAdminSecret, (req, res) => prefeituraAuthController.recuperarSenha(req, res));
+
 module.exports = router;
