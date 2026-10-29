@@ -13,6 +13,7 @@ import LoginPrefeitura from './pages/LoginPrefeitura';
 import CadastroPrefeitura from './pages/CadastroPrefeitura';
 import RecuperarSenhaPrefeitura from './pages/RecuperarSenhaPrefeitura';
 import AdminDeviceGuard from './components/AdminDeviceGuard';
+import PainelKanban from './pages/PainelKanban';
 import NovaSolicitacaoStep1 from './pages/NovaSolicitacaoStep1';
 import NovaSolicitacaoStep2 from './pages/NovaSolicitacaoStep2';
 import NovaSolicitacaoStep3 from './pages/NovaSolicitacaoStep3';
@@ -30,12 +31,17 @@ import NotFound from './pages/NotFound';
 function AppContent() {
   const location = useLocation();
 
+  const isKanbanRoute =
+    location.pathname === '/painel' ||
+    location.pathname.startsWith('/prefeitura/painel');
+
   // Rotas da Prefeitura (Back-office Desktop) que utilizam Header e Footer globais
   const isPrefeituraRoute =
     location.pathname.startsWith('/login/prefeitura') ||
     location.pathname.startsWith('/cadastro/prefeitura') ||
     location.pathname.startsWith('/esqueci-senha/prefeitura') ||
-    location.pathname.startsWith('/recuperar-senha/prefeitura');
+    location.pathname.startsWith('/recuperar-senha/prefeitura') ||
+    isKanbanRoute;
 
   // Rotas móveis do Cidadão (possuem cabeçalho próprio dentro do smartphone)
   const isCidadaoAuthRoute =
@@ -93,13 +99,15 @@ function AppContent() {
       </a>
 
       {/* Cabeçalho global (exibido em rotas institucionais e na Prefeitura) */}
-      {!isCidadaoAuthRoute && <Header mostrarSair={isPainelRoute} />}
+      {!isCidadaoAuthRoute && (
+        <Header mostrarSair={isPainelRoute} painelAdmin={isKanbanRoute} />
+      )}
 
       {/* Área onde as páginas das rotas são renderizadas */}
       <div
         className={`app-main ${isCidadaoAuthRoute ? 'app-main--auth' : ''} ${
           isPrefeituraRoute ? 'app-main--prefeitura' : ''
-        }`}
+        } ${isKanbanRoute ? 'app-main--kanban' : ''}`}
       >
 
         <Routes>
@@ -140,6 +148,24 @@ function AppContent() {
             element={
               <AdminDeviceGuard>
                 <RecuperarSenhaPrefeitura />
+              </AdminDeviceGuard>
+            }
+          />
+
+          {/* Painel de Solicitações (Kanban) do Back-office */}
+          <Route
+            path="/painel"
+            element={
+              <AdminDeviceGuard>
+                <PainelKanban />
+              </AdminDeviceGuard>
+            }
+          />
+          <Route
+            path="/prefeitura/painel"
+            element={
+              <AdminDeviceGuard>
+                <PainelKanban />
               </AdminDeviceGuard>
             }
           />
@@ -217,8 +243,8 @@ function AppContent() {
         </Routes>
       </div>
 
-      {/* Rodapé global nas páginas institucionais e em todas as rotas da Prefeitura */}
-      {!isCidadaoAuthRoute && !isHomeRoute && <Footer />}
+      {/* Rodapé global nas páginas institucionais e rotas públicas da Prefeitura (omitido no Kanban para layout 100% de tela) */}
+      {!isCidadaoAuthRoute && !isHomeRoute && !isKanbanRoute && <Footer />}
 
       {/* Pop-up global de privacidade e cookies */}
       <CookieBanner />

@@ -1,0 +1,136 @@
+@use '../../styles/variables' as vars;
+
+.cartao-kanban {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 12px;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  position: relative;
+
+  // -------------------------------------------------------------------------
+  // Color-coding Pastel Obrigatório por Status
+  // -------------------------------------------------------------------------
+  &--pendente {
+    background-color: #EDE194;
+  }
+
+  &--analise {
+    background-color: #BCDCF4;
+  }
+
+  &--execucao {
+    background-color: #F9B188;
+  }
+
+  &--concluida {
+    background-color: #D4E4BC;
+  }
+
+  &--descartada {
+    background-color: #ECC4BC;
+  }
+
+  &--default {
+    background-color: #ffffff;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.18);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0f172a;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.2);
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  // -------------------------------------------------------------------------
+  // Estado de Arraste Ativo: Slot original como "buraco vazio" (moldura)
+  // -------------------------------------------------------------------------
+  &.cartao-kanban--dragging {
+    background-color: transparent !important;
+    border: 2px dashed #94a3b8 !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+
+    /* Esconde TODO o conteúdo interno (textos, ícones, datas) */
+    * {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+  }
+
+  // Linha Superior: Protocolo em destaque
+  &__topo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+  }
+
+  &__protocolo {
+    font-family: vars.$font-family-mono;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #0f172a; // Texto escuro para alto contraste
+    letter-spacing: 0.2px;
+  }
+
+  // Bloco de Conteúdo Central
+  &__conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 6px;
+  }
+
+  &__subcategoria {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #0f172a; // Texto escuro
+    margin: 0;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__endereco {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1e293b; // Texto escuro
+    margin: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Base do Cartão: Data
+  &__base {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 5px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  &__data {
+    font-size: 0.68rem;
+    color: #334155; // Texto escuro
+    font-weight: 600;
+  }
+}

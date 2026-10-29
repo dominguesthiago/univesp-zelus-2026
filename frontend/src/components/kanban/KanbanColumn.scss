@@ -1,0 +1,83 @@
+@use '../../styles/variables' as vars;
+
+.kanban-coluna {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
+  background-color: #f1f3f4; // Fundo cinza claro/neutro conforme especificação
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+  overflow: hidden;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+  // Feedback visual ao arrastar cartão sobre a coluna (Drop Zone ativa)
+  &--drag-over {
+    background-color: #e2e8f0;
+    box-shadow: inset 0 0 0 2px #94a3b8;
+  }
+
+  // Cabeçalho minimalista fixo no topo e perfeitamente centralizado (sem números)
+  &__header {
+    background: transparent;
+    padding: 12px 8px 8px 8px;
+    border: none;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &__titulo {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  // Rolagem vertical restrita exclusivamente ao corpo de cartões (Scroll Invisível)
+  &__cards {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 8px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    // Scrollbar invisível mantendo a rolagem totalmente funcional
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE e Edge legados
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari/Edge
+    }
+  }
+
+  &__vazio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px 10px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+}
