@@ -37,7 +37,7 @@ O fluxo de atendimento da zeladoria urbana é estruturado em **5 colunas sequenc
 | **5. Descartada** | `Descartada` | Pastel Coral (`#ECC4BC`) | Solicitação improcedente, duplicada, com informações insuficientes ou referente a competência externa ao município. |
 
 ### 2.1. Regras de Transição e Cabeçalhos de Coluna
-* O operador pode transicionar uma solicitação para qualquer uma das colunas, desde que registre o respectivo motivo de auditoria.
+* O operador pode transicionar uma solicitação ativa entre as colunas operacionais, desde que registre o respectivo motivo de auditoria. Cartões em estados terminais ("Concluída" ou "Descartada") possuem status imutável e são bloqueados contra novas movimentações.
 * Os cabeçalhos das colunas exibem exclusivamente o título da etapa (ex: "PENDENTE", "EM ANÁLISE") de forma limpa e rigorosamente centralizada. Toda e qualquer contagem numérica fica centralizada na barra superior.
 
 ### 2.2. Mecânica de Drag and Drop e Zonas de Soltura (Drop Zones)
@@ -91,6 +91,12 @@ O popup focado apresenta:
 * O histórico completo de movimentações anteriores de cada solicitação é renderizado em formato de linha do tempo (*timeline*) cronológica reversa (da mais recente para a mais antiga) no interior do modal de detalhes (`SolicitacaoModal`).
 * Esse histórico garante transparência administrativa interna e suporte a fiscalizações dos órgãos de controle.
 
+### 4.4. Regra de Integridade: Bloqueio de Estados Terminais
+* **Imutabilidade de Demandas Encerradas:** Solicitações que atingem as colunas **"Concluída"** ou **"Descartada"** alcançam um **Estado Terminal**. Por motivos de conformidade legal, auditoria pública e consistência do fluxo operacional, o ciclo de vida dessas demandas é considerado finalizado, tornando o status estritamente imutável.
+* **Interceptação no Drop:** Caso o operador tente arrastar e soltar um cartão de status "Concluída" ou "Descartada" para qualquer outra coluna, a ação é imediatamente abortada no evento de soltura antes de registrar a intenção de movimento (`movimentoPendente`) e sem abrir o `ModalTransicaoAuditoria`.
+* **Feedback Visual Obrigatório via Modal Estilizado (`ModalAvisoBloqueio`):** O sistema aciona um modal dedicado e estilizado com backdrop suave e cabeçalho de aviso exibindo a mensagem: `"Ação bloqueada: Esta solicitação já consta como [Concluída / Descartada] (Estado terminal) e não pode ser movimentada para outra etapa."`, contendo botão único centralizado "Entendi" para fechamento e retorno suave do cartão à sua coluna de origem.
+* **Retorno Suave e Preservação de Consulta:** O cartão é restituído suavemente à sua coluna de origem. A funcionalidade de clique simples no cartão para abertura do `SolicitacaoModal` permanece 100% ativa, permitindo a livre consulta aos detalhes e ao histórico auditável da demanda.
+
 ---
 
 ## 5. Componente do Cartão com Color-Coding Pastel (Zero Ruído Visual)
@@ -133,28 +139,36 @@ Para manter uma interface esteticamente limpa e sem poluição de trilhos de rol
 
 ---
 
-## 7. Modal de Detalhes da Solicitação e Auditoria Completa
+## 7. Modal de Detalhes da Solicitação e Auditoria Operacional (`SolicitacaoModal`)
 
-Ao clicar em qualquer cartão do Kanban, um modal centralizado de grandes dimensões é acionado, sobrepondo-se à tela com um backdrop escuro e foco acessível.
+Ao clicar em qualquer cartão do Kanban, um modal de consulta e auditoria é acionado, sobrepondo-se à tela com backdrop suave e foco acessível. Em alinhamento com a revisão de UX/UI, o modal foi enxugado para eliminar redundâncias, aplicar a paleta pastel oficial e compactar os elementos, garantindo visualização direta em telas padrão sem barra de rolagem vertical no seu corpo.
 
-### 7.1. Layout Superior: Foto e Mapa Lado a Lado
-* **Painel da Foto (Esquerda):**
-  * Exibição em escala ampliada da foto original capturada pelo munícipe no local.
-  * Legenda com data de captura e opção de ampliação/visualização detalhada.
-* **Painel do Mapa (Direita):**
-  * Renderização visual estilizada da localização geográfica da ocorrência com coordenadas de latitude e longitude.
-  * Botão de Ação Direta: **"Abrir no Google Maps ↗"**, com atributo estrito `target="_blank"` e `rel="noopener noreferrer"`, abrindo a rota de navegação direta nas coordenadas exatas registradas via GPS:
-    `https://www.google.com/maps?q=${latitude},${longitude}`.
+### 7.1. Cabeçalho Leve e Harmonização Cromática Pastel
+* **Fundo Claro e Tipografia Escura:** O fundo pesado azul marinho foi substituído por uma superfície leve (branco/cinza claro `#ffffff` / `#f8fafc`) com textos escuros (`#0f172a`), garantindo leveza estética e alto contraste.
+* **Padronização das Etiquetas de Status com Paleta Pastel:** A etiqueta de status do chamado no cabeçalho e as tags de transição na linha do tempo utilizam estritamente as cores da paleta pastel categórica do Kanban com texto escuro `#0f172a`:
+  * **Pendente:** `#EDE194`
+  * **Em análise:** `#BCDCF4`
+  * **Em execução:** `#F9B188`
+  * **Concluída:** `#D4E4BC`
+  * **Descartada:** `#ECC4BC`
 
-### 7.2. Layout Central: Dados Completos da Ocorrência
-* **Endereço e Localização Detalhada:** Logradouro, Número, Bairro, Cidade, CEP e Ponto de Referência cadastrado.
-* **Dados do Cidadão Solicitante:** Nome completo do munícipe, CPF formatado, telefone / WhatsApp e e-mail.
-* **Informações do Chamado:** Protocolo gerado, data/hora da abertura, categoria, subcategoria e descrição detalhada.
+### 7.2. Layout Superior: Mídia Compacta Lado a Lado (140px a 160px)
+* **Containers de Mídia Otimizados:** Tanto a foto da solicitação (identificada de forma direta e sem textos excedentes) quanto o container cartográfico georreferenciado possuem alturas reduzidas para cerca de `145px` (faixa de `140px` a `160px`), prevenindo a expansão excessiva do modal.
+* **Mapa Georreferenciado:** Mantém o botão de navegação direta **"Abrir no Maps ↗"** apontando para as coordenadas GPS no Google Maps em nova aba com segurança (`target="_blank"`, `rel="noopener noreferrer"`).
 
-### 7.3. Seção de Auditoria e Alteração de Status no Modal
-1. Dropdown seletor com os 5 status operacionais;
-2. Campo `textarea` obrigatório para preenchimento de justificativa ao selecionar status divergente do atual;
-3. Histórico cronológico reversível (*timeline*) de todas as movimentações anteriores registradas no chamado.
+### 7.3. Layout Central: Refinamento Semântico e Compactação do Solicitante
+Para despoluir o layout, aplicar uma linguagem menos agressiva e otimizar o espaço vertical, a seção central é composta por:
+1. **Endereço da Solicitação (Coluna 1):** Ajuste semântico no título (substituição de "Ocorrência" por "Solicitação"), preservando estritamente a disposição dos campos de Logradouro e Bairro/Cidade/CEP;
+2. **Nome do Solicitante (Coluna 2 - Layout em 3 Linhas Limpas):** Disposição em 3 linhas aproveitando 100% da largura do bloco:
+   - *Linha 1 (Inline):* Rótulo "Solicitante:" e o nome completo do munícipe alinhados horizontalmente na mesma linha;
+   - *Linha 2 (50/50):* "CPF Registrado" na esquerda e "WhatsApp/Telefone" na direita, alinhados na mesma linha horizontal;
+   - *Linha 3 (Centralizada):* "Abertura da Solicitação" centralizada perfeitamente em relação ao bloco todo;
+3. **Limpeza de Redundâncias:** Exclusão definitiva dos campos "Ponto de Referência", "Categoria Geral", "E-mail de Contato", "Relato do Munícipe" e da frase explicativa do cabeçalho de auditoria, exibindo apenas o título limpo e a linha do tempo abaixo.
+
+### 7.4. Exclusividade do Drag and Drop e Remoção do Dropdown de Status
+* **Eliminação de Conflito de Fluxo:** A seção "Alterar Status da Solicitação" (elemento `<select>`, aviso condicional e botão de confirmação) foi completamente removida de dentro do `SolicitacaoModal`.
+* **Fluxo Unificado via Drag and Drop:** A movimentação de status no sistema passa a ser **100% exclusiva via arrastar e soltar (Drag and Drop)** no quadro Kanban, garantindo que toda e qualquer transição passe obrigatoriamente pela validação e justificativa auditada do modal focado `ModalTransicaoAuditoria`.
+* **Histórico Imutável de Auditoria:** O `SolicitacaoModal` preserva com exclusividade a consulta ao histórico cronológico (*audit log*) das transições anteriores, exibindo data/hora, responsável, justificativa documentada e as tags `status anterior ➔ novo status` coloridas segundo a paleta pastel correspondente.
 
 ---
 

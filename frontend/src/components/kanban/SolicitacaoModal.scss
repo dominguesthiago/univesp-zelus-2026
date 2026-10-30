@@ -4,12 +4,12 @@
   position: fixed;
   inset: 0;
   z-index: 1050;
-  background-color: rgba(15, 23, 42, 0.75);
+  background-color: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   overflow: hidden;
   animation: fadeIn 0.15s ease-out;
 }
@@ -23,12 +23,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 960px;
-  max-height: 92vh;
+  max-width: 900px;
+  max-height: 94vh;
   background-color: #ffffff;
-  border: 3.5px solid #1a1a24;
-  border-radius: 16px;
-  box-shadow: 8px 8px 0 #1a1a24;
+  border: 2px solid #1a1a24;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0 #1a1a24;
   overflow: hidden;
   animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -36,7 +36,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.98);
+    transform: translateY(16px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -45,121 +45,119 @@
 }
 
 // -------------------------------------------------------------------------
-// Cabeçalho do Modal
+// Cabeçalho do Modal - Fundo Claro (Branco/Cinza Claro) e Texto Escuro
 // -------------------------------------------------------------------------
 .solicitacao-modal-header {
   position: relative;
-  background-color: #1a3458;
-  color: #ffffff;
-  padding: 16px 24px;
-  border-bottom: 3px solid #1a1a24;
+  background-color: #ffffff;
+  color: #0f172a;
+  padding: 12px 20px;
+  border-bottom: 2px solid #e2e8f0;
   flex-shrink: 0;
 
   &__info {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   &__protocolo {
     font-family: vars.$font-family-mono;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    color: #1a1a24;
-    background-color: #fbd362;
-    padding: 3px 8px;
-    border: 1.5px solid #1a1a24;
+    color: #0f172a;
+    background-color: #f1f5f9;
+    padding: 2px 8px;
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
-    box-shadow: 2px 2px 0 #1a1a24;
   }
 
+  // Paleta Pastel Obrigatória no Header
   &__badge {
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    padding: 3px 10px;
+    padding: 2px 10px;
     border-radius: 999px;
-    border: 1.5px solid #ffffff;
-    color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #0f172a;
 
     &.modal-badge--pendente {
-      background-color: #ca8a04;
+      background-color: #EDE194;
     }
     &.modal-badge--analise {
-      background-color: #0284c7;
+      background-color: #BCDCF4;
     }
     &.modal-badge--execucao {
-      background-color: #ea580c;
+      background-color: #F9B188;
     }
     &.modal-badge--concluida {
-      background-color: #16a34a;
+      background-color: #D4E4BC;
     }
     &.modal-badge--descartada {
-      background-color: #dc2626;
+      background-color: #ECC4BC;
     }
   }
 
   &__titulo {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #0f172a;
     margin: 0;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
     padding-right: 40px;
   }
 
   &__close {
     position: absolute;
-    top: 16px;
-    right: 18px;
+    top: 12px;
+    right: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    background-color: #ffffff;
-    color: #1a1a24;
-    border: 2px solid #1a1a24;
-    border-radius: 8px;
-    box-shadow: 2px 2px 0 #1a1a24;
+    width: 32px;
+    height: 32px;
+    background-color: #f8fafc;
+    color: #0f172a;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
     cursor: pointer;
-    transition: transform vars.$transition-fast, background-color vars.$transition-fast;
+    transition: background-color vars.$transition-fast, color vars.$transition-fast, border-color vars.$transition-fast;
 
     &:hover {
       background-color: #fee2e2;
       color: #b91c1c;
-      transform: translate(-1px, -1px);
-      box-shadow: 3px 3px 0 #1a1a24;
+      border-color: #ef4444;
     }
 
     &:focus-visible {
-      outline: 3px solid #fbd362;
+      outline: 2px solid #0f172a;
       outline-offset: 2px;
     }
   }
 }
 
 // -------------------------------------------------------------------------
-// Corpo do Modal com Rolagem
+// Corpo do Modal Compacto (Sem Rolagem em Telas Padrão)
 // -------------------------------------------------------------------------
 .solicitacao-modal-body {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px 28px;
+  padding: 12px 18px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 10px;
   background-color: #f8fafc;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   &::-webkit-scrollbar-track {
     background: #f1f5f9;
   }
   &::-webkit-scrollbar-thumb {
-    background: #94a3b8;
-    border-radius: 4px;
+    background: #cbd5e1;
+    border-radius: 3px;
   }
 }
 
@@ -169,12 +167,12 @@
 }
 
 // -------------------------------------------------------------------------
-// 1. LAYOUT SUPERIOR: FOTO E MAPA LADO A LADO
+// 1. LAYOUT SUPERIOR: FOTO E MAPA LADO A LADO (COMPACTO: 140px a 160px)
 // -------------------------------------------------------------------------
 .modal-secao--midia {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 10px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -183,9 +181,9 @@
 
 .modal-painel-midia {
   background-color: #ffffff;
-  border: 2.5px solid #1a1a24;
-  border-radius: 10px;
-  box-shadow: 4px 4px 0 #1a1a24;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -194,29 +192,29 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
+    padding: 5px 10px;
     background-color: #f1f5f9;
-    border-bottom: 2px solid #1a1a24;
-    font-size: 0.78rem;
+    border-bottom: 1px solid #cbd5e1;
+    font-size: 0.74rem;
   }
 
   &__tag {
     font-weight: 800;
-    color: #1a1a24;
+    color: #0f172a;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
   }
 
   &__sub,
   &__coords {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-family: vars.$font-family-mono;
     color: #64748b;
     font-weight: 600;
   }
 
   &__imagem-wrapper {
-    height: 180px;
+    height: 145px; // Compacto: 140px a 160px
     background-color: #0f172a;
     display: flex;
     align-items: center;
@@ -232,15 +230,15 @@
     transition: transform 0.2s ease;
 
     &:hover {
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
   }
 }
 
-// Estilização Neobrutalista do Mapa
+// Estilização Compacta do Mapa
 .modal-mapa-preview {
   position: relative;
-  height: 180px;
+  height: 145px; // Compacto: 140px a 160px
   background-color: #e2e8f0;
   display: flex;
   flex-direction: column;
@@ -254,8 +252,8 @@
   background: 
     linear-gradient(to right, rgba(203, 213, 225, 0.4) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(203, 213, 225, 0.4) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-color: #e6f4ea; // Tom esverdeado urbano
+  background-size: 16px 16px;
+  background-color: #e6f4ea;
 }
 
 .modal-mapa-rua {
@@ -266,24 +264,24 @@
   &--h {
     left: 0;
     right: 0;
-    top: 45%;
-    height: 24px;
+    top: 42%;
+    height: 20px;
   }
 
   &--v {
     top: 0;
     bottom: 0;
-    left: 55%;
-    width: 24px;
+    left: 52%;
+    width: 20px;
   }
 }
 
 .modal-mapa-pin-pulse {
   position: absolute;
-  top: 45%;
-  left: 55%;
-  width: 32px;
-  height: 32px;
+  top: 42%;
+  left: 52%;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background-color: rgba(239, 68, 68, 0.3);
   transform: translate(-50%, -50%);
@@ -292,28 +290,28 @@
 
 @keyframes pulse {
   0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
 }
 
 .modal-mapa-pin {
   position: absolute;
-  top: 45%;
-  left: 55%;
+  top: 42%;
+  left: 52%;
   transform: translate(-50%, -100%);
   color: #dc2626;
-  filter: drop-shadow(2px 3px 0 #1a1a24);
+  filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.3));
 }
 
 .modal-mapa-overlay {
   position: relative;
   z-index: 5;
   background: rgba(255, 255, 255, 0.95);
-  border-top: 2px solid #1a1a24;
-  padding: 8px 12px;
+  border-top: 1px solid #cbd5e1;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .modal-mapa-endereco-resumo {
@@ -322,15 +320,15 @@
   min-width: 0;
 
   strong {
-    font-size: 0.8rem;
-    color: #1a1a24;
+    font-size: 0.76rem;
+    color: #0f172a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   span {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: #64748b;
   }
 }
@@ -338,40 +336,38 @@
 .modal-mapa-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background-color: #fbd362;
-  color: #1a1a24;
-  font-size: 0.78rem;
-  font-weight: 800;
-  padding: 6px 12px;
-  border: 2px solid #1a1a24;
-  border-radius: 6px;
-  box-shadow: 2px 2px 0 #1a1a24;
+  gap: 5px;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
   text-decoration: none;
   flex-shrink: 0;
-  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
+  transition: background-color vars.$transition-fast, border-color vars.$transition-fast;
 
   &:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0 #1a1a24;
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
     text-decoration: none;
-    color: #1a1a24;
-    background-color: #f5c647;
   }
 
   &:focus-visible {
-    outline: 2px solid #1a3458;
+    outline: 2px solid #0f172a;
     outline-offset: 2px;
   }
 }
 
 // -------------------------------------------------------------------------
-// 2. LAYOUT CENTRAL: DADOS COMPLETOS
+// 2. LAYOUT CENTRAL: DADOS ESSENCIAIS (ENXUTO E EQUILIBRADO 50/50)
 // -------------------------------------------------------------------------
 .modal-grid-dados {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 10px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -380,319 +376,187 @@
 
 .modal-card-dados {
   background-color: #ffffff;
-  border: 2.5px solid #1a1a24;
-  border-radius: 10px;
-  box-shadow: 4px 4px 0 #1a1a24;
-  padding: 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
 
   &__titulo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding-bottom: 10px;
-    margin-bottom: 12px;
-    border-bottom: 2px solid #e2e8f0;
+    gap: 6px;
+    padding-bottom: 5px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
 
     h2 {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 800;
-      color: #1a1a24;
+      color: #0f172a;
       margin: 0;
+      white-space: nowrap;
     }
   }
 
   &__icone {
-    color: #1a3458;
+    color: #3b82f6;
   }
 }
 
 .modal-dados-lista {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
 }
 
 .modal-dado-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-
-  &--descricao {
-    margin-top: 6px;
-    padding-top: 8px;
-    border-top: 1px dashed #cbd5e1;
-  }
+  gap: 1px;
 }
 
 .modal-dado-rotulo {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .modal-dado-valor {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #1a1a24;
+  color: #0f172a;
 
   &--destaque {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 800;
-    color: #1a3458;
+    color: #0f172a;
   }
-
-  &--categoria {
-    display: inline-block;
-    background-color: #f1f5f9;
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px solid #cbd5e1;
-    font-weight: 700;
-    font-size: 0.8rem;
-    width: fit-content;
-  }
-}
-
-.modal-dado-texto {
-  font-size: 0.85rem;
-  color: #334155;
-  background-color: #f8fafc;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1.5px solid #e2e8f0;
-  margin: 0;
-  line-height: 1.4;
 }
 
 // -------------------------------------------------------------------------
-// 3. INTERFACE DE AUDITORIA E ALTERAÇÃO DE STATUS
+// Reestruturação do Bloco "Nome do Solicitante" (3 Linhas Limpas)
+// -------------------------------------------------------------------------
+.modal-card-dados--solicitante {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+// Linha 1: Solicitante e Nome Completo na mesma linha horizontal (Inline)
+.modal-solicitante-linha-topo {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e2e8f0;
+
+  .modal-solicitante-icone {
+    color: #3b82f6;
+    flex-shrink: 0;
+  }
+
+  .modal-solicitante-rotulo {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+  }
+
+  .modal-solicitante-nome-destaque {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Linha 2: Flexbox/Grid 50/50 (CPF à esquerda e WhatsApp/Telefone à direita)
+.modal-solicitante-linha-dupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+// Linha 3: Centralizada (Abertura da Solicitação)
+.modal-solicitante-linha-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 4px;
+  border-top: 1px dashed #e2e8f0;
+
+  .modal-dado-item--centralizado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .modal-dado-valor {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------
+// 3. INTERFACE DE AUDITORIA: HISTÓRICO LIMPO (SEM FRASE EXCEDENTE)
 // -------------------------------------------------------------------------
 .modal-card-auditoria {
   background-color: #ffffff;
-  border: 2.5px solid #1a1a24;
-  border-radius: 12px;
-  box-shadow: 4px 4px 0 #1a1a24;
-  padding: 18px 20px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 14px;
 
   &__header {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #e2e8f0;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
   }
 
   &__icone {
-    color: #0284c7;
-    margin-top: 2px;
+    color: #3b82f6;
+    flex-shrink: 0;
   }
 
   &__titulo {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     font-weight: 800;
-    color: #1a1a24;
+    color: #0f172a;
     margin: 0;
   }
-
-  &__sub {
-    font-size: 0.78rem;
-    color: #64748b;
-    margin: 2px 0 0;
-  }
 }
 
-.modal-auditoria-feedback {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #dcfce7;
-  color: #15803d;
-  border: 2px solid #16a34a;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-bottom: 14px;
-  box-shadow: 2px 2px 0 #1a1a24;
-}
-
-.modal-auditoria-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.modal-auditoria-campo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.modal-auditoria-label {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #1a1a24;
-
-  .campo-obrigatorio {
-    color: #dc2626;
-    font-weight: 900;
-  }
-}
-
-.modal-auditoria-select {
-  width: 100%;
-  max-width: 320px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #1a1a24;
-  background-color: #ffffff;
-  border: 2.5px solid #1a1a24;
-  border-radius: 8px;
-  box-shadow: 3px 3px 0 #1a1a24;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 3px solid vars.$color-focus-ring;
-    outline-offset: 2px;
-  }
-}
-
-// Bloco de Justificativa / Motivo
-.modal-auditoria-motivo-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #fffbeb;
-  border: 2.5px solid #1a1a24;
-  border-radius: 10px;
-  box-shadow: 4px 4px 0 #1a1a24;
-  padding: 16px;
-  animation: fadeIn 0.15s ease-out;
-}
-
-.modal-auditoria-motivo-aviso {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #fef3c7;
-  color: #92400e;
-  padding: 8px 12px;
-  border: 1.5px solid #d97706;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  line-height: 1.35;
-}
-
-.modal-auditoria-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 0.88rem;
-  font-family: inherit;
-  color: #1a1a24;
-  background-color: #ffffff;
-  border: 2px solid #1a1a24;
-  border-radius: 6px;
-  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.05);
-  resize: vertical;
-
-  &:focus-visible {
-    outline: 3px solid #1a3458;
-    outline-offset: 2px;
-  }
-
-  &.tem-erro {
-    border-color: #dc2626;
-    background-color: #fef2f2;
-  }
-}
-
-.modal-auditoria-erro {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #dc2626;
-  margin: 0;
-}
-
-.modal-auditoria-acoes {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.modal-btn-confirmar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background-color: #aaebd3;
-  color: #1a1a24;
-  font-size: 0.85rem;
-  font-weight: 800;
-  padding: 10px 18px;
-  border: 2.5px solid #1a1a24;
-  border-radius: 8px;
-  box-shadow: 3px 3px 0 #1a1a24;
-  cursor: pointer;
-  transition: transform vars.$transition-fast, box-shadow vars.$transition-fast;
-
-  &:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 #1a1a24;
-    background-color: #92e0c3;
-  }
-
-  &:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 #1a1a24;
-  }
-
-  &:focus-visible {
-    outline: 3px solid #1a3458;
-    outline-offset: 2px;
-  }
-}
-
-.modal-btn-cancelar {
-  background: transparent;
-  color: #64748b;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 8px 14px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 6px;
-  cursor: pointer;
-
-  &:hover {
-    color: #1a1a24;
-    background-color: #f1f5f9;
-    border-color: #94a3b8;
-  }
-}
-
-// -------------------------------------------------------------------------
-// 4. HISTÓRICO DE AUDITORIA (TIMELINE)
-// -------------------------------------------------------------------------
+// Histórico de Auditoria (Timeline Compacta)
 .modal-historico-wrapper {
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 2px dashed #cbd5e1;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .modal-historico-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: #1a3458;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: #475569;
 
   h3 {
-    font-size: 0.92rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    color: #1a1a24;
+    color: #0f172a;
     margin: 0;
   }
 }
@@ -700,55 +564,54 @@
 .modal-timeline {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-left: 6px;
+  gap: 6px;
+  padding-left: 4px;
 }
 
 .modal-timeline-item {
   position: relative;
   display: flex;
-  gap: 12px;
-  padding-left: 18px;
-  border-left: 2.5px solid #1a1a24;
+  gap: 8px;
+  padding-left: 14px;
+  border-left: 2px solid #cbd5e1;
 
   &:last-child {
-    border-left-color: #cbd5e1;
+    border-left-color: transparent;
   }
 }
 
 .modal-timeline-marcador {
   position: absolute;
-  left: -7px;
+  left: -5px;
   top: 4px;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: #fbd362;
-  border: 2px solid #1a1a24;
+  background-color: #0f172a;
 }
 
 .modal-timeline-conteudo {
   flex: 1;
   background-color: #f8fafc;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .modal-timeline-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .modal-timeline-data {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   color: #64748b;
   font-family: vars.$font-family-mono;
 }
@@ -756,50 +619,64 @@
 .modal-timeline-transicao {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 800;
+  gap: 5px;
+}
 
-  .transicao-anterior {
-    color: #64748b;
-    background-color: #e2e8f0;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
+// Paleta Pastel Obrigatória no Histórico de Transições
+.transicao-status {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0f172a;
+  padding: 1px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
 
-  .transicao-seta {
-    color: #1a1a24;
+  &.modal-badge--pendente {
+    background-color: #EDE194;
   }
+  &.modal-badge--analise {
+    background-color: #BCDCF4;
+  }
+  &.modal-badge--execucao {
+    background-color: #F9B188;
+  }
+  &.modal-badge--concluida {
+    background-color: #D4E4BC;
+  }
+  &.modal-badge--descartada {
+    background-color: #ECC4BC;
+  }
+}
 
-  .transicao-novo {
-    color: #1a1a24;
-    background-color: #fbd362;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid #1a1a24;
-  }
+.transicao-seta {
+  color: #64748b;
+  font-size: 0.72rem;
 }
 
 .modal-timeline-servidor {
-  font-size: 0.78rem;
-  color: #334155;
+  font-size: 0.72rem;
+  color: #475569;
+
+  strong {
+    color: #0f172a;
+  }
 }
 
 .modal-timeline-motivo {
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   font-style: italic;
-  color: #1a1a24;
+  color: #0f172a;
   background-color: #ffffff;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
-  border-left: 3px solid #1a3458;
-  margin-top: 2px;
+  border-left: 2px solid #cbd5e1;
+  margin-top: 1px;
 }
 
 .modal-timeline-vazio {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   color: #94a3b8;
   font-style: italic;
   margin: 0;
 }
-

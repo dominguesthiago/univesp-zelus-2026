@@ -4,6 +4,7 @@ import { MOCK_SOLICITACOES, COLUNAS_KANBAN } from '../data/mockSolicitacoes';
 import KanbanColumn from '../components/kanban/KanbanColumn';
 import SolicitacaoModal from '../components/kanban/SolicitacaoModal';
 import ModalTransicaoAuditoria from '../components/kanban/ModalTransicaoAuditoria';
+import ModalAvisoBloqueio from '../components/kanban/ModalAvisoBloqueio';
 import './PainelKanban.scss';
 
 /**
@@ -25,6 +26,9 @@ const PainelKanban = () => {
 
   // Estado para armazenar intenção temporária de movimento via Drag and Drop
   const [movimentoPendente, setMovimentoPendente] = useState(null);
+
+  // Estado para controlar o modal estilizado de aviso de bloqueio em estados terminais
+  const [avisoBloqueio, setAvisoBloqueio] = useState({ visivel: false, status: '' });
 
   // Estados para o Custom Drag Layer (rastreamento do mouse e cartão segurado)
   const [draggedCard, setDraggedCard] = useState(null);
@@ -126,7 +130,7 @@ const PainelKanban = () => {
     };
   }, [draggedCard]);
 
-  // Interceptação do Drop: Valida se a coluna é diferente e solicita justificativa
+  // Interceptação do Drop: Valida regras de negócio e solicita justificativa
   const handleDropCard = (solicitacaoId, novoStatus) => {
     setDraggedCard(null);
     setDragPosition(null);
@@ -136,6 +140,12 @@ const PainelKanban = () => {
 
     // Se soltar na mesma coluna de origem, não executa transição
     if (item.status === novoStatus) return;
+
+    // Regra de Integridade: Bloqueio de Estados Terminais ("Concluída" ou "Descartada")
+    if (item.status === 'Concluída' || item.status === 'Descartada') {
+      setAvisoBloqueio({ visivel: true, status: item.status });
+      return;
+    }
 
     // Intercepta a transição e abre o modal de auditoria
     setMovimentoPendente({
@@ -324,6 +334,14 @@ const PainelKanban = () => {
           solicitacao={solicitacaoAtiva}
           onClose={() => setSolicitacaoAtiva(null)}
           onUpdateStatus={handleUpdateStatus}
+        />
+      )}
+
+      {/* Modal Estilizado de Aviso para Bloqueio de Estados Terminais */}
+      {avisoBloqueio.visivel && (
+        <ModalAvisoBloqueio
+          status={avisoBloqueio.status}
+          onClose={() => setAvisoBloqueio({ visivel: false, status: '' })}
         />
       )}
     </div>
