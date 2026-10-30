@@ -177,3 +177,46 @@ Para despoluir o layout, aplicar uma linguagem menos agressiva e otimizar o espa
 * **Teclado:** Fechamento de modais via tecla `Escape` (ESC), foco automático no primeiro campo de digitação ao abrir e armadilha de foco (*focus trap*).
 * **Leitores de Tela:** Utilização dos atributos `role="dialog"`, `aria-modal="true"`, `aria-labelledby` e `aria-describedby`.
 * **Cores e Contrastes:** Todos os textos e badges atendem à proporção mínima de contraste de 4.5:1 (texto normal) e 3:1 (componentes de interface) conforme o padrão WCAG AA.
+
+---
+
+## 9. Integração com a API Real e Normalizador de Status (`statusMapper.js`)
+
+O Painel Kanban concluiu a transição dos dados simulados (*mocks*) para a integração em tempo real com a API REST Node.js/Express e o banco de dados Supabase/PostgreSQL.
+
+### 9.1. Rotas Consumidas via `api.js`
+* **Leitura Geral de Solicitações:** `GET /api/solicitacoes/admin`
+  * Rota autenticada consumida pelo método `listarSolicitacoesAdmin()` ou `api.get()`.
+  * Retorna todas as solicitações com relacionamentos (*joins*) de cidadão (`nome_completo`, `cpf`, `whatsapp`, `email`) e subcategoria (`nome`).
+* **Atualização Auditada de Status:** `PATCH /api/solicitacoes/:id/status`
+  * Rota acionada pelo método `atualizarStatusSolicitacao(id, payload)` ou `api.patch()`.
+  * Recebe `{ status, justificativa_status, justificativa }`, atualiza a tabela `solicitacoes` e insere o carimbo imutável na tabela `audit_logs`.
+
+### 9.2. Normalizador de Dados (Escudo do Frontend)
+Para blindar o quadro Kanban contra inconsistências textuais ou legadas provenientes do banco, o módulo `statusMapper.js` aplica sanitização e mapeamento automático:
+* Mapeia variações (`"Em Andamento"`, `"ANDAMENTO"`, `"em analise"`, `"PENDENTE"`, `"CONCLUIDO"`, `"DESCARTADO"`) estritamente nos 5 status oficiais:
+  * `"Pendente"`
+  * `"Em análise"`
+  * `"Em execução"`
+  * `"Concluída"`
+  * `"Descartada"`
+* Status desconhecidos adotam fallback automático para `"Pendente"`.
+* A função `normalizarSolicitacao` formata os campos de endereço, solicitante, coordenadas e histórico de auditoria para compatibilidade imediata com os cartões e modais.
+
+### 9.3. Estados de Carregamento e Tratamento de Erros
+* **Estado de Carregamento (`loading`):** Indicador visual acessível com spinner animado e mensagem para leitores de tela durante a consulta inicial à API.
+* **Banner de Erro (`erroCarregamento`):** Em caso de falha de conexão com o servidor, exibe aviso amigável na interface com botão de ação rápida "Tentar novamente" (`carregarSolicitacoes`).
+
+---
+
+## 10. Cobertura de Testes Automatizados para Fluxos Assíncronos
+
+A integridade do Painel Kanban é garantida por uma suíte completa de testes automatizados no arquivo `PainelKanban.test.js`:
+* **Simulação de API (Jest Mocks):** Interceptação das funções `listarSolicitacoesAdmin` e `atualizarStatusSolicitacao` do serviço `api.js`.
+* **Cenários Cobertos:**
+  1. Renderização do indicador de carregamento inicial (*loading state*);
+  2. Tratamento e exibição do banner de erro com opção de nova tentativa;
+  3. Renderização completa das 5 colunas e contadores da barra superior após carregamento assíncrono;
+  4. Interceptação e bloqueio de drop para estados terminais ("Concluída" e "Descartada") acionando o modal estilizado `ModalAvisoBloqueio`;
+  5. Liberação de drop para etapas ativas, validação de justificativa obrigatória e envio da requisição `PATCH` à API ao confirmar;
+  6. Abertura e consulta de detalhes via clique no cartão através do `SolicitacaoModal`.

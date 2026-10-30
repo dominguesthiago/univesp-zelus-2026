@@ -148,7 +148,7 @@ const listarSolicitacoesAdmin = async (req, res) => {
             .from('solicitacoes')
             .select(`
                 *,
-                cidadaos (nome_completo),
+                cidadaos (nome_completo, cpf, whatsapp, email),
                 subcategorias (nome)
             `)
             .order('created_at', { ascending: false });

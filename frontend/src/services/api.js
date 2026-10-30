@@ -17,12 +17,17 @@ const getBaseUrl = () => {
  */
 export async function request(endpoint, options = {}) {
   const baseUrl = getBaseUrl();
-  const url = `${baseUrl}${endpoint}`;
+  const path = endpoint.startsWith('http')
+    ? endpoint
+    : endpoint.startsWith('/api/')
+    ? endpoint
+    : `/api${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${path}`;
 
-  // Resgate automático e transparente do token JWT de autenticação
+  // Resgate automático e transparente do token JWT de autenticação (suporta admin e munícipe)
   const token =
     typeof window !== 'undefined' && window.localStorage
-      ? localStorage.getItem('zelus_token')
+      ? localStorage.getItem('zelus_admin_token') || localStorage.getItem('zelus_token')
       : null;
 
   const config = {
@@ -218,8 +223,38 @@ export async function listarMinhasSolicitacoes() {
   });
 }
 
+/**
+ * Lista todas as solicitações para o Painel Administrativo da Prefeitura (Kanban).
+ * GET /api/solicitacoes/admin
+ * @returns {Promise<{sucesso: boolean, mensagem: string, dados: Array<Object>}>}
+ */
+export async function listarSolicitacoesAdmin() {
+  return request('/api/solicitacoes/admin', {
+    method: 'GET',
+  });
+}
+
+/**
+ * Atualiza o status de uma solicitação no banco com registro de auditoria.
+ * PATCH /api/solicitacoes/:id/status
+ * @param {string} id - UUID da solicitação
+ * @param {Object} dados - { status, justificativa_status, justificativa }
+ * @returns {Promise<{sucesso: boolean, mensagem: string, dados: Object}>}
+ */
+export async function atualizarStatusSolicitacao(id, dados) {
+  return request(`/api/solicitacoes/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify(dados),
+  });
+}
+
 const api = {
   request,
+  get: (endpoint, options = {}) => request(endpoint, { ...options, method: 'GET' }),
+  post: (endpoint, body, options = {}) =>
+    request(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  patch: (endpoint, body, options = {}) =>
+    request(endpoint, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
   registrarCidadao,
   loginCidadao,
   redefinirSenhaCidadao,
@@ -231,6 +266,8 @@ const api = {
   listarCategorias,
   criarSolicitacao,
   listarMinhasSolicitacoes,
+  listarSolicitacoesAdmin,
+  atualizarStatusSolicitacao,
 };
 
 export default api;
